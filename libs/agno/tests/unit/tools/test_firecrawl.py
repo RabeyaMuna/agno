@@ -4,6 +4,8 @@ import json
 import os
 from unittest.mock import Mock, patch
 
+# Ensure firecrawl-py is installed for the tests to run.
+
 import pytest
 from firecrawl import FirecrawlApp
 
