@@ -302,6 +302,9 @@ class WebsiteReader(Reader):
                         raise
                 except Exception as e:
                     # Log other exceptions but continue crawling other pages
+                    import logging
+
+                    logger = logging.getLogger(__name__)
                     logger.warning(f"Failed to crawl asynchronously {current_url}: {e}")
                     # For the initial URL, we should raise the error
                     if current_url == url and not crawler_result:
