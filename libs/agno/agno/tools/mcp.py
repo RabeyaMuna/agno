@@ -247,6 +247,10 @@ class MCPTools(Toolkit):
             if self.server_params is None:
                 raise ValueError("server_params must be provided when using stdio transport.")
 
+            # Fix: narrow the union so mypy knows this is stdio params
+            if not isinstance(self.server_params, StdioServerParameters):
+                raise ValueError("server_params must be an instance of StdioServerParameters when using stdio transport.")
+
             # Minimal change: enforce allowed executables only when actually connecting
             _validate_executable([self.server_params.command])
 
