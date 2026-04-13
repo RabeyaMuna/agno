@@ -91,24 +91,33 @@ class FirecrawlTools(Toolkit):
         return FirecrawlScrapeOptions(formats=self.formats)
 
     @staticmethod
-    def _get_firecrawl_client(app: Any) -> Any:
-        return getattr(app, "v1", app)
+    def _get_firecrawl_v1_client(app: Any) -> Optional[Any]:
+        app_dict = getattr(app, "__dict__", None)
+        if not isinstance(app_dict, dict):
+            return None
+        return app_dict.get("v1")
 
     def _scrape(self, url: str, params: Dict[str, Any]) -> Any:
-        app = self._get_firecrawl_client(self.app)
-        if hasattr(app, "scrape_url"):
+        if hasattr(self.app, "scrape_url"):
+            return self.app.scrape_url(url, **params)
+        app = self._get_firecrawl_v1_client(self.app)
+        if app is not None and hasattr(app, "scrape_url"):
             return app.scrape_url(url, **params)
         return self.app.scrape(url, **params)
 
     def _crawl(self, url: str, params: Dict[str, Any]) -> Any:
-        app = self._get_firecrawl_client(self.app)
-        if hasattr(app, "crawl_url"):
+        if hasattr(self.app, "crawl_url"):
+            return self.app.crawl_url(url, **params)
+        app = self._get_firecrawl_v1_client(self.app)
+        if app is not None and hasattr(app, "crawl_url"):
             return app.crawl_url(url, **params)
         return self.app.crawl(url, **params)
 
     def _map(self, url: str) -> Any:
-        app = self._get_firecrawl_client(self.app)
-        if hasattr(app, "map_url"):
+        if hasattr(self.app, "map_url"):
+            return self.app.map_url(url)
+        app = self._get_firecrawl_v1_client(self.app)
+        if app is not None and hasattr(app, "map_url"):
             return app.map_url(url)
         return self.app.map(url)
 
