@@ -90,6 +90,28 @@ class FirecrawlTools(Toolkit):
             return {"formats": self.formats}
         return FirecrawlScrapeOptions(formats=self.formats)
 
+    @staticmethod
+    def _get_firecrawl_client(app: Any) -> Any:
+        return getattr(app, "v1", app)
+
+    def _scrape(self, url: str, params: Dict[str, Any]) -> Any:
+        app = self._get_firecrawl_client(self.app)
+        if hasattr(app, "scrape_url"):
+            return app.scrape_url(url, **params)
+        return self.app.scrape(url, **params)
+
+    def _crawl(self, url: str, params: Dict[str, Any]) -> Any:
+        app = self._get_firecrawl_client(self.app)
+        if hasattr(app, "crawl_url"):
+            return app.crawl_url(url, **params)
+        return self.app.crawl(url, **params)
+
+    def _map(self, url: str) -> Any:
+        app = self._get_firecrawl_client(self.app)
+        if hasattr(app, "map_url"):
+            return app.map_url(url)
+        return self.app.map(url)
+
     def scrape_website(self, url: str) -> str:
         """Use this function to scrape a website using Firecrawl.
 
@@ -100,7 +122,7 @@ class FirecrawlTools(Toolkit):
         if self.formats:
             params["formats"] = self.formats
 
-        scrape_result = self.app.scrape_url(url, **params)
+        scrape_result = self._scrape(url, params)
         return json.dumps(scrape_result.model_dump(), cls=CustomJSONEncoder)
 
     def crawl_website(self, url: str, limit: Optional[int] = None) -> str:
@@ -121,7 +143,7 @@ class FirecrawlTools(Toolkit):
 
         params["poll_interval"] = self.poll_interval
 
-        crawl_result = self.app.crawl_url(url, **params)
+        crawl_result = self._crawl(url, params)
         return json.dumps(crawl_result.model_dump(), cls=CustomJSONEncoder)
 
     def map_website(self, url: str) -> str:
@@ -131,7 +153,7 @@ class FirecrawlTools(Toolkit):
             url (str): The URL to map.
 
         """
-        map_result = self.app.map_url(url)
+        map_result = self._map(url)
         return json.dumps(map_result.model_dump(), cls=CustomJSONEncoder)
 
     def search(self, query: str, limit: Optional[int] = None):
