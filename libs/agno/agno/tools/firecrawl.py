@@ -6,9 +6,17 @@ from agno.tools import Toolkit
 from agno.utils.log import logger
 
 try:
-    from firecrawl import FirecrawlApp, ScrapeOptions  # type: ignore[attr-defined]
+    from firecrawl import FirecrawlApp  # type: ignore[attr-defined]
 except ImportError:
     raise ImportError("`firecrawl-py` not installed. Please install using `pip install firecrawl-py`")
+
+try:
+    from firecrawl import ScrapeOptions as FirecrawlScrapeOptions  # type: ignore[attr-defined]
+except ImportError:
+    try:
+        from firecrawl import V1ScrapeOptions as FirecrawlScrapeOptions  # type: ignore[attr-defined]
+    except ImportError:
+        FirecrawlScrapeOptions = None
 
 
 class CustomJSONEncoder(json.JSONEncoder):
@@ -77,6 +85,11 @@ class FirecrawlTools(Toolkit):
 
         super().__init__(name="firecrawl_tools", tools=tools, **kwargs)
 
+    def _get_scrape_options(self) -> Any:
+        if FirecrawlScrapeOptions is None:
+            return {"formats": self.formats}
+        return FirecrawlScrapeOptions(formats=self.formats)
+
     def scrape_website(self, url: str) -> str:
         """Use this function to scrape a website using Firecrawl.
 
@@ -104,7 +117,7 @@ class FirecrawlTools(Toolkit):
         if self.limit or limit:
             params["limit"] = self.limit or limit
         if self.formats:
-            params["scrape_options"] = ScrapeOptions(formats=self.formats)  # type: ignore
+            params["scrape_options"] = self._get_scrape_options()
 
         params["poll_interval"] = self.poll_interval
 
@@ -132,7 +145,7 @@ class FirecrawlTools(Toolkit):
         if self.limit or limit:
             params["limit"] = self.limit or limit
         if self.formats:
-            params["scrape_options"] = ScrapeOptions(formats=self.formats)  # type: ignore
+            params["scrape_options"] = self._get_scrape_options()
         if self.search_params:
             params.update(self.search_params)
 
