@@ -72,6 +72,9 @@ def inline_pydantic_schema(schema: dict[str, Any]) -> dict[str, Any]:
         # Create a new dict to avoid modifying the input
         result = s.copy()
 
+        if result.get("type") == "object" and "properties" not in result and "additionalProperties" not in result:
+            result["additionalProperties"] = True
+
         # Handle arrays
         if "items" in result:
             result["items"] = process_schema(result["items"], defs)
@@ -171,10 +174,10 @@ def get_json_schema_for_arg(type_hint: Any) -> dict[str, Any] | None:
             if (
                 field_schema
                 and "anyOf" in field_schema
-                and any(schema["type"] == "null" for schema in field_schema["anyOf"])
+                and any(schema.get("type") == "null" for schema in field_schema["anyOf"])
             ):
                 field_schema["type"] = next(
-                    schema["type"] for schema in field_schema["anyOf"] if schema["type"] != "null"
+                    schema["type"] for schema in field_schema["anyOf"] if schema.get("type") != "null"
                 )
                 field_schema.pop("anyOf")
             else:
@@ -190,13 +193,14 @@ def get_json_schema_for_arg(type_hint: Any) -> dict[str, Any] | None:
         return arg_json_schema
 
     # Handle string annotations (from __future__ import annotations)
+    json_schema: dict[str, Any]
     if isinstance(type_hint, str):
-        json_schema: dict[str, Any] = {"type": get_json_type_for_py_type(type_hint)}
+        json_schema = {"type": get_json_type_for_py_type(type_hint)}
     elif hasattr(type_hint, "__name__"):
-        json_schema: dict[str, Any] = {"type": get_json_type_for_py_type(type_hint.__name__)}
+        json_schema = {"type": get_json_type_for_py_type(type_hint.__name__)}
     else:
         # For unknown types, default to object
-        json_schema: dict[str, Any] = {"type": "object"}
+        json_schema = {"type": "object"}
 
     if json_schema["type"] == "object":
         json_schema["properties"] = {}
