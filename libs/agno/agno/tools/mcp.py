@@ -164,13 +164,13 @@ class MCPTools(Toolkit):
             sse_params = asdict(self.server_params) if self.server_params is not None else {}
             if "url" not in sse_params:
                 sse_params["url"] = self.url
-            self._context = sse_client(**sse_params)
+            self._context = sse_client(**sse_params)  # type: ignore
             client_timeout = min(self.timeout_seconds, sse_params.get("timeout", self.timeout_seconds))
         elif self.transport == "streamable-http":
             streamable_http_params = asdict(self.server_params) if self.server_params is not None else {}
             if "url" not in streamable_http_params:
                 streamable_http_params["url"] = self.url
-            self._context = streamablehttp_client(**streamable_http_params)
+            self._context = streamablehttp_client(**streamable_http_params)  # type: ignore
             client_timeout = min(self.timeout_seconds, streamable_http_params.get("timeout", self.timeout_seconds))
         else:
             if self.server_params is None:
@@ -181,7 +181,7 @@ class MCPTools(Toolkit):
         session_params = await self._context.__aenter__()  # type: ignore
         read, write = session_params[0:2]
 
-        self._session_context = ClientSession(read, write, read_timeout_seconds=timedelta(seconds=client_timeout))
+        self._session_context = ClientSession(read, write, read_timeout_seconds=timedelta(seconds=client_timeout))  # type: ignore
         self.session = await self._session_context.__aenter__()  # type: ignore
 
         # Initialize with the new session
