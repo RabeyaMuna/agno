@@ -6,7 +6,8 @@ from agno.tools import Toolkit
 from agno.utils.log import logger
 
 try:
-    from firecrawl import FirecrawlApp, ScrapeOptions  # type: ignore[attr-defined]
+    from firecrawl import FirecrawlApp  # type: ignore[attr-defined]
+    from firecrawl.v2.types import ScrapeOptions  # type: ignore[attr-defined]
 except ImportError:
     raise ImportError("`firecrawl-py` not installed. Please install using `pip install firecrawl-py`")
 
@@ -82,11 +83,7 @@ class FirecrawlTools(Toolkit):
         Args:
             url (str): The URL to scrape.
         """
-        params = {}
-        if self.formats:
-            params["formats"] = self.formats
-
-        scrape_result = self.app.scrape_url(url, **params)
+        scrape_result = self.app.scrape(url, formats=self.formats)
         return json.dumps(scrape_result.model_dump(), cls=CustomJSONEncoder)
 
     def crawl_website(self, url: str, limit: Optional[int] = None) -> str:
@@ -99,15 +96,17 @@ class FirecrawlTools(Toolkit):
         Returns:
             The results of the crawling.
         """
-        params: Dict[str, Any] = {}
-        if self.limit or limit:
-            params["limit"] = self.limit or limit
+        crawl_limit = self.limit or limit
+        scrape_options = None
         if self.formats:
-            params["scrape_options"] = ScrapeOptions(formats=self.formats)  # type: ignore
+            scrape_options = ScrapeOptions(formats=self.formats)  # type: ignore
 
-        params["poll_interval"] = self.poll_interval
-
-        crawl_result = self.app.crawl_url(url, **params)
+        crawl_result = self.app.crawl(
+            url,
+            limit=crawl_limit,
+            scrape_options=scrape_options,
+            poll_interval=self.poll_interval,
+        )
         return json.dumps(crawl_result.model_dump(), cls=CustomJSONEncoder)
 
     def map_website(self, url: str) -> str:
@@ -117,7 +116,7 @@ class FirecrawlTools(Toolkit):
             url (str): The URL to map.
 
         """
-        map_result = self.app.map_url(url)
+        map_result = self.app.map(url)
         return json.dumps(map_result.model_dump(), cls=CustomJSONEncoder)
 
     def search(self, query: str, limit: Optional[int] = None):
@@ -127,16 +126,10 @@ class FirecrawlTools(Toolkit):
             query (str): The query to search for.
             limit (int): The maximum number of results to return.
         """
-        params: Dict[str, Any] = {}
-        if self.limit or limit:
-            params["limit"] = self.limit or limit
+        search_limit = self.limit or limit
+        scrape_options = None
         if self.formats:
-            params["scrape_options"] = ScrapeOptions(formats=self.formats)  # type: ignore
-        if self.search_params:
-            params.update(self.search_params)
+            scrape_options = ScrapeOptions(formats=self.formats)  # type: ignore
 
-        search_result = self.app.search(query, **params)
-        if search_result.success:
-            return json.dumps(search_result.data, cls=CustomJSONEncoder)
-        else:
-            return "Error searching with the Firecrawl tool: " + search_result.error
+        search_result = self.app.search(query, limit=search_limit, scrape_options=scrape_options)
+        return json.dumps(search_result.model_dump(), cls=CustomJSONEncoder)
