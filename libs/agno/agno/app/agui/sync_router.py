@@ -33,7 +33,7 @@ def run_agent(agent: Agent, run_input: RunAgentInput) -> Iterator[BaseEvent]:
 
         # Request streaming response from agent
         response_stream = agent.run(
-            messages=messages,
+            message=messages,
             session_id=run_input.thread_id,
             stream=True,
             stream_intermediate_steps=True,
@@ -61,7 +61,7 @@ def run_team(team: Team, input: RunAgentInput) -> Iterator[BaseEvent]:
 
         # Request streaming response from team
         response_stream = team.run(
-            messages=messages,
+            message=messages,
             session_id=input.thread_id,
             stream=True,
             stream_intermediate_steps=True,
