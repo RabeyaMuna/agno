@@ -44,6 +44,7 @@ class BaseAPIApp(ABC):
         self.monitoring = monitoring
         self.app_id: Optional[str] = app_id
         self.name: Optional[str] = name
+        self.type = type
         self.description = description
         self.set_app_id()
 
