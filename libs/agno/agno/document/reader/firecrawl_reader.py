@@ -9,8 +9,13 @@ from agno.utils.log import log_debug, logger
 
 try:
     from firecrawl import FirecrawlApp  # type: ignore[attr-defined]
+    if not hasattr(FirecrawlApp, 'scrape_url'):
+        from firecrawl import V1FirecrawlApp as FirecrawlApp  # type: ignore[attr-defined]
 except ImportError:
-    raise ImportError("The `firecrawl` package is not installed. Please install it via `pip install firecrawl-py`.")
+    try:
+        from firecrawl import V1FirecrawlApp as FirecrawlApp  # type: ignore[attr-defined]
+    except ImportError:
+        raise ImportError("The `firecrawl` package is not installed. Please install it via `pip install firecrawl-py`.")
 
 
 @dataclass
