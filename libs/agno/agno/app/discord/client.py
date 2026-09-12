@@ -1,5 +1,5 @@
 from os import getenv
-from typing import Optional
+from typing import Optional, Union
 
 import requests
 
@@ -138,39 +138,40 @@ class DiscordClient:
                     )
                     await self._handle_response_in_thread(team_response, thread)
 
-    async def _handle_hitl(self, run_response: RunResponse | TeamRunResponse, thread: discord.Thread):
-        for tool in run_response.tools_requiring_confirmation:
-            view = RequiresConfirmationView()
-            await thread.send(f"Tool requiring confirmation: {tool.tool_name}", view=view)
-            await view.wait()
-            tool.confirmed = view.value if view.value is not None else False
+    async def _handle_hitl(self, run_response: Union[RunResponse, TeamRunResponse], thread: discord.Thread):
+        if isinstance(run_response, RunResponse):
+            for tool in run_response.tools_requiring_confirmation:
+                view = RequiresConfirmationView()
+                await thread.send(f"Tool requiring confirmation: {tool.tool_name}", view=view)
+                await view.wait()
+                tool.confirmed = view.value if view.value is not None else False
 
-        for tool in run_response.tools_requiring_user_input:
-            input_schema: List[UserInputField] = tool.user_input_schema
-            RequiresUserInputModal = type(
-                "RequiresUserInputModal",
-                (discord.ui.Modal,),
-                {field.name: discord.ui.TextInput(
-                    label=field.name,
-                    required=True,
-                    placeholder=field.description,
-                    style=discord.TextStyle.short) for field in input_schema})
+            for tool in run_response.tools_requiring_user_input:
+                input_schema: List[UserInputField] = tool.user_input_schema
+                RequiresUserInputModal = type(
+                    "RequiresUserInputModal",
+                    (discord.ui.Modal,),
+                    {field.name: discord.ui.TextInput(
+                        label=field.name,
+                        required=True,
+                        placeholder=field.description,
+                        style=discord.TextStyle.short) for field in input_schema})
 
-            # async def on_submit(self, interaction: discord.Interaction):
-            #     await interaction.response.send_message(f'Thanks for your feedback, {self.name.value}!', ephemeral=True)
-            #
-            # async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
-            #     await interaction.response.send_message('Oops! Something went wrong.', ephemeral=True)
-            #     # Make sure we know what the error actually is
-            #     traceback.print_exception(type(error), error, error.__traceback__)
+                # async def on_submit(self, interaction: discord.Interaction):
+                #     await interaction.response.send_message(f'Thanks for your feedback, {self.name.value}!', ephemeral=True)
+                #
+                # async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
+                #     await interaction.response.send_message('Oops! Something went wrong.', ephemeral=True)
+                #     # Make sure we know what the error actually is
+                #     traceback.print_exception(type(error), error, error.__traceback__)
 
-            await thread.send_modal(RequiresUserInputModal())
+                await thread.send_modal(RequiresUserInputModal())
 
-        if self.agent:
-            return await self.agent.acontinue_run(run_response=run_response, )
+            if self.agent:
+                return await self.agent.acontinue_run(run_response=run_response)
         return None
 
-    async def _handle_response_in_thread(self, response: RunResponse, thread: discord.TextChannel):
+    async def _handle_response_in_thread(self, response: Union[RunResponse, TeamRunResponse], thread: discord.TextChannel):
         if response.is_paused:
             response = await self._handle_hitl(response, thread)
 
