@@ -318,6 +318,7 @@ class Qdrant(VectorDb):
             doc_id = md5(cleaned_content.encode()).hexdigest()
 
             # TODO(v2.0.0): Remove conditional vector naming logic
+            vector: Any
             if self.use_named_vectors:
                 vector = {self.dense_vector_name: document.embedding}
             else:
