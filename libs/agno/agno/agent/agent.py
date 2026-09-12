@@ -81,7 +81,7 @@ class Agent:
     session_name: Optional[str] = None
     # Session state (stored in the database to persist across runs)
     session_state: Optional[Dict[str, Any]] = None
-    search_previous_sessions_history: bool = False
+    search_previous_sessions_history: Optional[bool] = False
     number_of_sessions: Optional[int] = None
 
     # --- Agent Context ---
@@ -2080,7 +2080,7 @@ class Agent:
         if self.search_previous_sessions_history:
             agent_tools.append(
                 self.get_previous_sessions_messages_function(
-                    number_of_sessions=self.number_of_sessions,
+                    number_of_sessions=self.number_of_sessions or 3,
                 )
             )
 
