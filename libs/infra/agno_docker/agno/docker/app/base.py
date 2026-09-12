@@ -167,7 +167,7 @@ class DockerApp(InfraApp):
             if python_path is None:
                 python_path = container_context.workspace_root
                 if self.mount_resources and self.resources_dir_container_path is not None:
-                    python_path = "{}:{}".format(python_path, self.resources_dir_container_path)
+                    python_path = f"{python_path}:{self.resources_dir_container_path}"
                 if self.add_python_paths is not None:
                     python_path = "{}:{}".format(python_path, ":".join(self.add_python_paths))
             if python_path is not None:

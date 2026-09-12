@@ -353,7 +353,7 @@ class DockerImage(DockerResource):
         Args:
             docker_client: The DockerApiClient for the current cluster
         """
-        logger.debug("Creating: {}".format(self.get_resource_name()))
+        logger.debug(f"Creating: {self.get_resource_name()}")
         try:
             image_object = self.build_image(docker_client)
             if image_object is not None:
@@ -365,7 +365,7 @@ class DockerImage(DockerResource):
             #     return True
         except Exception as e:
             logger.exception(e)
-            logger.error("Error while creating image: {}".format(e))
+            logger.error(f"Error while creating image: {e}")
             raise
 
     def _read(self, docker_client: DockerApiClient) -> Any:
@@ -378,12 +378,12 @@ class DockerImage(DockerResource):
         from docker.errors import ImageNotFound, NotFound
         from docker.models.images import Image
 
-        logger.debug("Reading: {}".format(self.get_image_str()))
+        logger.debug(f"Reading: {self.get_image_str()}")
         try:
             _api_client: DockerClient = docker_client.api_client
             image_object: Optional[List[Image]] = _api_client.images.get(name=self.get_image_str())
             if image_object is not None and isinstance(image_object, Image):
-                logger.debug("Image found: {}".format(image_object))
+                logger.debug(f"Image found: {image_object}")
                 self.active_resource = image_object
                 return image_object
         except (NotFound, ImageNotFound):
@@ -397,7 +397,7 @@ class DockerImage(DockerResource):
         Args:
             docker_client: The DockerApiClient for the current cluster
         """
-        logger.debug("Updating: {}".format(self.get_resource_name()))
+        logger.debug(f"Updating: {self.get_resource_name()}")
         return self._create(docker_client=docker_client)
 
     def _delete(self, docker_client: DockerApiClient) -> bool:
@@ -409,7 +409,7 @@ class DockerImage(DockerResource):
         from docker import DockerClient
         from docker.models.images import Image
 
-        logger.debug("Deleting: {}".format(self.get_resource_name()))
+        logger.debug(f"Deleting: {self.get_resource_name()}")
         image_object: Optional[Image] = self._read(docker_client)
         # Return True if there is no image to delete
         if image_object is None:
@@ -419,12 +419,12 @@ class DockerImage(DockerResource):
         # Delete Image
         try:
             self.active_resource = None
-            logger.debug("Deleting image: {}".format(self.tag))
+            logger.debug(f"Deleting image: {self.tag}")
             _api_client: DockerClient = docker_client.api_client
             _api_client.images.remove(image=self.tag, force=True)
             return True
         except Exception as e:
-            logger.exception("Error while deleting image: {}".format(e))
+            logger.exception(f"Error while deleting image: {e}")
 
         return False
 

@@ -122,7 +122,7 @@ class EmployeeRecruitmentWorkflow(Workflow):
             return text_content
 
         except Exception as e:
-            print(f"Error processing PDF: {str(e)}")
+            print(f"Error processing PDF: {e!s}")
             return ""
 
     def run(

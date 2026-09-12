@@ -23,10 +23,11 @@ Alternatively, you can use an AWS profile:
 
 ```python
 import boto3
-session = boto3.Session(profile_name='MY-PROFILE')
+
+session = boto3.Session(profile_name="MY-PROFILE")
 agent = Agent(
     model=Claude(id="anthropic.claude-3-5-sonnet-20240620-v1:0", session=session),
-    markdown=True
+    markdown=True,
 )
 ```
 

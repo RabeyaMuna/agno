@@ -1,7 +1,7 @@
 import json
 import os
+from collections.abc import Iterator
 from os import getenv
-from typing import Iterator
 
 import httpx
 from agno.agent import Agent

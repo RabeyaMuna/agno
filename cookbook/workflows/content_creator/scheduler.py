@@ -21,7 +21,7 @@ def json_to_typefully_content(thread_json: Dict[str, Any]) -> str:
     formatted_tweets = []
     for tweet in tweets:
         tweet_text = tweet["content"]
-        if "media_urls" in tweet and tweet["media_urls"]:
+        if tweet.get("media_urls"):
             tweet_text += f"\n{tweet['media_urls'][0]}"
         formatted_tweets.append(tweet_text)
 
@@ -31,7 +31,7 @@ def json_to_typefully_content(thread_json: Dict[str, Any]) -> str:
 def json_to_linkedin_content(thread_json: Dict[str, Any]) -> str:
     """Convert JSON thread format to Typefully's format."""
     content = thread_json["content"]
-    if "url" in thread_json and thread_json["url"]:
+    if thread_json.get("url"):
         content += f"\n{thread_json['url']}"
     return content
 
@@ -118,5 +118,5 @@ def schedule(
         return None
 
     except Exception as e:
-        logger.error(f"Error: {str(e)}")
+        logger.error(f"Error: {e!s}")
         return None

@@ -176,8 +176,8 @@ def display_tool_calls(tool_calls_container, tools):
                             st.markdown(content)
 
     except Exception as e:
-        logger.error(f"Error displaying tool calls: {str(e)}")
-        tool_calls_container.error(f"Failed to display tool results: {str(e)}")
+        logger.error(f"Error displaying tool calls: {e!s}")
+        tool_calls_container.error(f"Failed to display tool results: {e!s}")
 
 
 def example_inputs(server_id: str) -> None:
@@ -318,7 +318,7 @@ def session_selector_widget(
                 if st.button("✎", key="edit_session_name"):
                     st.session_state.session_edit_mode = True
     except Exception as e:
-        logger.error(f"Error in session selector: {str(e)}")
+        logger.error(f"Error in session selector: {e!s}")
         st.sidebar.error("Failed to load sessions")
 
 

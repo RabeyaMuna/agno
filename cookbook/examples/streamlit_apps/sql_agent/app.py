@@ -119,7 +119,7 @@ def main() -> None:
             if _content is not None:
                 with st.chat_message(message["role"]):
                     # Display tool calls if they exist in the message
-                    if "tool_calls" in message and message["tool_calls"]:
+                    if message.get("tool_calls"):
                         display_tool_calls(st.empty(), message["tool_calls"])
                     st.markdown(_content)
 
@@ -158,7 +158,7 @@ def main() -> None:
                     add_message("assistant", response, sql_agent.run_response.tools)
                 except Exception as e:
                     logger.exception(e)
-                    error_message = f"Sorry, I encountered an error: {str(e)}"
+                    error_message = f"Sorry, I encountered an error: {e!s}"
                     add_message("assistant", error_message)
                     st.error(error_message)
 

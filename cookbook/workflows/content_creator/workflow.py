@@ -3,7 +3,6 @@ from typing import List, Optional
 
 from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat
-from agno.run.response import RunEvent
 from agno.tools.firecrawl import FirecrawlTools
 from agno.utils.log import logger
 from agno.workflow import Workflow

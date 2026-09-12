@@ -228,7 +228,7 @@ class AwsResources(InfraResources):
         if num_resources_to_create != num_resources_created:
             logger.error(
                 f"Resources created: {num_resources_created} do not match resources required: {num_resources_to_create}"
-            )  # noqa: E501
+            )
         return num_resources_created, num_resources_to_create
 
     def delete_resources(
@@ -383,7 +383,7 @@ class AwsResources(InfraResources):
         if num_resources_to_delete != num_resources_deleted:
             logger.error(
                 f"Resources deleted: {num_resources_deleted} do not match resources required: {num_resources_to_delete}"
-            )  # noqa: E501
+            )
         return num_resources_deleted, num_resources_to_delete
 
     def update_resources(
@@ -531,7 +531,7 @@ class AwsResources(InfraResources):
         if num_resources_to_update != num_resources_updated:
             logger.error(
                 f"Resources updated: {num_resources_updated} do not match resources required: {num_resources_to_update}"
-            )  # noqa: E501
+            )
         return num_resources_updated, num_resources_to_update
 
     def save_resources(

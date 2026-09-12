@@ -21,8 +21,9 @@ Run `pip install openai duckduckgo-search newspaper4k lxml_html_clean sqlalchemy
 """
 
 import json
+from collections.abc import Iterator
 from textwrap import dedent
-from typing import Dict, Iterator, Optional
+from typing import Dict, Optional
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -312,7 +313,7 @@ class ResearchReportGenerator(Workflow):
                         f"Attempt {attempt + 1}/{num_attempts} failed: Invalid response type"
                     )
             except Exception as e:
-                logger.warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
+                logger.warning(f"Attempt {attempt + 1}/{num_attempts} failed: {e!s}")
 
         logger.error(f"Failed to get search results after {num_attempts} attempts")
         return None

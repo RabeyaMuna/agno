@@ -18,4 +18,4 @@ try:
 
 except Exception as e:
     print(f"Error type: {type(e)}")
-    print(f"Error occurred: {str(e)}")
+    print(f"Error occurred: {e!s}")

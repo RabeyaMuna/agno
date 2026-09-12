@@ -19,7 +19,6 @@ try:
     audio_file = model.get_client().files.get(name=remote_file_name)
 except Exception as e:
     print(f"Error getting file {audio_path.stem}: {e}")
-    pass
 
 if not audio_file:
     try:

@@ -425,7 +425,7 @@ Do not include any other text in your response.""",
                     st.rerun()
 
             except Exception as e:
-                logger.error(f"Error processing move: {str(e)}")
+                logger.error(f"Error processing move: {e!s}")
                 st.rerun()
     else:
         st.info("👈 Press 'Start Game' to begin!")

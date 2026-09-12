@@ -1,4 +1,3 @@
-import os
 
 from agno.agent import Agent, RunResponseEvent  # noqa
 from agno.models.mistral import MistralChat

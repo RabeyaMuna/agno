@@ -57,7 +57,7 @@ def retriever(
         else:
             return None
     except Exception as e:
-        print(f"Error during vector database search: {str(e)}")
+        print(f"Error during vector database search: {e!s}")
         return None
 
 

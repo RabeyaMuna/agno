@@ -38,9 +38,9 @@ def main() -> None:
     st.sidebar.markdown("## Agents")
     search_exa = st.sidebar.checkbox("Exa Search", value=True)
     search_arxiv = st.sidebar.checkbox("ArXiv Search", value=False)
-    # search_pubmed = st.sidebar.checkbox("PubMed Search", disabled=True)  # noqa
-    # search_google_scholar = st.sidebar.checkbox("Google Scholar Search", disabled=True)  # noqa
-    # use_cache = st.sidebar.toggle("Use Cache", value=False, disabled=True)  # noqa
+    # search_pubmed = st.sidebar.checkbox("PubMed Search", disabled=True)
+    # search_google_scholar = st.sidebar.checkbox("Google Scholar Search", disabled=True)
+    # use_cache = st.sidebar.toggle("Use Cache", value=False, disabled=True)
     num_search_terms = st.sidebar.number_input(
         "Number of Search Terms",
         value=2,

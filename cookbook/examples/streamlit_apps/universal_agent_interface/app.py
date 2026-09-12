@@ -83,16 +83,16 @@ async def body() -> None:
         uagi = create_uagi(uagi_config)
         st.session_state["uagi"] = uagi
         st.session_state["uagi_config"] = uagi_config
-        logger.info(f"---*--- UAgI instance created ---*---")
+        logger.info("---*--- UAgI instance created ---*---")
     else:
         uagi = st.session_state["uagi"]
-        logger.info(f"---*--- UAgI instance exists ---*---")
+        logger.info("---*--- UAgI instance exists ---*---")
 
     ####################################################################
     # Load Agent Session from the database
     ####################################################################
     try:
-        logger.info(f"---*--- Loading UAgI session ---*---")
+        logger.info("---*--- Loading UAgI session ---*---")
         st.session_state["session_id"] = uagi.load_session()
     except Exception:
         st.warning("Could not create UAgI session, is the database running?")
@@ -139,7 +139,7 @@ async def body() -> None:
             if _content is not None:
                 with st.chat_message(message["role"]):
                     # Display tool calls if they exist in the message
-                    if "tool_calls" in message and message["tool_calls"]:
+                    if message.get("tool_calls"):
                         display_tool_calls(st.empty(), message["tool_calls"])
                     st.markdown(_content)
 
@@ -184,8 +184,8 @@ async def body() -> None:
                     else:
                         await add_message("assistant", response)
                 except Exception as e:
-                    logger.error(f"Error during agent run: {str(e)}", exc_info=True)
-                    error_message = f"Sorry, I encountered an error: {str(e)}"
+                    logger.error(f"Error during agent run: {e!s}", exc_info=True)
+                    error_message = f"Sorry, I encountered an error: {e!s}"
                     await add_message("assistant", error_message)
                     st.error(error_message)
 

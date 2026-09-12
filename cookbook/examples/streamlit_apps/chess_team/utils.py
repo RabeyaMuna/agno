@@ -483,7 +483,7 @@ class ChessBoard:
         except ValueError:
             return False, f"Invalid move format: {move_str}. Use format like 'e2e4'."
         except Exception as e:
-            return False, f"Error making move: {str(e)}"
+            return False, f"Error making move: {e!s}"
 
     def get_board_state(self) -> str:
         """
@@ -684,7 +684,7 @@ def display_move_history(move_history):
             if i < len(move_history):
                 try:
                     board.push(chess.Move.from_uci(move_history[i]["move"]))
-                except (chess.InvalidMoveError, ValueError) as e:
+                except (chess.InvalidMoveError, ValueError):
                     continue
 
         # Get the current move's from and to squares

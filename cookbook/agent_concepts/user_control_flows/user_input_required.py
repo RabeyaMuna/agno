@@ -3,7 +3,7 @@
 This example shows how to use the `requires_user_input` parameter to allow users to provide input externally.
 """
 
-from typing import Any, Dict, List
+from typing import List
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat

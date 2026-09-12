@@ -1,7 +1,6 @@
-from agno.playground import Playground, serve_playground_app
+from agno.playground import Playground
 from agno_assist import agno_support
 from agno_assist_voice import agno_assist_voice
-from fastapi import FastAPI
 
 # Create and configure the playground app
 playground_app = Playground(

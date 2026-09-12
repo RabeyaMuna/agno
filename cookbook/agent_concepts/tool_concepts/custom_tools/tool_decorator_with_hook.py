@@ -2,7 +2,8 @@
 
 import json
 import time
-from typing import Any, Callable, Dict, Iterator
+from collections.abc import Iterator
+from typing import Any, Callable, Dict
 
 import httpx
 from agno.agent import Agent

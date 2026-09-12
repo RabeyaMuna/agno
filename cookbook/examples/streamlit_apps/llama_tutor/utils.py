@@ -62,8 +62,7 @@ def display_tool_calls(tool_calls_container, tools):
                         if execution_time is not None:
                             execution_time_str = f"{execution_time:.2f}s"
                 except Exception as e:
-                    logger.error(f"Error displaying tool calls: {str(e)}")
-                    pass
+                    logger.error(f"Error displaying tool calls: {e!s}")
 
                 with st.expander(
                     f"🛠️ {tool_name.replace('_', ' ').title()} ({execution_time_str})",
@@ -82,11 +81,11 @@ def display_tool_calls(tool_calls_container, tools):
                         st.markdown("**Results:**")
                         try:
                             st.json(content)
-                        except Exception as e:
+                        except Exception:
                             st.markdown(content)
 
     except Exception as e:
-        logger.error(f"Error displaying tool calls: {str(e)}")
+        logger.error(f"Error displaying tool calls: {e!s}")
         tool_calls_container.error("Failed to display tool results")
 
 

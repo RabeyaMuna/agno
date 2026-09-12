@@ -21,7 +21,6 @@ try:
     video_file = model.get_client().files.get(name=remote_file_name)
 except Exception as e:
     logger.info(f"Error getting file {video_path.stem}: {e}")
-    pass
 
 # Upload the video file if it doesn't exist
 if not video_file:

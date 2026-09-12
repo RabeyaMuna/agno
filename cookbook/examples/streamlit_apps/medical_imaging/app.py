@@ -104,7 +104,7 @@ def main():
                         )
 
                     except Exception as e:
-                        st.error(f"Analysis error: {str(e)}")
+                        st.error(f"Analysis error: {e!s}")
                         st.info(
                             "Please try again or contact support if the issue persists."
                         )

@@ -80,7 +80,7 @@ def main() -> None:
                         )
 
             except Exception as e:
-                st.error(f"Failed to generate game: {str(e)}")
+                st.error(f"Failed to generate game: {e!s}")
 
     st.sidebar.markdown("---")
     if st.sidebar.button("Restart"):

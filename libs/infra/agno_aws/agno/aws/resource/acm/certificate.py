@@ -159,7 +159,7 @@ class AcmCertificate(AwsResource):
                     self.certificate_summary_file.parent.mkdir(parents=True, exist_ok=True)
                     self.certificate_summary_file.touch(exist_ok=True)
                 self.certificate_summary_file.write_text(cert_summary.json(indent=2))
-                print_info(f"Certificate Summary stored at: {str(self.certificate_summary_file)}")
+                print_info(f"Certificate Summary stored at: {self.certificate_summary_file!s}")
             except Exception as e:
                 logger.error("Could not writing Certificate Summary to file")
                 logger.error(e)

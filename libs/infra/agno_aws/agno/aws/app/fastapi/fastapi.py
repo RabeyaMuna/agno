@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Union
 
-from agno.aws.app.base import AwsApp, AwsBuildContext, ContainerContext  # noqa: F401
+from agno.aws.app.base import AwsApp, AwsBuildContext, ContainerContext
 
 
 class FastApi(AwsApp):

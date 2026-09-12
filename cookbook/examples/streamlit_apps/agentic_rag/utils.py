@@ -237,7 +237,7 @@ def session_selector_widget(agent: Agent, model_id: str) -> None:
                                     seen_messages.add(msg_id)
                                     add_message("user", user_msg)
 
-                                if "content" in run and run["content"]:
+                                if run.get("content"):
                                     asst_msg = run["content"]
                                     msg_id = f"assistant:{asst_msg}"
 
@@ -249,8 +249,8 @@ def session_selector_widget(agent: Agent, model_id: str) -> None:
 
                     st.rerun()
                 except Exception as e:
-                    logger.error(f"Error switching sessions: {str(e)}")
-                    st.sidebar.error(f"Error loading session: {str(e)}")
+                    logger.error(f"Error switching sessions: {e!s}")
+                    st.sidebar.error(f"Error loading session: {e!s}")
         else:
             st.sidebar.info("No saved sessions available.")
 

@@ -302,18 +302,14 @@ def agno_support_agent(
         session_id = agent.session_id
         if session_id is not None:
             print(
-                "[bold green]📝 Started New Session: [white]{}[/white][/bold green]\n".format(
-                    session_id
-                )
+                f"[bold green]📝 Started New Session: [white]{session_id}[/white][/bold green]\n"
             )
         else:
             print("[bold green]📝 Started New Session[/bold green]\n")
         show_topics = True
     else:
         print(
-            "[bold blue]🔄 Continuing Previous Session: [white]{}[/white][/bold blue]\n".format(
-                session_id
-            )
+            f"[bold blue]🔄 Continuing Previous Session: [white]{session_id}[/white][/bold blue]\n"
         )
         show_topics = False
 

@@ -43,4 +43,4 @@ async def run_github_agent(message):
                 response = await agent.arun(message)
                 return response.content
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Error: {e!s}"

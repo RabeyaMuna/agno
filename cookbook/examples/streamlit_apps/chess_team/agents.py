@@ -159,5 +159,5 @@ def get_chess_team(
         )
 
     except Exception as e:
-        logger.error(f"Error initializing chess team: {str(e)}")
+        logger.error(f"Error initializing chess team: {e!s}")
         raise

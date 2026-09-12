@@ -50,9 +50,10 @@ Then you can confidently send the refined emails to your prospects!
 """
 
 import json
+from collections.abc import Iterator
 from datetime import datetime
 from textwrap import dedent
-from typing import Dict, Iterator, List, Optional
+from typing import Dict, List, Optional
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat

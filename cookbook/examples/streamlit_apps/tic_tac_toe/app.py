@@ -232,8 +232,8 @@ Respond with ONLY two numbers for row and column, e.g. "1 2".""",
                     st.rerun()
 
             except Exception as e:
-                logger.error(f"Error processing move: {str(e)}")
-                st.error(f"Error processing move: {str(e)}")
+                logger.error(f"Error processing move: {e!s}")
+                st.error(f"Error processing move: {e!s}")
                 st.rerun()
     else:
         st.info("👈 Press 'Start Game' to begin!")

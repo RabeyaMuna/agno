@@ -9,7 +9,7 @@ Docs on Agent UI: https://docs.agno.com/agent-ui
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.models.response import FileType
-from agno.playground import Playground, serve_playground_app
+from agno.playground import Playground
 from agno.storage.sqlite import SqliteStorage
 from agno.tools.dalle import DalleTools
 from agno.tools.eleven_labs import ElevenLabsTools
