@@ -6,8 +6,6 @@ from pydantic import BaseModel
 
 from agno.exceptions import ModelProviderError
 from agno.models.openai.like import OpenAILike
-from agno.models.response import ModelResponse
-
 
 @dataclass
 class DashScope(OpenAILike):
