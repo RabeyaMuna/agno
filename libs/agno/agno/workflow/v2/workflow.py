@@ -3215,12 +3215,12 @@ class Workflow:
         for step in steps_list:
             if isinstance(step, Step):
                 executor = step.active_executor
-                if hasattr(executor, "workflow_session_state") and executor.workflow_session_state:
+                if self.workflow_session_state and hasattr(executor, "workflow_session_state") and executor.workflow_session_state:
                     # Merge the agent's session state back into workflow session state
                     merge_dictionaries(self.workflow_session_state, executor.workflow_session_state)
 
                 # If it's a team, collect from all members
-                if hasattr(executor, "members"):
+                if self.workflow_session_state and hasattr(executor, "members"):
                     for member in executor.members:
                         if hasattr(member, "workflow_session_state") and member.workflow_session_state:
                             merge_dictionaries(self.workflow_session_state, member.workflow_session_state)
