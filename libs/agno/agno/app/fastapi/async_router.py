@@ -1,7 +1,7 @@
 import json
 from dataclasses import asdict
 from io import BytesIO
-from typing import AsyncGenerator, List, Optional, cast
+from typing import Any, AsyncGenerator, Dict, List, Optional, cast
 from uuid import uuid4
 
 from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile
@@ -271,6 +271,7 @@ def get_async_router(
         agent = None
         team = None
         workflow = None
+        workflow_kwargs: Dict[str, Any] = {}
 
         # Only one of agent_id, team_id or workflow_id can be provided
         if agent_id and team_id or agent_id and workflow_id or team_id and workflow_id:
@@ -298,7 +299,8 @@ def get_async_router(
             if not workflow_input:
                 raise HTTPException(status_code=400, detail="Workflow input is required")
             try:
-                workflow_input = json.loads(workflow_input)
+                _parsed: Dict[str, Any] = json.loads(workflow_input)
+                workflow_kwargs = _parsed
             except json.JSONDecodeError:
                 raise HTTPException(status_code=400, detail="Workflow input must be a valid JSON string")
 
@@ -352,7 +354,7 @@ def get_async_router(
                 workflow_instance.user_id = user_id
                 workflow_instance.session_name = None
                 return StreamingResponse(
-                    (json.dumps(asdict(result)) for result in await workflow_instance.arun(**(workflow_input or {}))),
+                    (json.dumps(asdict(result)) for result in await workflow_instance.arun(**workflow_kwargs)),
                     media_type="text/event-stream",
                 )
         else:
@@ -386,6 +388,6 @@ def get_async_router(
                 workflow_instance = workflow.deep_copy(update={"workflow_id": workflow_id})
                 workflow_instance.user_id = user_id
                 workflow_instance.session_name = None
-                return (await workflow_instance.arun(**(workflow_input or {}))).to_dict()
+                return (await workflow_instance.arun(**workflow_kwargs)).to_dict()
 
     return router
