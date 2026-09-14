@@ -28,3 +28,18 @@ def store_result_in_file(
         fn_path.write_text(json.dumps(asdict(result), indent=4))
     except Exception as e:
         logger.warning(f"Failed to save result to file: {e}")
+
+
+def log_eval_run(
+    run_id: str,
+    run_data: dict,
+    eval_type,
+    agent_id: str | None = None,
+    model_id: str | None = None,
+    model_provider: str | None = None,
+    name: str | None = None,
+    evaluated_entity_name: str | None = None,
+    team_id: str | None = None,
+) -> None:
+    """Log evaluation run to the Agno platform."""
+    pass
