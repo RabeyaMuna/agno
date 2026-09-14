@@ -1,4 +1,4 @@
-from typing import Any, AsyncIterator, Dict, Iterator, List, Optional, Union
+from typing import Any, AsyncIterator, Dict, Iterator, List, Optional, Union, cast
 
 from agno.document import Document
 from agno.knowledge.agent import AgentKnowledge
@@ -23,16 +23,17 @@ class DocumentKnowledgeBase(AgentKnowledge):
         for item in self.documents:
             if isinstance(item, dict) and "document" in item:
                 # Handle document with metadata
-                document = item["document"]
-                config = item.get("metadata", {})
+                document: Document = cast(Document, item["document"])
+                config: Dict[str, Any] = cast(Dict[str, Any], item.get("metadata", {}))
                 if config:
                     log_info(f"Adding metadata {config} to document: {document.name}")
                     # Create a copy of the document with updated metadata
+                    meta: Dict[str, Any] = document.meta_data or {}
                     updated_document = Document(
                         content=document.content,
                         id=document.id,
                         name=document.name,
-                        meta_data={**document.meta_data, **config},
+                        meta_data={**meta, **config},
                         embedder=document.embedder,
                         embedding=document.embedding,
                         usage=document.usage,
@@ -48,7 +49,7 @@ class DocumentKnowledgeBase(AgentKnowledge):
                 raise ValueError(f"Invalid document format: {type(item)}")
 
     @property
-    async def async_document_lists(self) -> AsyncIterator[List[Document]]:
+    async def async_document_lists(self) -> AsyncIterator[List[Document]]:  # type: ignore[override]
         """Iterate over documents and yield lists of documents asynchronously.
         Each object yielded by the iterator is a list of documents.
 
@@ -62,16 +63,17 @@ class DocumentKnowledgeBase(AgentKnowledge):
         for item in self.documents:
             if isinstance(item, dict) and "document" in item:
                 # Handle document with metadata
-                document = item["document"]
-                config = item.get("metadata", {})
+                document: Document = cast(Document, item["document"])
+                config: Dict[str, Any] = cast(Dict[str, Any], item.get("metadata", {}))
                 if config:
                     log_info(f"Adding metadata {config} to document: {document.name}")
                     # Create a copy of the document with updated metadata
+                    meta: Dict[str, Any] = document.meta_data or {}
                     updated_document = Document(
                         content=document.content,
                         id=document.id,
                         name=document.name,
-                        meta_data={**document.meta_data, **config},
+                        meta_data={**meta, **config},
                         embedder=document.embedder,
                         embedding=document.embedding,
                         usage=document.usage,
