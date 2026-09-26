@@ -1,5 +1,5 @@
 from hashlib import md5
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 try:
     from qdrant_client import AsyncQdrantClient, QdrantClient  # noqa: F401
@@ -8,6 +8,10 @@ except ImportError:
     raise ImportError(
         "The `qdrant-client` package is not installed. Please install it via `pip install qdrant-client`."
     )
+
+
+if TYPE_CHECKING:
+    from fastembed import SparseTextEmbedding  # type: ignore[import-not-found]
 
 from agno.document import Document
 from agno.embedder import Embedder

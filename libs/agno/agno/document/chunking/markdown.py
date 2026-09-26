@@ -1,6 +1,11 @@
 import os
 import tempfile
-from typing import List
+from typing import TYPE_CHECKING, List
+
+if TYPE_CHECKING:
+    from unstructured.chunking.title import chunk_by_title  # type: ignore[import-not-found]
+    from unstructured.partition.md import partition_md  # type: ignore[import-not-found]
+
 
 try:
     from unstructured.chunking.title import chunk_by_title

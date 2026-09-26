@@ -1,14 +1,18 @@
 import asyncio
 from dataclasses import dataclass
-from typing import Dict, List, Literal, Optional
+from typing import TYPE_CHECKING, Dict, List, Literal, Optional
 
 from agno.document.base import Document
 from agno.document.chunking.strategy import ChunkingStrategy
 from agno.document.reader.base import Reader
 from agno.utils.log import log_debug, logger
 
+if TYPE_CHECKING:
+    from firecrawl import FirecrawlApp  # type: ignore[import-untyped]
+
+
 try:
-    from firecrawl import FirecrawlApp  # type: ignore[attr-defined]
+    from firecrawl import FirecrawlApp  # type: ignore[attr-defined, import-untyped]
 except ImportError:
     raise ImportError("The `firecrawl` package is not installed. Please install it via `pip install firecrawl-py`.")
 
