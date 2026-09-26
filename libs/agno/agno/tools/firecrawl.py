@@ -6,7 +6,8 @@ from agno.tools import Toolkit
 from agno.utils.log import logger
 
 try:
-    from firecrawl import FirecrawlApp, ScrapeOptions  # type: ignore[attr-defined]
+    from firecrawl import Firecrawl
+    from firecrawl.v2.types import ScrapeOptions
 except ImportError:
     raise ImportError("`firecrawl-py` not installed. Please install using `pip install firecrawl-py`")
 
@@ -55,7 +56,7 @@ class FirecrawlTools(Toolkit):
         self.formats: Optional[List[str]] = formats
         self.limit: int = limit
         self.poll_interval: int = poll_interval
-        self.app: FirecrawlApp = FirecrawlApp(api_key=self.api_key, api_url=api_url)
+        self.app: Firecrawl = Firecrawl(api_key=self.api_key, api_url=api_url)
         self.search_params = search_params
 
         # Start with scrape by default. But if crawl is set, then set scrape to False.
@@ -104,7 +105,7 @@ class FirecrawlTools(Toolkit):
         if self.limit or limit:
             params["limit"] = self.limit or limit
         if self.formats:
-            params["scrape_options"] = ScrapeOptions(formats=self.formats)  # type: ignore
+            params["formats"] = self.formats
 
         params["poll_interval"] = self.poll_interval
 
@@ -115,7 +116,7 @@ class FirecrawlTools(Toolkit):
         """Use this function to Map a website using Firecrawl.
 
         Args:
-            url (str): The URL to map.
+            url (str): URL to map.
 
         """
         map_result = self.app.map_url(url)
@@ -132,7 +133,7 @@ class FirecrawlTools(Toolkit):
         if self.limit or limit:
             params["limit"] = self.limit or limit
         if self.formats:
-            params["scrape_options"] = ScrapeOptions(formats=self.formats)  # type: ignore
+            params["scrape_options"] = ScrapeOptions(formats=self.formats)
         if self.search_params:
             params.update(self.search_params)
 
