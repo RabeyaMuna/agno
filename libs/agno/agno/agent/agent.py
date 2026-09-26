@@ -2422,6 +2422,7 @@ class Agent:
                     if structured_output is not None:
                         run_response.content = structured_output
                         if hasattr(run_response, "content_type"):
+                            assert self.response_model is not None
                             run_response.content_type = self.response_model.__name__
                     else:
                         log_warning("Failed to convert response to response_model")
@@ -3006,7 +3007,6 @@ class Agent:
                 model_response_event=model_response_event,
                 stream_intermediate_steps=stream_intermediate_steps,
                 reasoning_state=reasoning_state,
-                stream_model_response=stream_model_response,
             )
 
         # Determine reasoning completed
@@ -3129,6 +3129,7 @@ class Agent:
                 if model_response_event.content is not None:
                     if self.should_parse_structured_output:
                         model_response.content = model_response_event.content
+                        assert self.response_model is not None
                         content_type = self.response_model.__name__
                         run_response.content = model_response.content
                         run_response.content_type = content_type
