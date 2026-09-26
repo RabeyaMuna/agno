@@ -5,7 +5,7 @@ import os
 from unittest.mock import Mock, patch
 
 import pytest
-from firecrawl import FirecrawlApp
+from firecrawl import V1FirecrawlApp
 
 from agno.tools.firecrawl import FirecrawlTools
 
@@ -16,8 +16,8 @@ TEST_API_URL = "https://api.firecrawl.dev"
 @pytest.fixture
 def mock_firecrawl():
     """Create a mock FirecrawlApp instance."""
-    with patch("agno.tools.firecrawl.FirecrawlApp") as mock_firecrawl_cls:
-        mock_app = Mock(spec=FirecrawlApp)
+    with patch("agno.tools.firecrawl.V1FirecrawlApp") as mock_firecrawl_cls:
+        mock_app = Mock(spec=V1FirecrawlApp)
         mock_firecrawl_cls.return_value = mock_app
         return mock_app
 
@@ -34,7 +34,7 @@ def firecrawl_tools(mock_firecrawl):
 
 def test_init_with_env_vars():
     """Test initialization with environment variables."""
-    with patch("agno.tools.firecrawl.FirecrawlApp"):
+    with patch("agno.tools.firecrawl.V1FirecrawlApp"):
         with patch.dict("os.environ", {"FIRECRAWL_API_KEY": TEST_API_KEY}, clear=True):
             tools = FirecrawlTools()
             assert tools.api_key == TEST_API_KEY
@@ -45,7 +45,7 @@ def test_init_with_env_vars():
 
 def test_init_with_params():
     """Test initialization with parameters."""
-    with patch("agno.tools.firecrawl.FirecrawlApp"):
+    with patch("agno.tools.firecrawl.V1FirecrawlApp"):
         tools = FirecrawlTools(api_key="param_api_key", formats=["html", "text"], limit=5, api_url=TEST_API_URL)
         assert tools.api_key == "param_api_key"
         assert tools.formats == ["html", "text"]
@@ -72,7 +72,7 @@ def test_scrape_website(firecrawl_tools, mock_firecrawl):
     assert result_data["url"] == "https://example.com"
     assert result_data["content"] == "Test content"
     assert result_data["status"] == "success"
-    mock_firecrawl.scrape_url.assert_called_once_with("https://example.com")
+    mock_firecrawl.scrape_url.assert_called_once_with("https://example.com", formats=None)
 
 
 def test_scrape_website_with_formats(firecrawl_tools, mock_firecrawl):
@@ -119,7 +119,7 @@ def test_crawl_website(firecrawl_tools, mock_firecrawl):
     assert result_data["url"] == "https://example.com"
     assert result_data["pages"] == ["page1", "page2"]
     assert result_data["status"] == "success"
-    mock_firecrawl.crawl_url.assert_called_once_with("https://example.com", limit=10, poll_interval=30)
+    mock_firecrawl.crawl_url.assert_called_once_with("https://example.com", limit=10, scrape_options=None, poll_interval=30)
 
 
 def test_crawl_website_with_custom_limit(firecrawl_tools, mock_firecrawl):
@@ -143,7 +143,7 @@ def test_crawl_website_with_custom_limit(firecrawl_tools, mock_firecrawl):
     assert result_data["url"] == "https://example.com"
     assert result_data["pages"] == ["page1", "page2"]
     assert result_data["status"] == "success"
-    mock_firecrawl.crawl_url.assert_called_once_with("https://example.com", limit=5, poll_interval=30)
+    mock_firecrawl.crawl_url.assert_called_once_with("https://example.com", limit=5, scrape_options=None, poll_interval=30)
 
 
 def test_map_website(firecrawl_tools, mock_firecrawl):
@@ -184,7 +184,7 @@ def test_search(firecrawl_tools, mock_firecrawl):
     assert result_data["query"] == "test query"
     assert result_data["results"] == ["result1", "result2"]
     assert result_data["status"] == "success"
-    mock_firecrawl.search.assert_called_once_with("test query", limit=10)
+    mock_firecrawl.search.assert_called_once_with("test query", limit=10, scrape_options=None)
 
 
 def test_search_with_error(firecrawl_tools, mock_firecrawl):
@@ -200,7 +200,7 @@ def test_search_with_error(firecrawl_tools, mock_firecrawl):
 
     # Verify results
     assert result == "Error searching with the Firecrawl tool: Search failed"
-    mock_firecrawl.search.assert_called_once_with("test query", limit=10)
+    mock_firecrawl.search.assert_called_once_with("test query", limit=10, scrape_options=None)
 
 
 def test_search_with_custom_params(firecrawl_tools, mock_firecrawl):
@@ -222,4 +222,4 @@ def test_search_with_custom_params(firecrawl_tools, mock_firecrawl):
     assert result_data["query"] == "test query"
     assert result_data["results"] == ["result1", "result2"]
     assert result_data["status"] == "success"
-    mock_firecrawl.search.assert_called_once_with("test query", limit=10, language="en", region="us")
+    mock_firecrawl.search.assert_called_once_with("test query", limit=10, scrape_options=None, language="en", region="us")
