@@ -21,6 +21,9 @@ class WorkflowSession:
     # Workflow name
     workflow_name: Optional[str] = None
 
+    # Workflow Memory
+    memory: Optional[Dict[str, Any]] = None
+
     # Workflow runs - stores WorkflowRunResponse objects in memory
     runs: Optional[List[WorkflowRunResponse]] = None
 
