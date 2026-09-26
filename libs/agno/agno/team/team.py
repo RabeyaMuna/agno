@@ -1913,10 +1913,12 @@ class Team:
         self.session_state = self.session_state or {}
         if user_id is not None:
             self.session_state["current_user_id"] = user_id
-            self.team_session_state["current_user_id"] = user_id
+            if self.team_session_state is not None:
+                self.team_session_state["current_user_id"] = user_id
         if session_id is not None:
             self.session_state["current_session_id"] = session_id
-            self.team_session_state["current_session_id"] = session_id
+            if self.team_session_state is not None:
+                self.team_session_state["current_session_id"] = session_id
 
     def _make_memories_and_summaries(
         self, run_messages: RunMessages, session_id: str, user_id: Optional[str] = None
