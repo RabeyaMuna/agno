@@ -321,18 +321,18 @@ class Qdrant(VectorDb):
             if self.use_named_vectors:
                 vector = {self.dense_vector_name: document.embedding}
             else:
-                vector = document.embedding
+                vector = document.embedding  # type: ignore[assignment]
 
             if self.search_type == SearchType.vector:
                 # For vector search, maintain backward compatibility with unnamed vectors
                 document.embed(embedder=self.embedder)
-                vector = document.embedding
+                vector = document.embedding  # type: ignore[assignment]
             else:
                 # For other search types, use named vectors
                 vector = {}
                 if self.search_type in [SearchType.hybrid]:
                     document.embed(embedder=self.embedder)
-                    vector[self.dense_vector_name] = document.embedding
+                    vector[self.dense_vector_name] = document.embedding  # type: ignore[assignment]
 
                 if self.search_type in [SearchType.keyword, SearchType.hybrid]:
                     vector[self.sparse_vector_name] = next(self.sparse_encoder.embed([document.content])).as_object()
@@ -387,7 +387,7 @@ class Qdrant(VectorDb):
                 vector = {}
                 if self.search_type in [SearchType.hybrid]:
                     document.embed(embedder=self.embedder)
-                    vector[self.dense_vector_name] = document.embedding
+                    vector[self.dense_vector_name] = document.embedding  # type: ignore[assignment]
 
                 if self.search_type in [SearchType.keyword, SearchType.hybrid]:
                     vector[self.sparse_vector_name] = next(self.sparse_encoder.embed([document.content])).as_object()
