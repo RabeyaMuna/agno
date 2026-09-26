@@ -1,18 +1,15 @@
+from __future__ import annotations
+
 from os import getenv
-from typing import Optional
+from textwrap import dedent
 
 import requests
 
 from agno.agent.agent import Agent, RunResponse
 from agno.media import Audio, File, Image, Video
 from agno.team.team import Team, TeamRunResponse
-from agno.utils.log import log_info, log_warning
-
-from typing import List
 from agno.tools.function import UserInputField
-
-from textwrap import dedent
-
+from agno.utils.log import log_info, log_warning
 
 try:
     import discord
@@ -48,9 +45,9 @@ class RequiresConfirmationView(discord.ui.View):
 
 class DiscordClient:
     def __init__(self,
-                 agent: Optional[Agent] = None,
-                 team: Optional[Team] = None,
-                 client: Optional[discord.Client] = None):
+                 agent: Agent | None = None,
+                 team: Team | None = None,
+                 client: discord.Client | None = None):
         self.agent = agent
         self.team = team
         if client is None:
@@ -95,9 +92,7 @@ class DiscordClient:
                     message_audio = media_url
 
             log_info(f"processing message:{message_text} \n with media: {media_url} \n url:{message_url}")
-            if isinstance(message.channel, discord.Thread):
-                thread = message.channel
-            elif isinstance(message.channel, discord.channel.DMChannel):
+            if isinstance(message.channel, (discord.Thread, discord.channel.DMChannel)):
                 thread = message.channel
             elif isinstance(message.channel, discord.TextChannel):
                 thread = await message.create_thread(name=f"{message_user}'s thread")
@@ -139,38 +134,42 @@ class DiscordClient:
                     await self._handle_response_in_thread(team_response, thread)
 
     async def _handle_hitl(self, run_response: RunResponse | TeamRunResponse, thread: discord.Thread):
-        for tool in run_response.tools_requiring_confirmation:
-            view = RequiresConfirmationView()
-            await thread.send(f"Tool requiring confirmation: {tool.tool_name}", view=view)
-            await view.wait()
-            tool.confirmed = view.value if view.value is not None else False
+        # Handle tools requiring confirmation (only available on RunResponse)
+        if hasattr(run_response, 'tools_requiring_confirmation'):
+            for tool in run_response.tools_requiring_confirmation:
+                view = RequiresConfirmationView()
+                await thread.send(f"Tool requiring confirmation: {tool.tool_name}", view=view)
+                await view.wait()
+                tool.confirmed = view.value if view.value is not None else False
 
-        for tool in run_response.tools_requiring_user_input:
-            input_schema: List[UserInputField] = tool.user_input_schema
-            RequiresUserInputModal = type(
-                "RequiresUserInputModal",
-                (discord.ui.Modal,),
-                {field.name: discord.ui.TextInput(
-                    label=field.name,
-                    required=True,
-                    placeholder=field.description,
-                    style=discord.TextStyle.short) for field in input_schema})
+        # Handle tools requiring user input (only available on RunResponse)
+        if hasattr(run_response, 'tools_requiring_user_input'):
+            for tool in run_response.tools_requiring_user_input:
+                input_schema: list[UserInputField] = tool.user_input_schema
+                RequiresUserInputModal = type(
+                    "RequiresUserInputModal",
+                    (discord.ui.Modal,),
+                    {field.name: discord.ui.TextInput(
+                        label=field.name,
+                        required=True,
+                        placeholder=field.description,
+                        style=discord.TextStyle.short) for field in input_schema})
 
-            # async def on_submit(self, interaction: discord.Interaction):
-            #     await interaction.response.send_message(f'Thanks for your feedback, {self.name.value}!', ephemeral=True)
-            #
-            # async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
-            #     await interaction.response.send_message('Oops! Something went wrong.', ephemeral=True)
-            #     # Make sure we know what the error actually is
-            #     traceback.print_exception(type(error), error, error.__traceback__)
+                # async def on_submit(self, interaction: discord.Interaction):
+                #     await interaction.response.send_message(f'Thanks for your feedback, {self.name.value}!', ephemeral=True)
+                #
+                # async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
+                #     await interaction.response.send_message('Oops! Something went wrong.', ephemeral=True)
+                #     # Make sure we know what the error actually is
+                #     traceback.print_exception(type(error), error, error.__traceback__)
 
-            await thread.send_modal(RequiresUserInputModal())
+                await thread.send_modal(RequiresUserInputModal())
 
-        if self.agent:
+        if self.agent and isinstance(run_response, RunResponse):
             return await self.agent.acontinue_run(run_response=run_response, )
         return None
 
-    async def _handle_response_in_thread(self, response: RunResponse, thread: discord.TextChannel):
+    async def _handle_response_in_thread(self, response: RunResponse | TeamRunResponse, thread: discord.TextChannel):
         if response.is_paused:
             response = await self._handle_hitl(response, thread)
 
@@ -208,4 +207,4 @@ class DiscordClient:
                 raise ValueError("DISCORD_BOT_TOKEN NOT SET")
             return self.client.run(token)
         except Exception as e:
-            raise ValueError(f"Failed to run Discord client: {str(e)}")
+            raise ValueError(f"Failed to run Discord client: {e!s}")
