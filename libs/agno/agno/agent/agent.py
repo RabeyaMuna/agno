@@ -6548,12 +6548,19 @@ class Agent:
             document_name = query.replace(" ", "_").replace("?", "").replace("!", "").replace(".", "")
         document_content = json.dumps({"query": query, "result": result})
         log_info(f"Adding document to knowledge base: {document_name}: {document_content}")
-        self.knowledge.load_document(
+        load_document_result = self.knowledge.load_document(
             document=Document(
-                    name=document_name,
-                    content=document_content,
-                )
+                name=document_name,
+                content=document_content,
+            )
         )
+        if hasattr(load_document_result, "__await__"):
+            import asyncio
+
+            try:
+                asyncio.get_running_loop()
+            except RuntimeError:
+                asyncio.run(load_document_result)
         return "Successfully added to knowledge base"
 
     def update_memory(self, task: str) -> str:
