@@ -899,7 +899,7 @@ class Agent:
         self,
         message: Optional[Union[str, List, Dict, Message]] = None,
         *,
-        stream: Optional[bool] = None,
+        stream: Literal[False] = False,
         stream_intermediate_steps: Optional[bool] = None,
         user_id: Optional[str] = None,
         session_id: Optional[str] = None,
@@ -5113,7 +5113,7 @@ class Agent:
                 if "filters" in sig.parameters:
                     retriever_kwargs["filters"] = filters
                 retriever_kwargs.update({"query": query, "num_documents": num_documents, **kwargs})
-                return self.retriever(**retriever_kwargs)
+                return cast(Optional[List[Union[Dict[str, Any], str]]], self.retriever(**retriever_kwargs))
             except Exception as e:
                 log_warning(f"Retriever failed: {e}")
                 raise e
@@ -5179,7 +5179,7 @@ class Agent:
                 if isawaitable(result):
                     result = await result
 
-                return result
+                return cast(Optional[List[Union[Dict[str, Any], str]]], result)
             except Exception as e:
                 log_warning(f"Retriever failed: {e}")
                 raise e
@@ -5788,7 +5788,7 @@ class Agent:
                     self.run_response,
                 )
 
-    async def areason(self, run_messages: RunMessages) -> Any:
+    async def areason(self, run_messages: RunMessages) -> AsyncIterator[Any]:
         self.run_response = cast(RunResponse, self.run_response)
         # Yield a reasoning started event
         if self.stream_intermediate_steps:
