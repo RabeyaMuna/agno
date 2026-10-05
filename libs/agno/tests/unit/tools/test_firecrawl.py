@@ -4,8 +4,12 @@ import json
 import os
 from unittest.mock import Mock, patch
 
+import importlib.util
+
 import pytest
-from firecrawl import FirecrawlApp
+
+if importlib.util.find_spec("docstring_parser") is None:
+    pytest.skip("docstring_parser not installed", allow_module_level=True)
 
 from agno.tools.firecrawl import FirecrawlTools
 
@@ -17,7 +21,7 @@ TEST_API_URL = "https://api.firecrawl.dev"
 def mock_firecrawl():
     """Create a mock FirecrawlApp instance."""
     with patch("agno.tools.firecrawl.FirecrawlApp") as mock_firecrawl_cls:
-        mock_app = Mock(spec=FirecrawlApp)
+        mock_app = Mock()
         mock_firecrawl_cls.return_value = mock_app
         return mock_app
 
