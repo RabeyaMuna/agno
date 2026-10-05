@@ -9,7 +9,6 @@ from agno.utils.log import log_debug, log_error, log_warning
 try:
     from zep_cloud import BadRequestError, NotFoundError
     from zep_cloud.client import AsyncZep, Zep
-    from zep_cloud.types import MemorySearchResult
     from zep_cloud.types import Message as ZepMessage
 except ImportError:
     raise ImportError("`zep-cloud` package not found. Please install it with `pip install zep-cloud`")
@@ -208,7 +207,7 @@ class ZepTools(Toolkit):
             return "Error: Zep client/user/session not initialized."
 
         try:
-            search_response: List[MemorySearchResult] = self.zep_client.memory.search(
+            search_response = self.zep_client.memory.search(
                 text=query, session_id=self.session_id, search_scope=search_scope
             )
             results = [
@@ -434,7 +433,7 @@ class ZepAsyncTools(Toolkit):
             return "Error: Zep client/user/session not initialized."
 
         try:
-            search_response: List[MemorySearchResult] = await self.zep_client.memory.search(
+            search_response = await self.zep_client.memory.search(
                 text=query, session_id=self.session_id, search_scope=search_scope
             )
 
