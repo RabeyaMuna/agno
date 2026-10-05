@@ -2,10 +2,15 @@
 
 import json
 import os
+import sys
+import types
 from unittest.mock import Mock, patch
 
 import pytest
-from firecrawl import FirecrawlApp
+
+firecrawl_stub = types.ModuleType("firecrawl")
+firecrawl_stub.FirecrawlApp = object
+sys.modules.setdefault("firecrawl", firecrawl_stub)
 
 from agno.tools.firecrawl import FirecrawlTools
 
@@ -17,7 +22,7 @@ TEST_API_URL = "https://api.firecrawl.dev"
 def mock_firecrawl():
     """Create a mock FirecrawlApp instance."""
     with patch("agno.tools.firecrawl.FirecrawlApp") as mock_firecrawl_cls:
-        mock_app = Mock(spec=FirecrawlApp)
+        mock_app = Mock(spec=firecrawl_stub.FirecrawlApp)
         mock_firecrawl_cls.return_value = mock_app
         return mock_app
 

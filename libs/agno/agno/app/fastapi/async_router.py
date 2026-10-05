@@ -291,6 +291,7 @@ def get_async_router(
                 raise HTTPException(status_code=404, detail="Team not found")
             if not message:
                 raise HTTPException(status_code=400, detail="Message is required")
+        workflow_input_dict: dict[str, Any] = {}
         if workflow_id and workflows:
             workflow = next((workflow for workflow in workflows if workflow.workflow_id == workflow_id), None)
             if workflow is None:
@@ -298,9 +299,12 @@ def get_async_router(
             if not workflow_input:
                 raise HTTPException(status_code=400, detail="Workflow input is required")
             try:
-                workflow_input = json.loads(workflow_input)
+                parsed_workflow_input = json.loads(workflow_input)
             except json.JSONDecodeError:
                 raise HTTPException(status_code=400, detail="Workflow input must be a valid JSON string")
+            if not isinstance(parsed_workflow_input, dict):
+                raise HTTPException(status_code=400, detail="Workflow input must be a JSON object")
+            workflow_input_dict = parsed_workflow_input
 
         if agent:
             agent.monitoring = bool(monitor)
@@ -386,6 +390,6 @@ def get_async_router(
                 workflow_instance = workflow.deep_copy(update={"workflow_id": workflow_id})
                 workflow_instance.user_id = user_id
                 workflow_instance.session_name = None
-                return (await workflow_instance.arun(**(workflow_input or {}))).to_dict()
+                return (await workflow_instance.arun(**workflow_input_dict)).to_dict()
 
     return router
