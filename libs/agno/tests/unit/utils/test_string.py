@@ -1,4 +1,6 @@
-from typing import List, Optional
+from __future__ import annotations
+
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -201,7 +203,7 @@ def test_parse_nested_json():
         description: str
 
     class Steps(BaseModel):
-        steps: List[Step]
+        steps: list[Step]
 
     content = """
     ```json
