@@ -1380,7 +1380,7 @@ class Workflow:
         if background:
             return await self._arun_background(
                 message=message,
-                additional_data=additional_data,
+                additional_data=additional_data or {},
                 user_id=user_id,
                 session_id=session_id,
                 audio=audio,
@@ -1663,7 +1663,7 @@ class Workflow:
                 message=message,
                 user_id=user_id,
                 session_id=session_id,
-                additional_data=additional_data,
+                additional_data=additional_data or {},
                 audio=audio,
                 images=images,
                 videos=videos,
@@ -3217,12 +3217,16 @@ class Workflow:
                 executor = step.active_executor
                 if hasattr(executor, "workflow_session_state") and executor.workflow_session_state:
                     # Merge the agent's session state back into workflow session state
+                    if self.workflow_session_state is None:
+                        self.workflow_session_state = {}
                     merge_dictionaries(self.workflow_session_state, executor.workflow_session_state)
 
                 # If it's a team, collect from all members
                 if hasattr(executor, "members"):
                     for member in executor.members:
                         if hasattr(member, "workflow_session_state") and member.workflow_session_state:
+                            if self.workflow_session_state is None:
+                                self.workflow_session_state = {}
                             merge_dictionaries(self.workflow_session_state, member.workflow_session_state)
 
             elif isinstance(step, Steps):
