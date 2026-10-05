@@ -1015,8 +1015,9 @@ class Agent:
             team_session_id=self.team_session_id,
         )
 
-        run_response.model = self.model.id if self.model is not None else None
-        run_response.model_provider = self.model.provider if self.model is not None else None
+        if self.model is not None:
+            run_response.model = self.model.id
+            run_response.model_provider = self.model.provider
 
         self.run_response = run_response
         self.run_id = run_id
@@ -1404,8 +1405,9 @@ class Agent:
             team_session_id=self.team_session_id,
         )
 
-        run_response.model = self.model.id if self.model is not None else None
-        run_response.model_provider = self.model.provider if self.model is not None else None
+        if self.model is not None:
+            run_response.model = self.model.id
+            run_response.model_provider = self.model.provider
 
         self.run_response = run_response
         self.run_id = run_id
@@ -2689,12 +2691,14 @@ class Agent:
             # We get native structured outputs from the model
             if self._model_should_return_structured_output():
                 # Update the run_response content with the structured output
-                run_response.content = model_response.parsed
+                if model_response.parsed is not None:
+                    run_response.content = model_response.parsed
                 # Update the run_response content_type with the structured output class name
                 run_response.content_type = self.response_model.__name__
         else:
             # Update the run_response content with the model response content
-            run_response.content = model_response.content
+            if model_response.content is not None:
+                run_response.content = model_response.content
 
         # Update the run_response thinking with the model response thinking
         if model_response.thinking is not None:
@@ -4490,7 +4494,7 @@ class Agent:
             elif isinstance(self.memory, Memory) and self.add_session_summary_references:
                 if not user_id:
                     user_id = "default"
-                session_summary: SessionSummary = self.memory.summaries.get(user_id, {}).get(session_id, None)  # type: ignore
+                session_summary = self.memory.summaries.get(user_id, {}).get(session_id)
                 if session_summary is not None:
                     system_message_content += "Here is a brief summary of your previous interactions:\n\n"
                     system_message_content += "<summary_of_previous_interactions>\n"
@@ -4869,7 +4873,7 @@ class Agent:
 
         return [
             Message(role="system", content=system_content),
-            Message(role="user", content=model_response.content),
+            Message(role="user", content=model_response.content or ""),
         ]
 
     def get_messages_for_parser_model_stream(
@@ -4887,7 +4891,7 @@ class Agent:
 
         return [
             Message(role="system", content=system_content),
-            Message(role="user", content=run_response.content),
+            Message(role="user", content=run_response.content or ""),
         ]
 
     def get_session_summary(self, session_id: Optional[str] = None, user_id: Optional[str] = None):
@@ -6079,8 +6083,10 @@ class Agent:
 
         if parser_model_response_message is not None:
             run_messages.messages.append(parser_model_response_message)
-            model_response.parsed = parser_model_response.parsed
-            model_response.content = parser_model_response.content
+            if parser_model_response.parsed is not None:
+                model_response.parsed = parser_model_response.parsed
+            if parser_model_response.content is not None:
+                model_response.content = parser_model_response.content
         else:
             log_warning("Unable to parse response with parser model")
 
@@ -6944,7 +6950,7 @@ class Agent:
                         if response_content.markup is not None and response_content.markup.strip():
                             response_content = response_content.markup
                         else:
-                            response_content = None
+                            response_content = ""
 
                     if response_content:
                         render = True
@@ -7115,7 +7121,7 @@ class Agent:
                             escaped_content = escape_markdown_tags(run_response.content, tags_to_include_in_markdown)
                             response_content_batch = Markdown(escaped_content)
                         else:
-                            response_content_batch = run_response.get_content_as_string(indent=4)
+                            response_content_batch = run_response.get_content_as_string(indent=4) or ""
                     elif self.response_model is not None and isinstance(run_response.content, BaseModel):
                         try:
                             response_content_batch = JSON(
@@ -7394,7 +7400,7 @@ class Agent:
                         if response_content.markup is not None and response_content.markup.strip():
                             response_content = response_content.markup
                         else:
-                            response_content = None
+                            response_content = ""
 
                     if response_content:
                         render = True
@@ -7562,7 +7568,7 @@ class Agent:
                             escaped_content = escape_markdown_tags(run_response.content, tags_to_include_in_markdown)
                             response_content_batch = Markdown(escaped_content)
                         else:
-                            response_content_batch = run_response.get_content_as_string(indent=4)
+                            response_content_batch = run_response.get_content_as_string(indent=4) or ""
                     elif self.response_model is not None and isinstance(run_response.content, BaseModel):
                         try:
                             response_content_batch = JSON(
@@ -7751,7 +7757,7 @@ class Agent:
 
                 metrics_message = Message(
                     role="assistant",
-                    content=self.run_response.reasoning_content,
+                    content=self.run_response.reasoning_content or "",
                     metrics={"time": reasoning_time_taken},
                 )
 
