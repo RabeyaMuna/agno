@@ -1,5 +1,5 @@
 from hashlib import md5
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, cast
 
 try:
     from qdrant_client import AsyncQdrantClient, QdrantClient  # noqa: F401
@@ -8,6 +8,11 @@ except ImportError:
     raise ImportError(
         "The `qdrant-client` package is not installed. Please install it via `pip install qdrant-client`."
     )
+
+if TYPE_CHECKING:
+    from fastembed import SparseTextEmbedding
+else:
+    SparseTextEmbedding = Any
 
 from agno.document import Document
 from agno.embedder import Embedder
@@ -125,8 +130,6 @@ class Qdrant(VectorDb):
 
         if self.search_type in [SearchType.keyword, SearchType.hybrid]:
             try:
-                from fastembed import SparseTextEmbedding
-
                 default_kwargs = {"model_name": DEFAULT_SPARSE_MODEL}
                 if fastembed_kwargs:
                     default_kwargs.update(fastembed_kwargs)
@@ -318,24 +321,22 @@ class Qdrant(VectorDb):
             doc_id = md5(cleaned_content.encode()).hexdigest()
 
             # TODO(v2.0.0): Remove conditional vector naming logic
-            if self.use_named_vectors:
-                vector = {self.dense_vector_name: document.embedding}
-            else:
-                vector = document.embedding
-
+            vector: Union[List[float], Dict[str, Any]]
             if self.search_type == SearchType.vector:
                 # For vector search, maintain backward compatibility with unnamed vectors
                 document.embed(embedder=self.embedder)
-                vector = document.embedding
+                vector = cast(List[float], document.embedding)
             else:
                 # For other search types, use named vectors
-                vector = {}
+                named_vector: Dict[str, Any] = {}
                 if self.search_type in [SearchType.hybrid]:
                     document.embed(embedder=self.embedder)
-                    vector[self.dense_vector_name] = document.embedding
+                    named_vector[self.dense_vector_name] = document.embedding
 
                 if self.search_type in [SearchType.keyword, SearchType.hybrid]:
-                    vector[self.sparse_vector_name] = next(self.sparse_encoder.embed([document.content])).as_object()
+                    named_vector[self.sparse_vector_name] = next(self.sparse_encoder.embed([document.content])).as_object()
+
+                vector = named_vector
 
             # Create payload with document properties
             payload = {
