@@ -7,8 +7,12 @@ from agno.utils.log import logger
 
 try:
     from firecrawl import FirecrawlApp, ScrapeOptions  # type: ignore[attr-defined]
-except ImportError:
-    raise ImportError("`firecrawl-py` not installed. Please install using `pip install firecrawl-py`")
+except ImportError as e:
+    FirecrawlApp = None  # type: ignore[assignment]
+    ScrapeOptions = None  # type: ignore[assignment]
+    _firecrawl_import_error = e
+else:
+    _firecrawl_import_error = None
 
 
 class CustomJSONEncoder(json.JSONEncoder):
@@ -55,6 +59,11 @@ class FirecrawlTools(Toolkit):
         self.formats: Optional[List[str]] = formats
         self.limit: int = limit
         self.poll_interval: int = poll_interval
+        if FirecrawlApp is None:
+            raise ImportError(
+                "firecrawl is installed but missing required symbols FirecrawlApp/ScrapeOptions or is an incompatible version; please install a compatible firecrawl-py release"
+            ) from _firecrawl_import_error
+
         self.app: FirecrawlApp = FirecrawlApp(api_key=self.api_key, api_url=api_url)
         self.search_params = search_params
 
@@ -104,6 +113,10 @@ class FirecrawlTools(Toolkit):
         if self.limit or limit:
             params["limit"] = self.limit or limit
         if self.formats:
+            if ScrapeOptions is None:
+                raise ImportError(
+                    "firecrawl is installed but missing required symbol ScrapeOptions or is an incompatible version; please install a compatible firecrawl-py release"
+                ) from _firecrawl_import_error
             params["scrape_options"] = ScrapeOptions(formats=self.formats)  # type: ignore
 
         params["poll_interval"] = self.poll_interval
@@ -132,6 +145,10 @@ class FirecrawlTools(Toolkit):
         if self.limit or limit:
             params["limit"] = self.limit or limit
         if self.formats:
+            if ScrapeOptions is None:
+                raise ImportError(
+                    "firecrawl is installed but missing required symbol ScrapeOptions or is an incompatible version; please install a compatible firecrawl-py release"
+                ) from _firecrawl_import_error
             params["scrape_options"] = ScrapeOptions(formats=self.formats)  # type: ignore
         if self.search_params:
             params.update(self.search_params)

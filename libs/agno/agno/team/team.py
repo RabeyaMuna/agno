@@ -2321,9 +2321,9 @@ class Team:
                 team_markdown = False
 
             for member in self.members:
-                if member.response_model is not None and isinstance(member, Agent) and member.agent_id is not None:
+                if isinstance(member, Agent) and member.response_model is not None and member.agent_id is not None:
                     member_markdown[member.agent_id] = False  # type: ignore
-                if member.response_model is not None and isinstance(member, Team) and member.team_id is not None:
+                if isinstance(member, Team) and member.response_model is not None and member.team_id is not None:
                     member_markdown[member.team_id] = False  # type: ignore
 
             # Handle reasoning
@@ -2861,9 +2861,9 @@ class Team:
                         member_markdown[member.team_id] = True
 
             for member in self.members:
-                if member.response_model is not None and isinstance(member, Agent) and member.agent_id is not None:
+                if isinstance(member, Agent) and member.response_model is not None and member.agent_id is not None:
                     member_markdown[member.agent_id] = False  # type: ignore
-                if member.response_model is not None and isinstance(member, Team) and member.team_id is not None:
+                if isinstance(member, Team) and member.response_model is not None and member.team_id is not None:
                     member_markdown[member.team_id] = False  # type: ignore
 
             # Final panels assembly - we'll recreate the panels from scratch to ensure correct order
@@ -3186,9 +3186,9 @@ class Team:
                 team_markdown = False
 
             for member in self.members:
-                if member.response_model is not None and isinstance(member, Agent) and member.agent_id is not None:
+                if isinstance(member, Agent) and member.response_model is not None and member.agent_id is not None:
                     member_markdown[member.agent_id] = False  # type: ignore
-                if member.response_model is not None and isinstance(member, Team) and member.team_id is not None:
+                if isinstance(member, Team) and member.response_model is not None and member.team_id is not None:
                     member_markdown[member.team_id] = False  # type: ignore
 
             # Handle reasoning
@@ -3655,9 +3655,9 @@ class Team:
                         member_markdown[member.team_id] = True  # type: ignore
 
             for member in self.members:
-                if member.response_model is not None and isinstance(member, Agent) and member.agent_id is not None:
+                if isinstance(member, Agent) and member.response_model is not None and member.agent_id is not None:
                     member_markdown[member.agent_id] = False  # type: ignore
-                if member.response_model is not None and isinstance(member, Team) and member.team_id is not None:
+                if isinstance(member, Team) and member.response_model is not None and member.team_id is not None:
                     member_markdown[member.team_id] = False  # type: ignore
 
             # Final panels assembly - we'll recreate the panels from scratch to ensure correct order
@@ -6166,7 +6166,7 @@ class Team:
         """
         # First check direct members
         for i, member in enumerate(self.members):
-            if member.name or member.agent_id is not None:
+            if member.name or (isinstance(member, Agent) and member.agent_id is not None):
                 url_safe_member_id = self._get_member_id(member)
                 if url_safe_member_id == member_id:
                     return i, member
@@ -7562,8 +7562,8 @@ class Team:
                         if isinstance(member, Team)
                         else {}
                     ),
-                    "agent_id": member.agent_id if hasattr(member, "agent_id") else None,
-                    "team_id": member.team_id if hasattr(member, "team_id") else None,
+                    "agent_id": member.agent_id if isinstance(member, Agent) else None,
+                    "team_id": member.team_id if isinstance(member, Team) else None,
                     "members": (
                         [
                             {
@@ -7574,8 +7574,8 @@ class Team:
                                     if isinstance(sub_member, Team)
                                     else {}
                                 ),
-                                "agent_id": sub_member.agent_id if hasattr(sub_member, "agent_id") else None,
-                                "team_id": sub_member.team_id if hasattr(sub_member, "team_id") else None,
+                                "agent_id": sub_member.agent_id if isinstance(sub_member, Agent) else None,
+                                "team_id": sub_member.team_id if isinstance(sub_member, Team) else None,
                             }
                             for sub_member in member.members
                             if sub_member is not None
