@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import json
 import threading
@@ -9,9 +11,7 @@ from typing import (
     Any,
     AsyncIterator,
     Callable,
-    Dict,
     Iterator,
-    List,
     Literal,
     Optional,
     Sequence,
@@ -76,7 +76,7 @@ class Team:
     A class representing a team of agents.
     """
 
-    members: List[Union[Agent, "Team"]]
+    members: list[Union[Agent, "Team"]]
 
     mode: Literal["route", "coordinate", "collaborate"] = "coordinate"
 
@@ -106,10 +106,10 @@ class Team:
     # Session name
     session_name: Optional[str] = None
     # Session state (stored in the database to persist across runs)
-    session_state: Optional[Dict[str, Any]] = None
+    session_state: Optional[dict[str, Any]] = None
 
     # Team session state (shared between team leaders and team members)
-    team_session_state: Optional[Dict[str, Any]] = None
+    team_session_state: Optional[dict[str, Any]] = None
     # If True, add the session state variables in the user and system messages
     add_state_in_messages: bool = False
 
@@ -117,7 +117,7 @@ class Team:
     # A description of the Team that is added to the start of the system message.
     description: Optional[str] = None
     # List of instructions for the team.
-    instructions: Optional[Union[str, List[str], Callable]] = None
+    instructions: Optional[Union[str, list[str], Callable]] = None
     # Provide the expected output from the Team.
     expected_output: Optional[str] = None
     # Additional context added to the end of the system message.
@@ -138,14 +138,14 @@ class Team:
 
     # --- User provided context ---
     # User provided context
-    context: Optional[Dict[str, Any]] = None
+    context: Optional[dict[str, Any]] = None
     # If True, add the context to the user prompt
     add_context: bool = False
 
     # --- Agent Knowledge ---
     knowledge: Optional[AgentKnowledge] = None
     # Add knowledge_filters to the Agent class attributes
-    knowledge_filters: Optional[Dict[str, Any]] = None
+    knowledge_filters: Optional[dict[str, Any]] = None
     # Let the agent choose the knowledge filters
     enable_agentic_knowledge_filters: Optional[bool] = False
 
@@ -156,7 +156,7 @@ class Team:
     # Signature:
     # def retriever(team: Team, query: str, num_documents: Optional[int], **kwargs) -> Optional[list[dict]]:
     #     ...
-    retriever: Optional[Callable[..., Optional[List[Dict]]]] = None
+    retriever: Optional[Callable[..., Optional[list[Dict]]]] = None
     references_format: Literal["json", "yaml"] = "json"
 
     # --- Tools ---
@@ -176,7 +176,7 @@ class Team:
     # --- Team Tools ---
     # A list of tools provided to the Model.
     # Tools are functions the model may generate JSON inputs for.
-    tools: Optional[List[Union[Toolkit, Callable, Function, Dict]]] = None
+    tools: Optional[list[Union[Toolkit, Callable, Function, Dict]]] = None
     # Show tool calls in Team response. This sets the default for the team.
     show_tool_calls: bool = True
     # Controls which (if any) tool is called by the team model.
@@ -185,11 +185,11 @@ class Team:
     # Specifying a particular function via {"type: "function", "function": {"name": "my_function"}}
     #   forces the model to call that tool.
     # "none" is the default when no tools are present. "auto" is the default if tools are present.
-    tool_choice: Optional[Union[str, Dict[str, Any]]] = None
+    tool_choice: Optional[Union[str, dict[str, Any]]] = None
     # Maximum number of tool calls allowed.
     tool_call_limit: Optional[int] = None
     # A list of hooks to be called before and after the tool call
-    tool_hooks: Optional[List[Callable]] = None
+    tool_hooks: Optional[list[Callable]] = None
 
     # --- Structured output ---
     # Response model for the team response
@@ -226,7 +226,7 @@ class Team:
     # --- Team Storage ---
     storage: Optional[Storage] = None
     # Extra data stored with this team
-    extra_data: Optional[Dict[str, Any]] = None
+    extra_data: Optional[dict[str, Any]] = None
 
     # --- Team Reasoning ---
     reasoning: bool = False
@@ -248,7 +248,7 @@ class Team:
 
     def __init__(
         self,
-        members: List[Union[Agent, "Team"]],
+        members: list[Union[Agent, "Team"]],
         mode: Literal["route", "coordinate", "collaborate"] = "coordinate",
         model: Optional[Model] = None,
         name: Optional[str] = None,
@@ -256,11 +256,11 @@ class Team:
         user_id: Optional[str] = None,
         session_id: Optional[str] = None,
         session_name: Optional[str] = None,
-        session_state: Optional[Dict[str, Any]] = None,
-        team_session_state: Optional[Dict[str, Any]] = None,
+        session_state: Optional[dict[str, Any]] = None,
+        team_session_state: Optional[dict[str, Any]] = None,
         add_state_in_messages: bool = False,
         description: Optional[str] = None,
-        instructions: Optional[Union[str, List[str], Callable]] = None,
+        instructions: Optional[Union[str, list[str], Callable]] = None,
         expected_output: Optional[str] = None,
         additional_context: Optional[str] = None,
         success_criteria: Optional[str] = None,
@@ -268,24 +268,24 @@ class Team:
         add_datetime_to_instructions: bool = False,
         add_location_to_instructions: bool = False,
         add_member_tools_to_system_message: bool = True,
-        context: Optional[Dict[str, Any]] = None,
+        context: Optional[dict[str, Any]] = None,
         add_context: bool = False,
         knowledge: Optional[AgentKnowledge] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         add_references: bool = False,
         enable_agentic_knowledge_filters: Optional[bool] = False,
-        retriever: Optional[Callable[..., Optional[List[Dict]]]] = None,
+        retriever: Optional[Callable[..., Optional[list[Dict]]]] = None,
         references_format: Literal["json", "yaml"] = "json",
         enable_agentic_context: bool = False,
         share_member_interactions: bool = False,
         get_member_information_tool: bool = False,
         search_knowledge: bool = True,
         read_team_history: bool = False,
-        tools: Optional[List[Union[Toolkit, Callable, Function, Dict]]] = None,
+        tools: Optional[list[Union[Toolkit, Callable, Function, Dict]]] = None,
         show_tool_calls: bool = True,
         tool_call_limit: Optional[int] = None,
-        tool_choice: Optional[Union[str, Dict[str, Any]]] = None,
-        tool_hooks: Optional[List[Callable]] = None,
+        tool_choice: Optional[Union[str, dict[str, Any]]] = None,
+        tool_hooks: Optional[list[Callable]] = None,
         response_model: Optional[Type[BaseModel]] = None,
         use_json_mode: bool = False,
         parse_response: bool = True,
@@ -300,7 +300,7 @@ class Team:
         num_of_interactions_from_history: Optional[int] = None,
         num_history_runs: int = 3,
         storage: Optional[Storage] = None,
-        extra_data: Optional[Dict[str, Any]] = None,
+        extra_data: Optional[dict[str, Any]] = None,
         reasoning: bool = False,
         reasoning_model: Optional[Model] = None,
         reasoning_min_steps: int = 1,
@@ -398,18 +398,18 @@ class Team:
         self.run_response: Optional[TeamRunResponse] = None
 
         # Images generated during this session
-        self.images: Optional[List[ImageArtifact]] = None
+        self.images: Optional[list[ImageArtifact]] = None
         # Audio generated during this session
-        self.audio: Optional[List[AudioArtifact]] = None
+        self.audio: Optional[list[AudioArtifact]] = None
         # Videos generated during this session
-        self.videos: Optional[List[VideoArtifact]] = None
+        self.videos: Optional[list[VideoArtifact]] = None
 
         # Team session
         self.team_session: Optional[TeamSession] = None
 
-        self._tool_instructions: Optional[List[str]] = None
-        self._functions_for_model: Optional[Dict[str, Function]] = None
-        self._tools_for_model: Optional[List[Dict[str, Any]]] = None
+        self._tool_instructions: Optional[list[str]] = None
+        self._functions_for_model: Optional[dict[str, Function]] = None
+        self._tools_for_model: Optional[list[dict[str, Any]]] = None
 
         # True if we should parse a member response model
         self._member_response_model: Optional[Type[BaseModel]] = None
@@ -551,7 +551,7 @@ class Team:
     @overload
     def run(
         self,
-        message: Union[str, List, Dict, Message],
+        message: Union[str, list, dict, Message],
         *,
         stream: Literal[False] = False,
         stream_intermediate_steps: bool = False,
@@ -568,7 +568,7 @@ class Team:
     @overload
     def run(
         self,
-        message: Union[str, List, Dict, Message],
+        message: Union[str, list, dict, Message],
         *,
         stream: Literal[True] = True,
         stream_intermediate_steps: bool = False,
@@ -584,7 +584,7 @@ class Team:
 
     def run(
         self,
-        message: Union[str, List, Dict, Message],
+        message: Union[str, list, dict, Message],
         *,
         stream: bool = False,
         stream_intermediate_steps: bool = False,
@@ -595,7 +595,7 @@ class Team:
         images: Optional[Sequence[Image]] = None,
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> Union[TeamRunResponse, Iterator[TeamRunResponse]]:
         """Run the Team and return the response."""
@@ -700,7 +700,7 @@ class Team:
                     self.run_input = message
 
             # Prepare tools
-            _tools: List[Union[Toolkit, Callable, Function, Dict]] = []
+            _tools: list[Union[Toolkit, Callable, Function, Dict]] = []
 
             # Add provided tools
             if self.tools is not None:
@@ -1037,7 +1037,7 @@ class Team:
     @overload
     async def arun(
         self,
-        message: Union[str, List, Dict, Message],
+        message: Union[str, list, dict, Message],
         *,
         stream: Literal[False] = False,
         stream_intermediate_steps: bool = False,
@@ -1054,7 +1054,7 @@ class Team:
     @overload
     async def arun(
         self,
-        message: Union[str, List, Dict, Message],
+        message: Union[str, list, dict, Message],
         *,
         stream: Literal[True] = True,
         stream_intermediate_steps: bool = False,
@@ -1070,7 +1070,7 @@ class Team:
 
     async def arun(
         self,
-        message: Union[str, List, Dict, Message],
+        message: Union[str, list, dict, Message],
         *,
         stream: bool = False,
         stream_intermediate_steps: bool = False,
@@ -1081,7 +1081,7 @@ class Team:
         images: Optional[Sequence[Image]] = None,
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> Union[TeamRunResponse, AsyncIterator[TeamRunResponse]]:
         """Run the Team asynchronously and return the response."""
@@ -1179,7 +1179,7 @@ class Team:
                     self.run_input = message
 
             # Prepare tools
-            _tools: List[Union[Function, Callable, Toolkit, Dict]] = []
+            _tools: list[Union[Function, Callable, Toolkit, Dict]] = []
 
             # Add provided tools
             if self.tools is not None:
@@ -1567,7 +1567,7 @@ class Team:
                 self.memory.add_system_message(run_messages.system_message, system_message_role="system")  # type: ignore
 
             # Build a list of messages that should be added to the TeamMemory
-            messages_for_memory: List[Message] = (
+            messages_for_memory: list[Message] = (
                 [run_messages.user_message] if run_messages.user_message is not None else []
             )
 
@@ -1598,7 +1598,7 @@ class Team:
 
             self._make_memories_and_summaries(run_messages, session_id, user_id)
 
-            session_messages: List[Message] = []
+            session_messages: list[Message] = []
             for run in self.memory.runs.get(session_id, []):  # type: ignore
                 if run.messages is not None:
                     for m in run.messages:
@@ -1621,7 +1621,7 @@ class Team:
                 self.memory.add_system_message(run_messages.system_message, system_message_role="system")  # type: ignore
 
             # Build a list of messages that should be added to the TeamMemory
-            messages_for_memory: List[Message] = (
+            messages_for_memory: list[Message] = (
                 [run_messages.user_message] if run_messages.user_message is not None else []
             )
 
@@ -1655,7 +1655,7 @@ class Team:
 
             await self._amake_memories_and_summaries(run_messages, session_id, user_id)
 
-            session_messages: List[Message] = []
+            session_messages: list[Message] = []
             if self.memory.runs:
                 for run in self.memory.runs.get(session_id, []):
                     if run.messages is not None:
@@ -1710,13 +1710,13 @@ class Team:
             run_response.citations = full_model_response.citations
 
         if stream_intermediate_steps and reasoning_state["reasoning_started"]:
-            all_reasoning_steps: List[ReasoningStep] = []
+            all_reasoning_steps: list[ReasoningStep] = []
             if (
                 self.run_response
                 and self.run_response.extra_data
                 and hasattr(self.run_response.extra_data, "reasoning_steps")
             ):
-                all_reasoning_steps = cast(List[ReasoningStep], self.run_response.extra_data.reasoning_steps)
+                all_reasoning_steps = cast(list[ReasoningStep], self.run_response.extra_data.reasoning_steps)
 
             if all_reasoning_steps:
                 self._add_reasoning_metrics_to_extra_data(run_response, reasoning_state["reasoning_time_taken"])
@@ -1792,13 +1792,13 @@ class Team:
         run_response.metrics = self._aggregate_metrics_from_messages(messages_for_run_response)
 
         if stream_intermediate_steps and reasoning_state["reasoning_started"]:
-            all_reasoning_steps: List[ReasoningStep] = []
+            all_reasoning_steps: list[ReasoningStep] = []
             if (
                 self.run_response
                 and self.run_response.extra_data
                 and hasattr(self.run_response.extra_data, "reasoning_steps")
             ):
-                all_reasoning_steps = cast(List[ReasoningStep], self.run_response.extra_data.reasoning_steps)
+                all_reasoning_steps = cast(list[ReasoningStep], self.run_response.extra_data.reasoning_steps)
 
             if all_reasoning_steps:
                 self._add_reasoning_metrics_to_extra_data(run_response, reasoning_state["reasoning_time_taken"])
@@ -1815,7 +1815,7 @@ class Team:
         session_id: str,
         full_model_response: ModelResponse,
         model_response_chunk: ModelResponse,
-        reasoning_state: Dict[str, Any],
+        reasoning_state: dict[str, Any],
         stream_intermediate_steps: bool = False,
     ) -> Iterator[TeamRunResponse]:
         # If the model response is an assistant_response, yield a RunResponse
@@ -2075,13 +2075,13 @@ class Team:
         show_reasoning: bool = True,
         show_full_reasoning: bool = False,
         console: Optional[Any] = None,
-        tags_to_include_in_markdown: Optional[Set[str]] = None,
+        tags_to_include_in_markdown: Optional[set[str]] = None,
         audio: Optional[Sequence[Audio]] = None,
         images: Optional[Sequence[Image]] = None,
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
         markdown: Optional[bool] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
         if not tags_to_include_in_markdown:
@@ -2140,7 +2140,7 @@ class Team:
         show_message: bool = True,
         show_reasoning: bool = True,
         show_full_reasoning: bool = False,
-        tags_to_include_in_markdown: Optional[Set[str]] = None,
+        tags_to_include_in_markdown: Optional[set[str]] = None,
         session_id: Optional[str] = None,
         user_id: Optional[str] = None,
         audio: Optional[Sequence[Audio]] = None,
@@ -2148,7 +2148,7 @@ class Team:
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
         markdown: bool = False,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
         import textwrap
@@ -2422,7 +2422,7 @@ class Team:
         show_message: bool = True,
         show_reasoning: bool = True,
         show_full_reasoning: bool = False,
-        tags_to_include_in_markdown: Optional[Set[str]] = None,
+        tags_to_include_in_markdown: Optional[set[str]] = None,
         session_id: Optional[str] = None,
         user_id: Optional[str] = None,
         audio: Optional[Sequence[Audio]] = None,
@@ -2431,7 +2431,7 @@ class Team:
         files: Optional[Sequence[File]] = None,
         markdown: bool = False,
         stream_intermediate_steps: bool = False,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
         import textwrap
@@ -2451,7 +2451,7 @@ class Team:
 
         _response_content: str = ""
         _response_thinking: str = ""
-        reasoning_steps: List[ReasoningStep] = []
+        reasoning_steps: list[ReasoningStep] = []
 
         # Track tool calls by member and team
         member_tool_calls = {}  # type: ignore
@@ -2932,13 +2932,13 @@ class Team:
         show_reasoning: bool = True,
         show_full_reasoning: bool = False,
         console: Optional[Any] = None,
-        tags_to_include_in_markdown: Optional[Set[str]] = None,
+        tags_to_include_in_markdown: Optional[set[str]] = None,
         audio: Optional[Sequence[Audio]] = None,
         images: Optional[Sequence[Image]] = None,
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
         markdown: Optional[bool] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
         if not tags_to_include_in_markdown:
@@ -2997,7 +2997,7 @@ class Team:
         show_message: bool = True,
         show_reasoning: bool = True,
         show_full_reasoning: bool = False,
-        tags_to_include_in_markdown: Optional[Set[str]] = None,
+        tags_to_include_in_markdown: Optional[set[str]] = None,
         session_id: Optional[str] = None,
         user_id: Optional[str] = None,
         audio: Optional[Sequence[Audio]] = None,
@@ -3005,7 +3005,7 @@ class Team:
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
         markdown: bool = False,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
         import textwrap
@@ -3277,7 +3277,7 @@ class Team:
         show_message: bool = True,
         show_reasoning: bool = True,
         show_full_reasoning: bool = False,
-        tags_to_include_in_markdown: Optional[Set[str]] = None,
+        tags_to_include_in_markdown: Optional[set[str]] = None,
         session_id: Optional[str] = None,
         user_id: Optional[str] = None,
         audio: Optional[Sequence[Audio]] = None,
@@ -3305,11 +3305,11 @@ class Team:
 
         _response_content: str = ""
         _response_thinking: str = ""
-        reasoning_steps: List[ReasoningStep] = []
+        reasoning_steps: list[ReasoningStep] = []
 
         # Track tool calls by member and team
         member_tool_calls = {}  # type: ignore
-        team_tool_calls: List[ToolExecution] = []
+        team_tool_calls: list[ToolExecution] = []
 
         # Track processed tool calls to avoid duplicates
         processed_tool_calls = set()
@@ -3747,7 +3747,7 @@ class Team:
     def _parse_response_content(
         self,
         run_response: Union[TeamRunResponse, RunResponse],
-        tags_to_include_in_markdown: Set[str],
+        tags_to_include_in_markdown: set[str],
         show_markdown: bool = True,
     ) -> Any:
         from rich.json import JSON
@@ -3777,7 +3777,7 @@ class Team:
         emoji: str = ":sunglasses:",
         stream: bool = False,
         markdown: bool = False,
-        exit_on: Optional[List[str]] = None,
+        exit_on: Optional[list[str]] = None,
         **kwargs: Any,
     ) -> None:
         from rich.prompt import Prompt
@@ -3836,7 +3836,7 @@ class Team:
             async for item in reason_generator:
                 yield item
 
-    def _calculate_session_metrics(self, messages: List[Message]) -> SessionMetrics:
+    def _calculate_session_metrics(self, messages: list[Message]) -> SessionMetrics:
         session_metrics = SessionMetrics()
         assistant_message_role = self.model.assistant_message_role if self.model is not None else "assistant"
 
@@ -3847,7 +3847,7 @@ class Team:
 
         return session_metrics
 
-    def _calculate_full_team_session_metrics(self, messages: List[Message], session_id: str) -> SessionMetrics:
+    def _calculate_full_team_session_metrics(self, messages: list[Message], session_id: str) -> SessionMetrics:
         current_session_metrics = self.session_metrics or self._calculate_session_metrics(messages)
         current_session_metrics = replace(current_session_metrics)
         assistant_message_role = self.model.assistant_message_role if self.model is not None else "assistant"
@@ -3862,8 +3862,8 @@ class Team:
                             current_session_metrics += m.metrics
         return current_session_metrics
 
-    def _aggregate_metrics_from_messages(self, messages: List[Message]) -> Dict[str, Any]:
-        aggregated_metrics: Dict[str, Any] = defaultdict(list)
+    def _aggregate_metrics_from_messages(self, messages: list[Message]) -> dict[str, Any]:
+        aggregated_metrics: dict[str, Any] = defaultdict(list)
         assistant_message_role = self.model.assistant_message_role if self.model is not None else "assistant"
         for m in messages:
             if m.role == assistant_message_role and m.metrics is not None:
@@ -4009,8 +4009,8 @@ class Team:
 
             step_count = 1
             next_action = NextAction.CONTINUE
-            reasoning_messages: List[Message] = []
-            all_reasoning_steps: List[ReasoningStep] = []
+            reasoning_messages: list[Message] = []
+            all_reasoning_steps: list[ReasoningStep] = []
             log_debug("Starting Reasoning", center=True, symbol="=")
             while next_action == NextAction.CONTINUE and step_count < self.reasoning_max_steps:
                 log_debug(f"Step {step_count}", center=True, symbol="-")
@@ -4028,7 +4028,7 @@ class Team:
                         log_warning("Reasoning error. Reasoning steps are empty, continuing regular session...")
                         break
 
-                    reasoning_steps: List[ReasoningStep] = reasoning_agent_response.content.reasoning_steps
+                    reasoning_steps: list[ReasoningStep] = reasoning_agent_response.content.reasoning_steps
                     all_reasoning_steps.extend(reasoning_steps)
                     # Yield reasoning steps
                     if stream_intermediate_steps:
@@ -4190,8 +4190,8 @@ class Team:
 
             step_count = 1
             next_action = NextAction.CONTINUE
-            reasoning_messages: List[Message] = []
-            all_reasoning_steps: List[ReasoningStep] = []
+            reasoning_messages: list[Message] = []
+            all_reasoning_steps: list[ReasoningStep] = []
             log_debug("Starting Reasoning", center=True, symbol="=")
             while next_action == NextAction.CONTINUE and step_count < self.reasoning_max_steps:
                 log_debug(f"Step {step_count}", center=True, symbol="-")
@@ -4209,7 +4209,7 @@ class Team:
                         log_warning("Reasoning error. Reasoning steps are empty, continuing regular session...")
                         break
 
-                    reasoning_steps: List[ReasoningStep] = reasoning_agent_response.content.reasoning_steps
+                    reasoning_steps: list[ReasoningStep] = reasoning_agent_response.content.reasoning_steps
                     all_reasoning_steps.extend(reasoning_steps)
                     # Yield reasoning steps
                     if stream_intermediate_steps:
@@ -4274,15 +4274,15 @@ class Team:
         content_type: Optional[str] = None,
         thinking: Optional[str] = None,
         event: RunEvent = RunEvent.run_response,
-        tools: Optional[List[ToolExecution]] = None,
+        tools: Optional[list[ToolExecution]] = None,
         reasoning_content: Optional[str] = None,
-        audio: Optional[List[AudioArtifact]] = None,
-        images: Optional[List[ImageArtifact]] = None,
-        videos: Optional[List[VideoArtifact]] = None,
+        audio: Optional[list[AudioArtifact]] = None,
+        images: Optional[list[ImageArtifact]] = None,
+        videos: Optional[list[VideoArtifact]] = None,
         response_audio: Optional[AudioResponse] = None,
         citations: Optional[Citations] = None,
         model: Optional[str] = None,
-        messages: Optional[List[Message]] = None,
+        messages: Optional[list[Message]] = None,
         created_at: Optional[int] = None,
         from_run_response: Optional[TeamRunResponse] = None,
     ) -> TeamRunResponse:
@@ -4356,7 +4356,7 @@ class Team:
             else:
                 log_warning("Context is not a dict")
 
-    def determine_tools_for_model(self, model: Model, tools: List[Union[Function, Callable, Toolkit, Dict]]) -> None:
+    def determine_tools_for_model(self, model: Model, tools: list[Union[Function, Callable, Toolkit, Dict]]) -> None:
         if self._tools_for_model is None:
             self._functions_for_model = {}
             self._tools_for_model = []
@@ -4482,7 +4482,7 @@ class Team:
         # 1. Build and return the default system message for the Team.
         # 1.1 Build the list of instructions for the system message
         self.model = cast(Model, self.model)
-        instructions: List[str] = []
+        instructions: list[str] = []
         if self.instructions is not None:
             _instructions = self.instructions
             if callable(self.instructions):
@@ -4499,7 +4499,7 @@ class Team:
             instructions.extend(_model_instructions)
 
         # 1.3 Build a list of additional information for the system message
-        additional_information: List[str] = []
+        additional_information: list[str] = []
         # 1.3.1 Add instructions for using markdown
         if self.markdown and self.response_model is None:
             additional_information.append("Use markdown to format your answers.")
@@ -4538,7 +4538,7 @@ class Team:
                     - Use the most specific filter(s) possible to narrow down results.
                     - If multiple filters are relevant, combine them in the filters parameter (e.g., {{'name': 'Jordan Mitchell', 'document_type': 'contract'}}).
                     - Ensure the filter keys match the valid metadata filters: {valid_filters_str}.
-                    You can use the search_knowledge_base tool to search the knowledge base and get the most relevant documents. Make sure to pass the filters as [Dict[str: Any]] to the tool. FOLLOW THIS STRUCTURE STRICTLY.
+                    You can use the search_knowledge_base tool to search the knowledge base and get the most relevant documents. Make sure to pass the filters as [dict[str: Any]] to the tool. FOLLOW THIS STRUCTURE STRICTLY.
                 """)
                 )
 
@@ -4725,12 +4725,12 @@ class Team:
         *,
         session_id: str,
         user_id: Optional[str] = None,
-        message: Optional[Union[str, List, Dict, Message]] = None,
+        message: Optional[Union[str, list, dict, Message]] = None,
         audio: Optional[Sequence[Audio]] = None,
         images: Optional[Sequence[Image]] = None,
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> RunMessages:
         """This function returns a RunMessages object with the following attributes:
@@ -4800,12 +4800,12 @@ class Team:
 
     def _get_user_message(
         self,
-        message: Optional[Union[str, List, Dict, Message]] = None,
+        message: Optional[Union[str, list, dict, Message]] = None,
         audio: Optional[Sequence[Audio]] = None,
         images: Optional[Sequence[Image]] = None,
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs,
     ):
         # Get references from the knowledge base to use in the user message
@@ -4922,7 +4922,7 @@ class Team:
         )
         return self._formatter.format(message, **format_variables)  # type: ignore
 
-    def _convert_context_to_string(self, context: Dict[str, Any]) -> str:
+    def _convert_context_to_string(self, context: dict[str, Any]) -> str:
         """Convert the context dictionary to a string representation.
 
         Args:
@@ -5108,7 +5108,7 @@ class Team:
             """
             import json
 
-            history: List[Dict[str, Any]] = []
+            history: list[dict[str, Any]] = []
             if isinstance(self.memory, TeamMemory):
                 team_chats = self.memory.get_all_messages()
 
@@ -5177,10 +5177,10 @@ class Team:
         session_id: str,
         stream: bool = False,
         async_mode: bool = False,
-        images: Optional[List[Image]] = None,
-        videos: Optional[List[Video]] = None,
-        audio: Optional[List[Audio]] = None,
-        files: Optional[List[File]] = None,
+        images: Optional[list[Image]] = None,
+        videos: Optional[list[Video]] = None,
+        audio: Optional[list[Audio]] = None,
+        files: Optional[list[File]] = None,
     ) -> Function:
         if not images:
             images = []
@@ -5475,11 +5475,11 @@ class Team:
         session_id: str,
         stream: bool = False,
         async_mode: bool = False,
-        images: Optional[List[Image]] = None,
-        videos: Optional[List[Video]] = None,
-        audio: Optional[List[Audio]] = None,
-        files: Optional[List[File]] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        images: Optional[list[Image]] = None,
+        videos: Optional[list[Video]] = None,
+        audio: Optional[list[Audio]] = None,
+        files: Optional[list[File]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
     ) -> Function:
         if not images:
             images = []
@@ -5917,7 +5917,7 @@ class Team:
         videos: Optional[Sequence[Video]] = None,
         audio: Optional[Sequence[Audio]] = None,
         files: Optional[Sequence[File]] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
     ) -> Function:
         if not images:
             images = []
@@ -6496,7 +6496,7 @@ class Team:
 
     def get_messages_for_session(
         self, session_id: Optional[str] = None, user_id: Optional[str] = None
-    ) -> List[Message]:
+    ) -> list[Message]:
         """Get messages for a session"""
         _session_id = session_id or self.session_id
         _user_id = user_id or self.user_id
@@ -6582,17 +6582,17 @@ class Team:
                 self.run_response.audio = []
             self.run_response.audio.append(audio)
 
-    def get_images(self) -> Optional[List[ImageArtifact]]:
+    def get_images(self) -> Optional[list[ImageArtifact]]:
         return self.images
 
-    def get_videos(self) -> Optional[List[VideoArtifact]]:
+    def get_videos(self) -> Optional[list[VideoArtifact]]:
         return self.videos
 
-    def get_audio(self) -> Optional[List[AudioArtifact]]:
+    def get_audio(self) -> Optional[list[AudioArtifact]]:
         return self.audio
 
     def update_reasoning_content_from_tool_call(
-        self, run_response: TeamRunResponse, tool_name: str, tool_args: Dict[str, Any]
+        self, run_response: TeamRunResponse, tool_name: str, tool_args: dict[str, Any]
     ) -> Optional[ReasoningStep]:
         """Update reasoning_content based on tool calls that look like thinking or reasoning tools."""
 
@@ -6726,8 +6726,8 @@ class Team:
     ###########################################################################
 
     def get_relevant_docs_from_knowledge(
-        self, query: str, num_documents: Optional[int] = None, filters: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Optional[List[Dict[str, Any]]]:
+        self, query: str, num_documents: Optional[int] = None, filters: Optional[dict[str, Any]] = None, **kwargs
+    ) -> Optional[list[dict[str, Any]]]:
         """Return a list of references from the knowledge base"""
         from agno.document import Document
 
@@ -6751,7 +6751,7 @@ class Team:
 
             try:
                 sig = signature(self.retriever)
-                retriever_kwargs: Dict[str, Any] = {}
+                retriever_kwargs: dict[str, Any] = {}
                 if "team" in sig.parameters:
                     retriever_kwargs = {"team": self}
                 if "filters" in sig.parameters:
@@ -6769,7 +6769,7 @@ class Team:
                 num_documents = self.knowledge.num_documents
 
             log_debug(f"Searching knowledge base with filters: {filters}")
-            relevant_docs: List[Document] = self.knowledge.search(
+            relevant_docs: list[Document] = self.knowledge.search(
                 query=query, num_documents=num_documents, filters=filters
             )
 
@@ -6783,8 +6783,8 @@ class Team:
             raise e
 
     async def aget_relevant_docs_from_knowledge(
-        self, query: str, num_documents: Optional[int] = None, filters: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Optional[List[Dict[str, Any]]]:
+        self, query: str, num_documents: Optional[int] = None, filters: Optional[dict[str, Any]] = None, **kwargs
+    ) -> Optional[list[dict[str, Any]]]:
         """Get relevant documents from knowledge base asynchronously."""
         from agno.document import Document
 
@@ -6809,7 +6809,7 @@ class Team:
 
             try:
                 sig = signature(self.retriever)
-                retriever_kwargs: Dict[str, Any] = {}
+                retriever_kwargs: dict[str, Any] = {}
                 if "team" in sig.parameters:
                     retriever_kwargs = {"team": self}
                 if "filters" in sig.parameters:
@@ -6828,7 +6828,7 @@ class Team:
                 num_documents = self.knowledge.num_documents
 
             log_debug(f"Searching knowledge base with filters: {filters}")
-            relevant_docs: List[Document] = await self.knowledge.async_search(
+            relevant_docs: list[Document] = await self.knowledge.async_search(
                 query=query, num_documents=num_documents, filters=filters
             )
 
@@ -6841,7 +6841,7 @@ class Team:
             log_warning(f"Error searching knowledge base: {e}")
             raise e
 
-    def _convert_documents_to_string(self, docs: List[Dict[str, Any]]) -> str:
+    def _convert_documents_to_string(self, docs: list[dict[str, Any]]) -> str:
         if docs is None or len(docs) == 0:
             return ""
 
@@ -6855,8 +6855,8 @@ class Team:
         return json.dumps(docs, indent=2)
 
     def _get_team_effective_filters(
-        self, knowledge_filters: Optional[Dict[str, Any]] = None, member_filters: Optional[Dict[str, Any]] = None
-    ) -> Optional[Dict[str, Any]]:
+        self, knowledge_filters: Optional[dict[str, Any]] = None, member_filters: Optional[dict[str, Any]] = None
+    ) -> Optional[dict[str, Any]]:
         """
         Determine effective filters for the team, considering:
         1. Team-level filters (self.knowledge_filters)
@@ -6880,7 +6880,7 @@ class Team:
         return effective_filters
 
     def search_knowledge_base_function(
-        self, knowledge_filters: Optional[Dict[str, Any]] = None, async_mode: bool = False
+        self, knowledge_filters: Optional[dict[str, Any]] = None, async_mode: bool = False
     ) -> Callable:
         """Factory function to create a search_knowledge_base function with filters."""
 
@@ -6950,11 +6950,11 @@ class Team:
             return search_knowledge_base
 
     def search_knowledge_base_with_agentic_filters_function(
-        self, knowledge_filters: Optional[Dict[str, Any]] = None, async_mode: bool = False
+        self, knowledge_filters: Optional[dict[str, Any]] = None, async_mode: bool = False
     ) -> Callable:
         """Factory function to create a search_knowledge_base function with filters."""
 
-        def search_knowledge_base(query: str, filters: Optional[Dict[str, Any]] = None) -> str:
+        def search_knowledge_base(query: str, filters: Optional[dict[str, Any]] = None) -> str:
             """Use this function to search the knowledge base for information about a query.
 
             Args:
@@ -6988,7 +6988,7 @@ class Team:
                 return "No documents found"
             return self._convert_documents_to_string(docs_from_knowledge)
 
-        async def asearch_knowledge_base(query: str, filters: Optional[Dict[str, Any]] = None) -> str:
+        async def asearch_knowledge_base(query: str, filters: Optional[dict[str, Any]] = None) -> str:
             """Use this function to search the knowledge base for information about a query asynchronously.
 
             Args:
@@ -7029,7 +7029,7 @@ class Team:
     # Logging
     ###########################################################################
 
-    def _create_run_data(self) -> Dict[str, Any]:
+    def _create_run_data(self) -> dict[str, Any]:
         """Create and return the run data dictionary."""
         run_response_format = "text"
         if self.response_model is not None:
@@ -7045,7 +7045,7 @@ class Team:
                 if isinstance(func, Function)
             }
 
-        run_data: Dict[str, Any] = {
+        run_data: dict[str, Any] = {
             "functions": functions,
             "metrics": self.run_response.metrics,  # type: ignore
         }
@@ -7061,8 +7061,8 @@ class Team:
 
         return run_data
 
-    def _get_team_data(self) -> Dict[str, Any]:
-        team_data: Dict[str, Any] = {}
+    def _get_team_data(self) -> dict[str, Any]:
+        team_data: dict[str, Any] = {}
         if self.name is not None:
             team_data["name"] = self.name
         if self.team_id is not None:
@@ -7073,8 +7073,8 @@ class Team:
             team_data["mode"] = self.mode
         return team_data
 
-    def _get_session_data(self) -> Dict[str, Any]:
-        session_data: Dict[str, Any] = {}
+    def _get_session_data(self) -> dict[str, Any]:
+        session_data: dict[str, Any] = {}
         if self.session_name is not None:
             session_data["session_name"] = self.session_name
         if self.session_state is not None and len(self.session_state) > 0:
@@ -7191,8 +7191,8 @@ class Team:
             log_debug(f"Could not create team monitor: {e}")
 
     def _get_agentic_or_user_search_filters(
-        self, filters: Optional[Dict[str, Any]], effective_filters: Optional[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        self, filters: Optional[dict[str, Any]], effective_filters: Optional[dict[str, Any]]
+    ) -> dict[str, Any]:
         """Helper function to determine the final filters to use for the search.
 
         Args:
@@ -7200,7 +7200,7 @@ class Team:
             effective_filters: Filters passed by user.
 
         Returns:
-            Dict[str, Any]: The final filters to use for the search.
+            dict[str, Any]: The final filters to use for the search.
         """
         search_filters = {}
 
@@ -7260,7 +7260,7 @@ class Team:
             print(f"Could not create team on platform: {e}")
             log_debug(f"Could not create team on platform: {e}")
 
-    def to_platform_dict(self) -> Dict[str, Any]:
+    def to_platform_dict(self) -> dict[str, Any]:
         model = None
         if self.model is not None:
             model = {
@@ -7268,7 +7268,7 @@ class Team:
                 "model": self.model.id,
                 "provider": self.model.provider,
             }
-        tools: List[Dict[str, Any]] = []
+        tools: list[dict[str, Any]] = []
         if self.tools is not None:
             if not hasattr(self, "_tools_for_model") or self._tools_for_model is None:
                 team_model = self.model
