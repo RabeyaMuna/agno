@@ -310,8 +310,7 @@ def test_search_repositories_with_sorting(mock_github, mock_paginated_list):
     result = github_tools.search_repositories("python", sort="stars", order="desc")
     result_data = json.loads(result)
 
-    mock_client.search_repositories.assert_called_with(query="python", sort="stars", order="desc")
-    assert len(result_data) == 2
+    mock_client.search_repositories.assert_called_with(query="python", sort="stars", order="desc", per_page=30)    assert len(result_data) == 2
     assert result_data[0]["stars"] == 1000
     assert result_data[1]["stars"] == 500
 
@@ -343,6 +342,7 @@ def test_search_repositories_rate_limit_error(mock_github):
     result_data = json.loads(result)
     assert "error" in result_data
     assert "API rate limit exceeded" in result_data["error"]
+    assert result_data["status"] == 403
 
 
 def test_search_repositories_pagination(mock_github):
@@ -500,6 +500,7 @@ def test_get_pull_request_count(mock_github):
     result_data = json.loads(result)
     assert "error" in result_data
     assert "Repository not found" in result_data["error"]
+    assert result_data["status"] == 404
 
 
 def test_get_repository_stars(mock_github):
@@ -525,6 +526,7 @@ def test_get_repository_stars(mock_github):
 
     assert "error" in result_data
     assert "Repository not found" in result_data["error"]
+    assert result_data["status"] == 404
 
 
 def test_get_pull_request_comments(mock_github):
@@ -580,6 +582,7 @@ def test_get_pull_request_comments(mock_github):
 
     assert "error" in result_data
     assert "Pull request not found" in result_data["error"]
+    assert result_data["status"] == 404
 
 
 def test_create_pull_request_comment(mock_github):
@@ -631,6 +634,7 @@ def test_create_pull_request_comment(mock_github):
 
     assert "error" in result_data
     assert "Validation failed" in result_data["error"]
+    assert result_data["status"] == 422
 
 
 def test_edit_pull_request_comment(mock_github):
@@ -763,6 +767,7 @@ def test_create_repository(mock_github):
 
     assert "error" in result_data
     assert "Repository creation failed" in result_data["error"]
+    assert result_data["status"] == 422
 
 
 def test_get_pull_request_with_comprehensive_details(mock_github):
@@ -1421,7 +1426,7 @@ def test_create_branch(mock_github):
     # Mock new branch reference
     mock_new_ref = MagicMock()
     mock_new_ref.object.sha = "source-commit-sha"  # Same SHA as source
-    mock_new_ref.url = "https://api.github.com/repos/test-org/test-repo/git/refs/heads/new-branch"
+    mock_new_ref.url = "https://github.com/test-org/test-repo/tree/new-branch"
     mock_repo.create_git_ref.return_value = mock_new_ref
 
     # Test creating a branch from default branch
@@ -1454,6 +1459,7 @@ def test_create_branch(mock_github):
 
     assert "error" in result_data
     assert "Reference not found" in result_data["error"]
+    assert result_data["status"] == 404
 
 
 def test_set_default_branch(mock_github):
@@ -1530,7 +1536,7 @@ def test_search_code(mock_github):
     result = github_tools.search_code(query="agent class")
     result_data = json.loads(result)
 
-    mock_client.search_code.assert_called_with("agent class")
+    mock_client.search_code.assert_called_with("agent class", per_page=30)
 
     assert result_data["query"] == "agent class"
     assert result_data["total_count"] == 2
@@ -1551,7 +1557,7 @@ def test_search_code(mock_github):
     result_data = json.loads(result)
 
     expected_query = "agent class language:python repo:test-org/test-repo user:test-org path:src filename:main.py"
-    mock_client.search_code.assert_called_with(expected_query)
+    mock_client.search_code.assert_called_with(expected_query, per_page=30)
 
     assert result_data["query"] == expected_query
 
@@ -1563,3 +1569,4 @@ def test_search_code(mock_github):
 
     assert "error" in result_data
     assert "API rate limit exceeded" in result_data["error"]
+    assert result_data["status"] == 403
