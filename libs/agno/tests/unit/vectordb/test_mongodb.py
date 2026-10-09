@@ -1,6 +1,6 @@
 import uuid
 from hashlib import md5
-from typing import Any, Dict, Generator, List
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -245,7 +245,7 @@ def test_document_existence(vector_db: MongoDb, mock_mongodb_client: MagicMock) 
     docs = create_test_documents(1)
 
     # Setup mock responses for find_one
-    def mock_find_one(query: Dict[str, Any]) -> Dict[str, Any]:
+    def mock_find_one(query: dict[str, Any]) -> dict[str, Any]:
         # For doc_exists
         if "_id" in query and query["_id"] == md5(docs[0].content.encode("utf-8")).hexdigest():
             return {"_id": "doc_0", "content": "This is test document 0", "name": "test_doc_0"}

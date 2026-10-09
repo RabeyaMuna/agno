@@ -70,7 +70,7 @@ def test_read_url_max_retries():
     url = "https://example.com"
 
     with patch("httpx.get", side_effect=httpx.RequestError("Connection error")):
-        reader = URLReader()
+        reader = URLReader(max_retries=3)
         with pytest.raises(httpx.RequestError):
             reader.read(url)
 
