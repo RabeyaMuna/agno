@@ -251,7 +251,7 @@ def test_error_handling(mock_github):
     result = github_tools.get_repository("invalid/repo")
     result_data = json.loads(result)
     assert "error" in result_data
-    assert "Repository not found" in result_data["error"]
+    assert result_data["error"] == "Repository not found"
 
     # Reset side effect
     mock_client.get_repo.side_effect = None
@@ -261,7 +261,7 @@ def test_error_handling(mock_github):
     result = github_tools.create_issue("test-org/test-repo", title="Test")
     result_data = json.loads(result)
     assert "error" in result_data
-    assert "Permission denied" in result_data["error"]
+    assert result_data["error"] == "Permission denied"
 
 
 def test_search_repositories_basic(mock_github, mock_paginated_list):
@@ -342,7 +342,7 @@ def test_search_repositories_rate_limit_error(mock_github):
     result = github_tools.search_repositories("python")
     result_data = json.loads(result)
     assert "error" in result_data
-    assert "API rate limit exceeded" in result_data["error"]
+    assert result_data["error"] == "API rate limit exceeded"
 
 
 def test_search_repositories_pagination(mock_github):
@@ -1433,7 +1433,7 @@ def test_create_branch(mock_github):
 
     assert result_data["name"] == "new-branch"
     assert result_data["sha"] == "source-commit-sha"
-    assert result_data["url"] == "https://github.com/test-org/test-repo/tree/new-branch"
+    assert result_data["url"] == "https://api.github.com/repos/test-org/test-repo/git/refs/heads/new-branch"
 
     # Test creating a branch from a specified source branch
     result = github_tools.create_branch(
@@ -1562,4 +1562,4 @@ def test_search_code(mock_github):
     result_data = json.loads(result)
 
     assert "error" in result_data
-    assert "API rate limit exceeded" in result_data["error"]
+    assert result_data["error"] == "API rate limit exceeded"

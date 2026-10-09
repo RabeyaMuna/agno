@@ -54,9 +54,8 @@ def test_init_with_env_var():
 
 def test_init_without_token():
     """Test initialization without API token."""
-    with patch.dict("os.environ", clear=True):
-        with pytest.raises(ValueError, match="Webex access token is not set"):
-            WebexTools()
+    with patch.dict("os.environ", clear=True), pytest.raises(ValueError, match="Webex access token is not set"):
+        WebexTools()
 
 
 def test_init_with_selective_tools():
@@ -134,6 +133,7 @@ def test_list_rooms_failure(webex_tools, mock_webex_api):
 
     assert "error" in result_data
     assert "Too Many Requests" in str(result_data["error"])
+    assert result_data["error"]["status_code"] == 429
 
 
 def test_list_rooms_empty(webex_tools, mock_webex_api):
@@ -158,3 +158,4 @@ def test_send_message_rate_limit(webex_tools, mock_webex_api):
 
     assert "error" in result_data
     assert "Too Many Requests" in str(result_data["error"])
+    assert result_data["error"]["status_code"] == 429

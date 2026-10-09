@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from pydantic import BaseModel
 
 from agno.utils.string import parse_response_model_str, url_safe_string
@@ -201,7 +199,7 @@ def test_parse_nested_json():
         description: str
 
     class Steps(BaseModel):
-        steps: List[Step]
+        steps: list[Step]
 
     content = """
     ```json

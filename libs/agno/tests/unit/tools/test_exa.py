@@ -49,10 +49,9 @@ def create_mock_search_result(
 
 def test_init_with_api_key():
     """Test initialization with provided API key."""
-    with patch("agno.tools.exa.Exa") as mock_exa:
-        with patch.dict("os.environ", {"EXA_API_KEY": "test_key"}):
-            ExaTools()
-            mock_exa.assert_called_once_with("test_key")
+    with patch("agno.tools.exa.Exa") as mock_exa, patch.dict("os.environ", {"EXA_API_KEY": "test_key"}):
+        ExaTools()
+        mock_exa.assert_called_once_with("test_key")
 
 
 def test_init_with_selective_tools():
@@ -198,23 +197,27 @@ def test_error_handling(exa_tools, mock_exa_client):
     """Test error handling in various methods."""
     # Test search error
     mock_exa_client.search_and_contents.side_effect = Exception("Search API Error")
-    result = exa_tools.search_exa("test query")
-    assert "Error: Search API Error" in result
+    with pytest.raises(Exception) as exc_info:
+        exa_tools.search_exa("test query")
+    assert "Search API Error" in str(exc_info.value)
 
     # Test get_contents error
     mock_exa_client.get_contents.side_effect = Exception("Contents API Error")
-    result = exa_tools.get_contents(["https://example.com"])
-    assert "Error: Contents API Error" in result
+    with pytest.raises(Exception) as exc_info:
+        exa_tools.get_contents(["https://example.com"])
+    assert "Contents API Error" in str(exc_info.value)
 
     # Test find_similar error
     mock_exa_client.find_similar_and_contents.side_effect = Exception("Similar API Error")
-    result = exa_tools.find_similar("https://example.com")
-    assert "Error: Similar API Error" in result
+    with pytest.raises(Exception) as exc_info:
+        exa_tools.find_similar("https://example.com")
+    assert "Similar API Error" in str(exc_info.value)
 
     # Test answer error
     mock_exa_client.answer.side_effect = Exception("Answer API Error")
-    result = exa_tools.exa_answer("test question")
-    assert "Error: Answer API Error" in result
+    with pytest.raises(Exception) as exc_info:
+        exa_tools.exa_answer("test question")
+    assert "Answer API Error" in str(exc_info.value)
 
 
 def test_parse_results_with_missing_fields(exa_tools):
