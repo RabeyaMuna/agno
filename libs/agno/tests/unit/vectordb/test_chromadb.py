@@ -1,6 +1,5 @@
 import os
 import shutil
-from typing import List
 
 import pytest
 
@@ -30,8 +29,8 @@ def chroma_db(mock_embedder):
     # Cleanup after test
     try:
         db.drop()
-    except Exception:
-        pass
+    except Exception as e:
+        pytest.fail(f"Failed to drop collection: {e!s}")
 
     if os.path.exists(TEST_PATH):
         shutil.rmtree(TEST_PATH)
@@ -119,6 +118,8 @@ def test_distance_metrics():
     try:
         db_cosine.drop()
         db_euclidean.drop()
+    except Exception as e:
+        pytest.fail(f"Failed to drop collections: {e!s}")
     finally:
         if os.path.exists(TEST_PATH):
             shutil.rmtree(TEST_PATH)

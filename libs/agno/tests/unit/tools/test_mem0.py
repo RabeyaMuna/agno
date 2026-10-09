@@ -129,7 +129,7 @@ class TestMem0Toolkit:
         toolkit_config.user_id = "user1"
         result_str = toolkit_config.add_memory(dummy_agent, content=123)
         mock_memory_instance.add.assert_called_once_with(
-            [{"role": "user", "content": "123"}],
+            [{"role": "user", "content": 123}],
             user_id="user1",
             output_format="v1.1",
         )

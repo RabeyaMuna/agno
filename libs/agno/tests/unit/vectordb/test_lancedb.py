@@ -26,8 +26,8 @@ def lance_db(mock_embedder):
 
     try:
         db.drop()
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Error dropping LanceDb table: {e}")
 
     if os.path.exists(TEST_PATH):
         shutil.rmtree(TEST_PATH)
