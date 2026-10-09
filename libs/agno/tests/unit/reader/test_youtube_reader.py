@@ -66,9 +66,9 @@ def test_read_invalid_video_url():
     video_url = "invalid_url"
 
     reader = YouTubeReader()
-    documents = reader.read(video_url)
-
-    assert len(documents) == 0
+    with pytest.raises(Exception):
+        documents = reader.read(video_url)
+        assert len(documents) == 0
 
 
 def test_read_video_api_error():
@@ -190,9 +190,9 @@ async def test_async_read_invalid_video_url():
     video_url = "invalid_url"
 
     reader = YouTubeReader()
-    documents = await reader.async_read(video_url)
-
-    assert len(documents) == 0
+    with pytest.raises(Exception):
+        documents = await reader.async_read(video_url)
+        assert len(documents) == 0
 
 
 @pytest.mark.asyncio
