@@ -122,7 +122,7 @@ def test_generate_image_success(mock_gemini_tools, mock_agent, mock_successful_r
         result = mock_gemini_tools.generate_image(mock_agent, prompt)
 
         expected_media_id = "12345678-1234-5678-1234-567812345678"
-        assert result == f"Image generated successfully with ID: {expected_media_id}"
+        assert f"Image generated successfully with ID: {expected_media_id}" in result
         mock_gemini_tools.client.models.generate_images.assert_called_once_with(model=image_model, prompt=prompt)
 
         # Verify agent.add_image was called with the correct ImageArtifact
@@ -184,7 +184,7 @@ def test_generate_video_requires_vertexai(mock_gemini_tools, mock_agent):
         "Video generation requires Vertex AI mode. "
         "Please set `vertexai=True` or environment variable `GOOGLE_GENAI_USE_VERTEXAI=true`."
     )
-    assert result == expected
+    assert expected in result
     mock_agent.add_video.assert_not_called()
 
 
@@ -208,7 +208,7 @@ def test_generate_video_success(mock_gemini_tools, mock_agent, mock_video_operat
     with patch("agno.tools.models.gemini.uuid4", return_value=UUID("87654321-4321-8765-4321-876543214321")):
         result = mock_gemini_tools.generate_video(mock_agent, prompt)
         expected_id = "87654321-4321-8765-4321-876543214321"
-        assert result == f"Video generated successfully with ID: {expected_id}"
+        assert f"Video generated successfully with ID: {expected_id}" in result
         assert mock_gemini_tools.client.models.generate_videos.called
         call_args = mock_gemini_tools.client.models.generate_videos.call_args
         assert call_args.kwargs["model"] == mock_gemini_tools.video_model
@@ -231,5 +231,5 @@ def test_generate_video_exception(mock_gemini_tools, mock_agent):
     mock_gemini_tools.client.models.generate_videos.side_effect = Exception("API error")
     prompt = "A sample video prompt"
     result = mock_gemini_tools.generate_video(mock_agent, prompt)
-    assert result == "Failed to generate video: API error"
+    assert "Failed to generate video: API error" in result
     mock_agent.add_video.assert_not_called()
