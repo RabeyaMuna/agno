@@ -1,7 +1,7 @@
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from os import getenv
-from typing import Any, Dict, Iterator, List, Optional, Union
+from typing import Any, Iterator, Optional, Union
 
 import httpx
 from pydantic import BaseModel
@@ -48,7 +48,7 @@ class Llama(Model):
     extra_headers: Optional[Any] = None
     extra_query: Optional[Any] = None
     extra_body: Optional[Any] = None
-    request_params: Optional[Dict[str, Any]] = None
+    request_params: Optional[dict[str, Any]] = None
 
     # Client parameters
     api_key: Optional[str] = None
@@ -58,13 +58,13 @@ class Llama(Model):
     default_headers: Optional[Any] = None
     default_query: Optional[Any] = None
     http_client: Optional[httpx.Client] = None
-    client_params: Optional[Dict[str, Any]] = None
+    client_params: Optional[dict[str, Any]] = None
 
     # OpenAI clients
     client: Optional[LlamaAPIClient] = None
     async_client: Optional[AsyncLlamaAPIClient] = None
 
-    def _get_client_params(self) -> Dict[str, Any]:
+    def _get_client_params(self) -> dict[str, Any]:
         # Fetch API key from env if not already set
         if not self.api_key:
             self.api_key = getenv("LLAMA_API_KEY")
@@ -99,7 +99,7 @@ class Llama(Model):
         if self.client:
             return self.client
 
-        client_params: Dict[str, Any] = self._get_client_params()
+        client_params: dict[str, Any] = self._get_client_params()
         if self.http_client is not None:
             client_params["http_client"] = self.http_client
         self.client = LlamaAPIClient(**client_params)
@@ -115,7 +115,7 @@ class Llama(Model):
         if self.async_client:
             return self.async_client
 
-        client_params: Dict[str, Any] = self._get_client_params()
+        client_params: dict[str, Any] = self._get_client_params()
         if self.http_client:
             client_params["http_client"] = self.http_client
         else:
@@ -126,12 +126,12 @@ class Llama(Model):
         return AsyncLlamaAPIClient(**client_params)
 
     @property
-    def request_kwargs(self) -> Dict[str, Any]:
+    def request_kwargs(self) -> dict[str, Any]:
         """
         Returns keyword arguments for API requests.
 
         Returns:
-            Dict[str, Any]: A dictionary of keyword arguments for API requests.
+            dict[str, Any]: A dictionary of keyword arguments for API requests.
         """
         # Define base request parameters
         base_params = {
