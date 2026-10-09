@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from pydantic import BaseModel
 
 from agno.utils.string import parse_response_model_str, url_safe_string
@@ -50,8 +48,8 @@ def test_url_safe_string_complex():
 
 class MockModel(BaseModel):
     name: str
-    value: Optional[str] = None
-    description: Optional[str] = None
+    value: str | None = None
+    description: str | None = None
 
 
 def test_parse_direct_json():
