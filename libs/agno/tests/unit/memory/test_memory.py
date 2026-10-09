@@ -254,7 +254,7 @@ def test_replace_user_memory(memory_with_model, sample_user_memory):
 
     # Now replace it
     updated_memory = UserMemory(
-        memory="The user's name is Jane Doe", topics=["name", "user"], last_updated=datetime.now()
+        memory="The user's name is Jane Doe", topics=["name", "user"], last_updated=datetime.now(timezone.utc)
     )
 
     memory_with_model.replace_user_memory(memory_id=memory_id, memory=updated_memory, user_id="test_user")
