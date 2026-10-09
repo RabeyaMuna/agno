@@ -202,7 +202,7 @@ class PostgresStorage(Storage):
                 table_without_indexes = Table(
                     self.table_name,
                     MetaData(schema=self.schema),
-                    *[c.copy() for c in self.table.columns],
+                    *[copy(c) for c in self.table.columns],
                     schema=self.schema,
                 )
                 table_without_indexes.create(self.db_engine, checkfirst=True)

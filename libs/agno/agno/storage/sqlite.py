@@ -190,7 +190,7 @@ class SqliteStorage(Storage):
                 table_without_indexes = Table(
                     self.table_name,
                     MetaData(),
-                    *[c.copy() for c in self.table.columns],
+                    *[c.copy(schema=self.table.schema) for c in self.table.columns],
                 )
                 table_without_indexes.create(self.db_engine, checkfirst=True)
 
