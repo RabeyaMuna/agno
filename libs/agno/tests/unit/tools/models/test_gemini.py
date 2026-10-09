@@ -30,8 +30,8 @@ def mock_client():
 def mock_gemini_tools(mock_client):
     def mock_getenv_side_effect(var_name):
         if var_name == "GOOGLE_GENAI_USE_VERTEXAI":
-            return None
-        return None
+            return
+        return
 
     with patch("agno.tools.models.gemini.Client", return_value=mock_client) as _, patch(
         "agno.tools.models.gemini.getenv", side_effect=mock_getenv_side_effect
@@ -66,8 +66,8 @@ def test_gemini_tools_init_with_api_key_arg():
 
     def mock_getenv_side_effect(var_name):
         if var_name == "GOOGLE_GENAI_USE_VERTEXAI":
-            return None
-        return None
+            return
+        return
 
     with patch("agno.tools.models.gemini.Client") as mock_client_cls, patch(
         "agno.tools.models.gemini.getenv", side_effect=mock_getenv_side_effect
@@ -172,7 +172,7 @@ def test_generate_image_api_error(mock_gemini_tools, mock_agent):
 
     result = mock_gemini_tools.generate_image(mock_agent, prompt)
 
-    expected_error = f"Failed to generate image: Client or method not available ({api_error_message})"
+    expected_error = f"Failed to generate image: {api_error_message}"
     assert result == expected_error
     mock_gemini_tools.client.models.generate_images.assert_called_once_with(
         model=mock_gemini_tools.image_model,  # Use default model
@@ -189,7 +189,7 @@ def test_generate_image_no_image_bytes(mock_gemini_tools, mock_agent, mock_faile
 
     result = mock_gemini_tools.generate_image(mock_agent, prompt)
 
-    assert result == "Failed to generate image: No images were generated."
+    assert result == "Failed to generate image: No image bytes were returned."
     mock_gemini_tools.client.models.generate_images.assert_called_once_with(
         model=mock_gemini_tools.image_model,
         prompt=prompt,

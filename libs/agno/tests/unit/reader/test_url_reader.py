@@ -60,6 +60,7 @@ def test_read_url_with_retry(mock_response):
     with patch("httpx.get", side_effect=[httpx.RequestError("Connection error"), mock_response]):
         reader = URLReader()
         reader.chunk = False
+        reader.max_retries = 3
         documents = reader.read(url)
 
         assert len(documents) == 1
@@ -72,6 +73,7 @@ def test_read_url_max_retries():
 
     with patch("httpx.get", side_effect=httpx.RequestError("Connection error")):
         reader = URLReader()
+        reader.max_retries = 3
         with pytest.raises(httpx.RequestError):
             reader.read(url)
 
@@ -144,6 +146,7 @@ async def test_async_read_url_with_retry():
     with patch("httpx.AsyncClient", return_value=mock_client):
         reader = URLReader()
         reader.chunk = False  # Disable chunking for this test
+        reader.max_retries = 3
         documents = await reader.async_read(url)
 
         assert len(documents) == 1
@@ -160,6 +163,7 @@ async def test_async_read_url_max_retries():
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         reader = URLReader()
+        reader.max_retries = 3
         with pytest.raises(httpx.RequestError):
             await reader.async_read(url)
 

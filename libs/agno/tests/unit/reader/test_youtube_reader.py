@@ -18,8 +18,8 @@ def mock_transcript():
 def test_read_video(mock_transcript):
     video_url = "https://www.youtube.com/watch?v=test_video_id"
 
-    with patch("agno.document.reader.youtube_reader.YouTubeTranscriptApi") as mock_api:
-        mock_api.get_transcript.return_value = mock_transcript
+    with patch("agno.document.reader.youtube_reader.YouTubeTranscriptApi.get_transcript") as mock_get_transcript:
+        mock_get_transcript.return_value = mock_transcript
 
         reader = YouTubeReader()
         # Ensure chunking is disabled

@@ -1,4 +1,3 @@
-from typing import List
 from unittest.mock import Mock, patch
 
 import pytest
@@ -91,7 +90,7 @@ def test_create_collection(milvus_db, mock_milvus_client):
         mock_milvus_client.create_collection.assert_called_once()
 
         # Verify parameters
-        args, kwargs = mock_milvus_client.create_collection.call_args
+        kwargs = mock_milvus_client.create_collection.call_args.kwargs
         assert kwargs["collection_name"] == "test_collection"
         assert kwargs["dimension"] == milvus_db.dimensions
 
