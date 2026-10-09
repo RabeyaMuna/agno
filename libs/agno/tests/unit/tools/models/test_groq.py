@@ -192,7 +192,7 @@ def test_translate_audio_local_file(mock_exists, mock_toolkit_init, mock_groq_cl
     mock_file.assert_called_once_with(mock_file_path, "rb")
 
 
-@patch("groq.resources.audio.Translations.create", side_effect=Exception("API Error"))
+@patch("groq.resources.audio.Translations.create", side_effect=RuntimeError("API Error"))
 @patch("agno.tools.toolkit.Toolkit.__init__", return_value=None)  # Mock base init
 @patch("os.path.exists", return_value=True)
 def test_translate_audio_error(mock_exists, mock_toolkit_init, mock_translate_create):
@@ -227,7 +227,7 @@ def test_translate_audio_url(mock_exists, mock_toolkit_init, mock_groq_client):
     )
 
 
-@patch("groq.resources.audio.Translations.create", side_effect=Exception("API Error"))
+@patch("groq.resources.audio.Translations.create", side_effect=RuntimeError("API Error"))
 @patch("agno.tools.toolkit.Toolkit.__init__", return_value=None)  # Mock base init
 @patch("os.path.exists", return_value=False)  # Simulate URL case
 def test_translate_audio_error_url(mock_exists, mock_toolkit_init, mock_translate_create):
