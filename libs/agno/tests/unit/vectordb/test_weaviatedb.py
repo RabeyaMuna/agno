@@ -1,5 +1,4 @@
 import json
-from typing import List
 from unittest.mock import MagicMock, Mock, patch
 
 import pytest
@@ -164,7 +163,7 @@ def test_hybrid_search(weaviate_db, sample_documents, mock_weaviate_client):
     mock_result1.properties = {
         "name": "tom_kha",
         "content": "Tom Kha Gai is a Thai coconut soup with chicken",
-        "meta_data": json.dumps({"cuisine": "Thai", "type": "soup"}),
+        "meta_data": {"cuisine": "Thai", "type": "soup"},
     }
     mock_result1.vector = [0.1] * 1536
 
@@ -172,7 +171,7 @@ def test_hybrid_search(weaviate_db, sample_documents, mock_weaviate_client):
     mock_result2.properties = {
         "name": "pad_thai",
         "content": "Pad Thai is a stir-fried rice noodle dish",
-        "meta_data": json.dumps({"cuisine": "Thai", "type": "noodles"}),
+        "meta_data": {"cuisine": "Thai", "type": "noodles"},
     }
     mock_result2.vector = [0.3] * 1536
 
@@ -236,7 +235,7 @@ def test_get_search_results(weaviate_db):
     mock_response = MagicMock()
 
     mock_obj1 = MagicMock()
-    mock_obj1.properties = {"name": "test1", "content": "Test content 1", "meta_data": json.dumps({"key": "value"})}
+    mock_obj1.properties = {"name": "test1", "content": "Test content 1", "meta_data": {"key": "value"}}
     mock_obj1.vector = {"default": [0.1] * 768}
 
     mock_obj2 = MagicMock()

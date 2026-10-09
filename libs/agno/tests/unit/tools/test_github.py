@@ -1244,6 +1244,7 @@ def test_get_file_content(mock_github):
 
     assert "error" in result_data
     assert "Not Found" in result_data["error"]
+    assert result_data["status_code"] == 404
 
 
 def test_update_file(mock_github):
