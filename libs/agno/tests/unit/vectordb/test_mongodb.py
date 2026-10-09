@@ -1,6 +1,6 @@
 import uuid
 from hashlib import md5
-from typing import Any, Dict, Generator, List
+from typing import Any, Generator
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -221,10 +221,7 @@ def test_insert_and_search(vector_db: MongoDb, mock_mongodb_client: MagicMock, m
     assert results[0].id == "doc_0"
 
     # Verify the search pipeline was called correctly
-    # Get the aggregate call args and handle potential typing issues
-    args = collection.aggregate.call_args
-    assert args is not None
-    pipeline = args[0][0]
+    pipeline = collection.aggregate.call_args[0][0]
     assert isinstance(pipeline, list)
 
     # Check that the first pipeline stage is a vector search with the correct limit
@@ -245,7 +242,7 @@ def test_document_existence(vector_db: MongoDb, mock_mongodb_client: MagicMock) 
     docs = create_test_documents(1)
 
     # Setup mock responses for find_one
-    def mock_find_one(query: Dict[str, Any]) -> Dict[str, Any]:
+    def mock_find_one(query: dict[str, Any]) -> dict[str, Any]:
         # For doc_exists
         if "_id" in query and query["_id"] == md5(docs[0].content.encode("utf-8")).hexdigest():
             return {"_id": "doc_0", "content": "This is test document 0", "name": "test_doc_0"}
