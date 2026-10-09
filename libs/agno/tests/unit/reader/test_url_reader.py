@@ -171,8 +171,9 @@ async def test_async_read_url_http_error():
 
     mock_response = Mock(spec=httpx.Response)
     mock_response.status_code = 404
+    mock_response.request = Mock()
     mock_response.raise_for_status.side_effect = httpx.HTTPStatusError(
-        "404 Not Found", request=Mock(), response=mock_response
+        "404 Not Found", request=mock_response.request, response=mock_response
     )
 
     mock_client = AsyncMock(spec=httpx.AsyncClient)
@@ -192,6 +193,7 @@ async def test_async_chunking():
     mock_response = Mock(spec=httpx.Response)
     mock_response.status_code = 200
     mock_response.text = "Hello, world! " * 1000
+    mock_response.request = Mock()
 
     mock_client = AsyncMock(spec=httpx.AsyncClient)
     mock_client.__aenter__.return_value.get.return_value = mock_response
