@@ -253,7 +253,7 @@ def test_empty_file_upload(test_app):
     empty_file = ("files", ("empty.jpg", io.BytesIO(b""), "image/jpeg"))
     files = [empty_file]
     response = test_app.post("/v1/playground/agents/test-agent/runs", data=data, files=files)
-    assert response.status_code == 200
+    assert response.status_code == 400
 
 
 def test_document_upload_with_knowledge(test_app, mock_agent_with_knowledge):
