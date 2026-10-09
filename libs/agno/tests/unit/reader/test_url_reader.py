@@ -70,8 +70,9 @@ def test_read_url_max_retries():
     """Test URL reading with max retries exceeded"""
     url = "https://example.com"
 
-    with patch("httpx.get", side_effect=httpx.RequestError("Connection error")):
+    with patch("httpx.get", side_effect=httpx.RequestError("Connection error")) as mock_get:
         reader = URLReader()
+        reader.max_retries = 3
         with pytest.raises(httpx.RequestError):
             reader.read(url)
 
@@ -178,10 +179,9 @@ async def test_async_read_url_http_error():
     mock_client = AsyncMock(spec=httpx.AsyncClient)
     mock_client.__aenter__.return_value.get.return_value = mock_response
 
-    with patch("httpx.AsyncClient", return_value=mock_client):
+    with patch("httpx.AsyncClient", return_value=mock_client), pytest.raises(httpx.HTTPStatusError):
         reader = URLReader()
-        with pytest.raises(httpx.HTTPStatusError):
-            await reader.async_read(url)
+        await reader.async_read(url)
 
 
 @pytest.mark.asyncio

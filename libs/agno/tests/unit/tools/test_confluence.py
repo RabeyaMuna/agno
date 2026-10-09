@@ -65,9 +65,8 @@ def test_init_with_constructor_parameters():
 
 def test_init_with_missing_credentials():
     """Test initialization with missing credentials."""
-    with patch.dict("os.environ", {}, clear=True):
-        with pytest.raises(ValueError):
-            ConfluenceTools()
+    with patch.dict("os.environ", {}, clear=True), pytest.raises(ValueError):
+        ConfluenceTools()
 
 
 # Space Tests
@@ -79,7 +78,7 @@ def test_get_all_space_detail(confluence_tools, mock_confluence):
             {"key": "SPACE2", "name": "Space Two", "type": "personal"},
         ]
     }
-    mock_confluence.get_all_spaces.return_value = mock_spaces
+    mock_confluence.get_all_spaces = Mock(return_value=mock_spaces)
 
     result = confluence_tools.get_all_space_detail()
     assert result == str(mock_spaces["results"])
@@ -94,7 +93,7 @@ def test_get_space_key_existing(confluence_tools, mock_confluence):
             {"key": "SPACE2", "name": "Space Two", "type": "personal"},
         ]
     }
-    mock_confluence.get_all_spaces.return_value = mock_spaces
+    mock_confluence.get_all_spaces = Mock(return_value=mock_spaces)
 
     result = confluence_tools.get_space_key("Space One")
     assert result == "SPACE1"
@@ -109,7 +108,7 @@ def test_get_space_key_not_found(confluence_tools, mock_confluence):
             {"key": "SPACE2", "name": "Space Two", "type": "personal"},
         ]
     }
-    mock_confluence.get_all_spaces.return_value = mock_spaces
+    mock_confluence.get_all_spaces = Mock(return_value=mock_spaces)
 
     result = confluence_tools.get_space_key("Non-existent Space")
     assert result == "No space found"
@@ -126,7 +125,7 @@ def test_get_page_content_success(confluence_tools, mock_confluence):
             "title": "Test Page",
             "body": {"storage": {"value": "<p>Test content</p>"}},
         }
-        mock_confluence.get_page_by_title.return_value = mock_page
+        mock_confluence.get_page_by_title = Mock(return_value=mock_page)
 
         result = confluence_tools.get_page_content("Space One", "Test Page")
         assert json.loads(result) == mock_page
@@ -137,7 +136,7 @@ def test_get_page_content_not_found(confluence_tools, mock_confluence):
     """Test retrieving non-existent page content."""
     # Mock the get_space_key method
     with patch.object(confluence_tools, "get_space_key", return_value="SPACE1"):
-        mock_confluence.get_page_by_title.return_value = None
+        mock_confluence.get_page_by_title = Mock(return_value=None)
 
         result = confluence_tools.get_page_content("Space One", "Non-existent Page")
         assert json.loads(result) == {"error": "Page 'Non-existent Page' not found in space 'Space One'"}
@@ -148,7 +147,7 @@ def test_get_page_content_error(confluence_tools, mock_confluence):
     """Test error handling when retrieving page content."""
     # Mock the get_space_key method
     with patch.object(confluence_tools, "get_space_key", return_value="SPACE1"):
-        mock_confluence.get_page_by_title.side_effect = Exception("API Error")
+        mock_confluence.get_page_by_title = Mock(side_effect=Exception("API Error"))
 
         result = confluence_tools.get_page_content("Space One", "Test Page")
         assert json.loads(result) == {"error": "API Error"}
