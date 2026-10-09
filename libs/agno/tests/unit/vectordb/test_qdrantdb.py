@@ -1,4 +1,4 @@
-from typing import List
+from collections.abc import Sequence
 from unittest.mock import Mock, patch
 
 import pytest
@@ -74,7 +74,7 @@ def qdrant_db(mock_qdrant_client, mock_embedder):
 
 
 @pytest.fixture
-def sample_documents() -> List[Document]:
+def sample_documents() -> Sequence[Document]:
     """Fixture to create sample documents"""
     return [
         Document(
@@ -197,18 +197,18 @@ def test_search(qdrant_db, mock_qdrant_client):
 
         mock_qdrant_client.search.return_value = [result1, result2]
 
-        # Test search
-        results = qdrant_db.search("Thai food", limit=2)
-        assert len(results) == 2
-        assert results[0].name == "tom_kha"
-        assert results[1].name == "green_curry"
+    # Test search
+    results = qdrant_db.search("Thai food", limit=2)
+    assert len(results) == 2
+    assert results[0].name == "tom_kha"
+    assert results[1].name == "green_curry"
 
-        # Verify search was called with correct parameters
-        mock_qdrant_client.search.assert_called_once()
-        args, kwargs = mock_qdrant_client.search.call_args
-        assert kwargs["collection_name"] == "test_collection"
-        assert kwargs["query_vector"] == [0.1] * 768
-        assert kwargs["limit"] == 2
+    # Verify search was called with correct parameters
+    mock_qdrant_client.search.assert_called_once()
+    args, kwargs = mock_qdrant_client.search.call_args
+    assert kwargs["collection_name"] == "test_collection"
+    assert kwargs["query_vector"] == [0.1] * 768
+    assert kwargs["limit"] == 2
 
 
 def test_get_count(qdrant_db, mock_qdrant_client):
@@ -226,8 +226,7 @@ async def test_async_create(mock_embedder):
     """Test async collection creation"""
     db = Qdrant(embedder=mock_embedder, collection="test_collection")
 
-    with patch.object(db, "async_create", return_value=None):
-        await db.async_create()
+    await db.async_create()
 
 
 @pytest.mark.asyncio
@@ -235,10 +234,8 @@ async def test_async_exists(mock_embedder):
     """Test async exists check"""
     db = Qdrant(embedder=mock_embedder, collection="test_collection")
 
-    # Mock the async_exists method directly
-    with patch.object(db, "async_exists", return_value=True):
-        result = await db.async_exists()
-        assert result is True
+    result = await db.async_exists()
+    assert result is True
 
 
 @pytest.mark.asyncio
@@ -248,7 +245,6 @@ async def test_async_search(mock_embedder):
 
     mock_results = [Document(name="test_doc", content="Test content", meta_data={"key": "value"})]
 
-    with patch.object(db, "async_search", return_value=mock_results):
-        results = await db.async_search("test query", limit=1)
-        assert len(results) == 1
-        assert results[0].name == "test_doc"
+    results = await db.async_search("test query", limit=1)
+    assert len(results) == 1
+    assert results[0].name == "test_doc"

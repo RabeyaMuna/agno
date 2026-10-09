@@ -1,6 +1,5 @@
 import os
 import shutil
-from typing import List
 
 import pytest
 
@@ -26,7 +25,7 @@ def lance_db(mock_embedder):
 
     try:
         db.drop()
-    except Exception:
+    except RuntimeError:
         pass
 
     if os.path.exists(TEST_PATH):
