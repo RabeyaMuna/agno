@@ -708,6 +708,7 @@ def test_create_repository(mock_github):
 
     # Mock user and repo creation
     mock_user = MagicMock()
+    mock_user.create_repo = MagicMock()  # Explicitly add missing attribute
     mock_client.get_user.return_value = mock_user
 
     mock_created_repo = MagicMock(spec=Repository)
@@ -733,6 +734,7 @@ def test_create_repository(mock_github):
 
     # Test creating in organization
     mock_org = MagicMock()
+    mock_org.create_repo = MagicMock()  # Explicitly add missing attribute
     mock_client.get_organization.return_value = mock_org
 
     mock_org_repo = MagicMock(spec=Repository)
@@ -1124,12 +1126,12 @@ def test_create_file(mock_github):
     result_data = json.loads(result)
 
     # Check that content was properly encoded to bytes
-    args = mock_repo.create_file.call_args
-    assert args[1]["path"] == "docs/test.md"
-    assert args[1]["message"] == "Add test.md"
-    assert args[1]["branch"] == "main"
+    call_args = mock_repo.create_file.call_args
+    assert call_args[1]["path"] == "docs/test.md"
+    assert call_args[1]["message"] == "Add test.md"
+    assert call_args[1]["branch"] == "main"
     # Content should be bytes
-    assert isinstance(args[1]["content"], bytes)
+    assert isinstance(call_args[1]["content"], bytes)
 
     assert result_data["path"] == "docs/test.md"
     assert result_data["sha"] == "abc123"
