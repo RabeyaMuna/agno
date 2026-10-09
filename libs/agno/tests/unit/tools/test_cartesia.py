@@ -146,6 +146,10 @@ def test_feature_registration(mock_cartesia_client):
 def test_list_voices(cartesia_tools, mock_cartesia_client):
     """Test listing voices correctly handles the pager and extracts data."""
     # Mock client already set up in fixture to return pager
+    mock_cartesia_client.voices.list.return_value = [
+        {"id": "voice1", "name": "Voice One", "description": "Desc 1", "language": "en"},
+        {"id": "voice2", "name": "Voice Two", "description": "Desc 2", "language": "es"},
+    ]
 
     result_json_str = cartesia_tools.list_voices()
     result_data = json.loads(result_json_str)

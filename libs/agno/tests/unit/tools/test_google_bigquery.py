@@ -56,7 +56,7 @@ def test_list_tables_error(bq_tools_instance, mock_bq_client):
     mock_bq_client.list_tables.side_effect = Exception("Network Error")
 
     result = bq_tools_instance.list_tables()
-    assert "Error getting tables: Network Error" == result
+    assert result == "Error getting tables: Network Error"
 
 
 def test_describe_table_success(bq_tools_instance, mock_bq_client):
@@ -111,5 +111,5 @@ def test_run_sql_query_error_in_client_query(bq_tools_instance, mock_bq_client):
     query = "SELECT * FROM some_table"
     result = bq_tools_instance.run_sql_query(query)
 
-    expected_json_string = json.dumps("")
+    expected_json_string = json.dumps("Error while executing SQL: Query Execution Failed")
     assert result == expected_json_string

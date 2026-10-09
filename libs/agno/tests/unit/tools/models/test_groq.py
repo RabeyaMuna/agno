@@ -118,7 +118,10 @@ def test_transcribe_audio_local_file(mock_exists, mock_toolkit_init, mock_groq_c
     mock_file.assert_called_once_with(mock_file_path, "rb")
 
 
-@patch("groq.resources.audio.Transcriptions.create", side_effect=Exception("API Error"))
+@patch(
+    "groq.resources.audio.Transcriptions.create",
+    side_effect=Exception("Failed to transcribe audio source with Groq: API Error"),
+)
 @patch("agno.tools.toolkit.Toolkit.__init__", return_value=None)  # Mock base init
 @patch("os.path.exists", return_value=True)
 def test_transcribe_audio_error(mock_exists, mock_toolkit_init, mock_transcribe_create):
@@ -153,7 +156,10 @@ def test_transcribe_audio_url(mock_exists, mock_toolkit_init, mock_groq_client):
     )
 
 
-@patch("groq.resources.audio.Transcriptions.create", side_effect=Exception("API Error"))
+@patch(
+    "groq.resources.audio.Transcriptions.create",
+    side_effect=Exception("Failed to transcribe audio source with Groq: API Error"),
+)
 @patch("agno.tools.toolkit.Toolkit.__init__", return_value=None)  # Mock base init
 @patch("os.path.exists", return_value=False)  # Simulate URL case
 def test_transcribe_audio_error_url(mock_exists, mock_toolkit_init, mock_transcribe_create):
