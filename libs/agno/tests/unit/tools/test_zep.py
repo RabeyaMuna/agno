@@ -4,6 +4,12 @@ import pytest
 
 from agno.tools.zep import ZepAsyncTools, ZepTools
 
+# Mock the missing import to avoid dependency error
+from unittest.mock import MagicMock
+import sys
+
+sys.modules["zep_cloud.types"] = MagicMock()
+
 # Test data
 MOCK_API_KEY = "test_api_key"
 MOCK_SESSION_ID = "test-session"
