@@ -4,6 +4,14 @@ import pytest
 
 from agno.tools.zep import ZepAsyncTools, ZepTools
 
+# Mock the problematic import from zep_cloud.types to avoid version mismatch
+try:
+    from zep_cloud.types import MemorySearchResult
+except ImportError:
+    # Define a dummy class if the import fails (e.g., older version)
+    class MemorySearchResult:
+        pass
+
 # Test data
 MOCK_API_KEY = "test_api_key"
 MOCK_SESSION_ID = "test-session"

@@ -12,4 +12,4 @@ agent = Agent(
     debug_mode=True,
 )
 
-asyncio.run(agent.aprint_response("Whats happening in France?"))
+asyncio.run(agent.aprint_response("What's happening in France?"))
