@@ -2,6 +2,7 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
+# Import the tools directly from the module to avoid dependency issues
 from agno.tools.zep import ZepAsyncTools, ZepTools
 
 # Test data
