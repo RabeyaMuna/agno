@@ -146,6 +146,7 @@ class MCPTools(Toolkit):
             self.server_params = StdioServerParameters(command=cmd, args=arguments, env=env)
 
         self._client = client
+        self._mcp_tools_list: List[MCPTools] = []
         self._context = None
         self._session_context = None
         self._initialized = False
@@ -182,6 +183,8 @@ class MCPTools(Toolkit):
         read, write = session_params[0:2]
 
         self._session_context = ClientSession(read, write, read_timeout_seconds=timedelta(seconds=client_timeout))
+        if self._session_context is None:
+            raise RuntimeError("Failed to create ClientSession")
         self.session = await self._session_context.__aenter__()
 
         # Initialize with the new session
