@@ -24,6 +24,8 @@ class DocumentKnowledgeBase(AgentKnowledge):
             if isinstance(item, dict) and "document" in item:
                 # Handle document with metadata
                 document = item["document"]
+                if not isinstance(document, Document):
+                    raise ValueError(f"Invalid document type in dict: {type(document)}")
                 config = item.get("metadata", {})
                 if config:
                     log_info(f"Adding metadata {config} to document: {document.name}")
@@ -63,6 +65,8 @@ class DocumentKnowledgeBase(AgentKnowledge):
             if isinstance(item, dict) and "document" in item:
                 # Handle document with metadata
                 document = item["document"]
+                if not isinstance(document, Document):
+                    raise ValueError(f"Invalid document type in dict: {type(document)}")
                 config = item.get("metadata", {})
                 if config:
                     log_info(f"Adding metadata {config} to document: {document.name}")
