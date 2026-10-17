@@ -4,6 +4,10 @@ import pytest
 
 from agno.tools.zep import ZepAsyncTools, ZepTools
 
+# Mock the missing import to avoid dependency error during test collection
+with patch('agno.tools.zep.MemorySearchResult', create=True):
+    pass
+
 # Test data
 MOCK_API_KEY = "test_api_key"
 MOCK_SESSION_ID = "test-session"
