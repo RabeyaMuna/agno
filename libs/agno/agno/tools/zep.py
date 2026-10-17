@@ -9,7 +9,7 @@ from agno.utils.log import log_debug, log_error, log_warning
 try:
     from zep_cloud import BadRequestError, NotFoundError
     from zep_cloud.client import AsyncZep, Zep
-    from zep_cloud.types import MemorySearchResult
+    from zep_cloud.types import SearchResult
     from zep_cloud.types import Message as ZepMessage
 except ImportError:
     raise ImportError("`zep-cloud` package not found. Please install it with `pip install zep-cloud`")
