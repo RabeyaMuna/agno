@@ -1,4 +1,3 @@
-import json
 from os import getenv
 from typing import Any, Dict, List, Optional
 
@@ -8,7 +7,8 @@ from agno.utils.log import logger
 try:
     from firecrawl import FirecrawlApp, ScrapeOptions  # type: ignore[attr-defined]
 except ImportError:
-    raise ImportError("`firecrawl-py` not installed. Please install using `pip install firecrawl-py`")
+    FirecrawlApp = None
+    ScrapeOptions = None
 
 
 class CustomJSONEncoder(json.JSONEncoder):
