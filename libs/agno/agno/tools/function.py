@@ -116,7 +116,8 @@ class Function(BaseModel):
 
             # Parse docstring for parameters
             param_descriptions: Dict[str, Any] = {}
-            if docstring := getdoc(c):
+            docstring = getdoc(c)
+            if docstring:
                 parsed_doc = parse(docstring)
                 param_docs = parsed_doc.params
 
