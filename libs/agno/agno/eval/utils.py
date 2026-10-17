@@ -1,7 +1,5 @@
 """Util logic shared by all eval modules"""
 
-from dataclasses import asdict
-from pathlib import Path
 from typing import Optional, Union
 
 from agno.utils.log import logger
@@ -16,6 +14,8 @@ def store_result_in_file(
     """Store the given result in the given file path"""
     try:
         import json
+        from dataclasses import asdict
+        from pathlib import Path
 
         fn_path = Path(file_path.format(name=name, eval_id=eval_id))
         if not fn_path.parent.exists():

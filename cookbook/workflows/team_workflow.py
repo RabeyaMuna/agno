@@ -103,6 +103,6 @@ class TeamWorkflow(Workflow):
 
 if __name__ == "__main__":
     # Run workflow
-    report: Iterator[RunResponse] = TeamWorkflow(debug_mode=False).run()
+    report = TeamWorkflow(debug_mode=False).run()
     # Print the report
     pprint_run_response(report, markdown=True, show_time=True)

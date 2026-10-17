@@ -19,7 +19,7 @@ run_stream: Iterator[RunResponse] = agent.run(
 pprint_run_response(run_stream, markdown=True)
 
 # Print metrics per message
-if agent.run_response.messages:
+if hasattr(agent, 'run_response') and agent.run_response and hasattr(agent.run_response, 'messages') and agent.run_response.messages:
     for message in agent.run_response.messages:
         if message.role == "assistant":
             if message.content:
