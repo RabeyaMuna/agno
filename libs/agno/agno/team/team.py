@@ -6255,13 +6255,13 @@ class Team:
         session_id = session_id or self.session_id
 
         # -*- Read from storage
-        self.read_from_storage(session_id=session_id)  # type: ignore
+        self.read_from_storage(session_id=session_id)
         # -*- Rename session
         self.session_name = session_name
         # -*- Save to storage
-        self.write_to_storage(session_id=session_id, user_id=self.user_id)  # type: ignore
+        self.write_to_storage(session_id=session_id, user_id=self.user_id)
         # -*- Log Agent session
-        self._log_team_session(session_id=session_id, user_id=self.user_id)  # type: ignore
+        self._log_team_session(session_id=session_id, user_id=self.user_id)
 
     def delete_session(self, session_id: str) -> None:
         """Delete the current session and save to storage"""
@@ -6476,7 +6476,7 @@ class Team:
         if self.storage is not None:
             # Load existing session if session_id is provided
             log_debug(f"Reading TeamSession: {self.session_id}")
-            self.read_from_storage(session_id=self.session_id)  # type: ignore
+            self.read_from_storage(session_id=self.session_id)
 
             # Create a new session if it does not exist
             if self.team_session is None:
@@ -6487,11 +6487,11 @@ class Team:
                     self.initialize_team(session_id=self.session_id)
                 # write_to_storage() will create a new TeamSession
                 # and populate self.team_session with the new session
-                self.write_to_storage(session_id=self.session_id, user_id=self.user_id)  # type: ignore
+                self.write_to_storage(session_id=self.session_id, user_id=self.user_id)
                 if self.team_session is None:
                     raise Exception("Failed to create new TeamSession in storage")
                 log_debug(f"-*- Created TeamSession: {self.team_session.session_id}")
-                self._log_team_session(session_id=self.session_id, user_id=self.user_id)  # type: ignore
+                self._log_team_session(session_id=self.session_id, user_id=self.user_id)
         return self.session_id
 
     def get_messages_for_session(
