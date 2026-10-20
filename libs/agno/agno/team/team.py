@@ -2313,7 +2313,7 @@ class Team:
                 for member in self.members:
                     if isinstance(member, Agent) and member.agent_id is not None:
                         member_markdown[member.agent_id] = True
-                    if isinstance(member, Team) and member.team_id is not None:
+                    elif isinstance(member, Team) and member.team_id is not None:
                         member_markdown[member.team_id] = True
                 team_markdown = True
 
@@ -2321,9 +2321,9 @@ class Team:
                 team_markdown = False
 
             for member in self.members:
-                if member.response_model is not None and isinstance(member, Agent) and member.agent_id is not None:
+                if isinstance(member, Agent) and member.response_model is not None and member.agent_id is not None:
                     member_markdown[member.agent_id] = False  # type: ignore
-                if member.response_model is not None and isinstance(member, Team) and member.team_id is not None:
+                elif isinstance(member, Team) and member.response_model is not None and member.team_id is not None:
                     member_markdown[member.team_id] = False  # type: ignore
 
             # Handle reasoning
@@ -3178,7 +3178,7 @@ class Team:
                 for member in self.members:
                     if isinstance(member, Agent) and member.agent_id is not None:
                         member_markdown[member.agent_id] = True
-                    if isinstance(member, Team) and member.team_id is not None:
+                    elif isinstance(member, Team) and member.team_id is not None:
                         member_markdown[member.team_id] = True
                 team_markdown = True
 
@@ -3186,9 +3186,9 @@ class Team:
                 team_markdown = False
 
             for member in self.members:
-                if member.response_model is not None and isinstance(member, Agent) and member.agent_id is not None:
+                if isinstance(member, Agent) and member.response_model is not None and member.agent_id is not None:
                     member_markdown[member.agent_id] = False  # type: ignore
-                if member.response_model is not None and isinstance(member, Team) and member.team_id is not None:
+                elif isinstance(member, Team) and member.response_model is not None and member.team_id is not None:
                     member_markdown[member.team_id] = False  # type: ignore
 
             # Handle reasoning
@@ -3651,13 +3651,13 @@ class Team:
                 for member in self.members:
                     if isinstance(member, Agent) and member.agent_id is not None:
                         member_markdown[member.agent_id] = True  # type: ignore
-                    if isinstance(member, Team) and member.team_id is not None:
+                    elif isinstance(member, Team) and member.team_id is not None:
                         member_markdown[member.team_id] = True  # type: ignore
 
             for member in self.members:
-                if member.response_model is not None and isinstance(member, Agent) and member.agent_id is not None:
+                if isinstance(member, Agent) and member.response_model is not None and member.agent_id is not None:
                     member_markdown[member.agent_id] = False  # type: ignore
-                if member.response_model is not None and isinstance(member, Team) and member.team_id is not None:
+                elif isinstance(member, Team) and member.response_model is not None and member.team_id is not None:
                     member_markdown[member.team_id] = False  # type: ignore
 
             # Final panels assembly - we'll recreate the panels from scratch to ensure correct order
@@ -4751,7 +4751,7 @@ class Team:
                 system_message_content += f"{indent * ' '} - ID: {url_safe_member_id}\n"
                 if member.members is not None:
                     system_message_content += member.get_members_system_message_content(indent=indent + 2)
-            else:
+            elif isinstance(member, Agent):
                 system_message_content += f"{indent * ' '} - Agent {idx + 1}:\n"
                 if url_safe_member_id is not None:
                     system_message_content += f"{indent * ' '}   - ID: {url_safe_member_id}\n"
@@ -6166,7 +6166,8 @@ class Team:
         """
         # First check direct members
         for i, member in enumerate(self.members):
-            if member.name or member.agent_id is not None:
+            # Check if member has a name or agent_id attribute (Agent) before accessing
+            if hasattr(member, 'agent_id') and member.agent_id is not None or member.name is not None:
                 url_safe_member_id = self._get_member_id(member)
                 if url_safe_member_id == member_id:
                     return i, member
