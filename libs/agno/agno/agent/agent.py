@@ -3838,7 +3838,7 @@ class Agent:
         if self.team_session_state is not None and len(self.team_session_state) > 0:
             session_data["team_session_state"] = self.team_session_state
         if self.session_metrics is not None:
-            session_data["session_metrics"] = asdict(self.session_metrics) if self.session_metrics is not None else None
+            session_data["session_metrics"] = asdict(self.session_metrics)
         if self.team_data is not None:
             session_data["team_data"] = self.team_data
         if self.images is not None:
@@ -6080,7 +6080,7 @@ class Agent:
         if parser_model_response_message is not None:
             run_messages.messages.append(parser_model_response_message)
             model_response.parsed = parser_model_response.parsed
-            model_response.content = parser_model_response.content
+            model_response.content = parser_model_response.content  # type: ignore
         else:
             log_warning("Unable to parse response with parser model")
 
@@ -7113,7 +7113,7 @@ class Agent:
                             escaped_content = escape_markdown_tags(run_response.content, tags_to_include_in_markdown)
                             response_content_batch = Markdown(escaped_content)
                         else:
-                            response_content_batch = run_response.get_content_as_string(indent=4)
+                            response_content_batch = run_response.get_content_as_string(indent=4)  # type: ignore
                     elif self.response_model is not None and isinstance(run_response.content, BaseModel):
                         try:
                             response_content_batch = JSON(
