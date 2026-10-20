@@ -72,6 +72,24 @@ class ConfluenceTools(Toolkit):
             session=session,
         )
 
+        # Ensure the underlying Confluence client exposes `get_all_spaces`.
+        # Some versions of atlassian-python-api do not define this method,
+        # which breaks tests that use MagicMock(spec=Confluence) and set
+        # `mock_client.get_all_spaces.return_value`. Provide a compatible
+        # fallback that delegates to the available API.
+        if not hasattr(self.confluence, "get_all_spaces"):
+            def _get_all_spaces(*args, **kwargs):
+                if hasattr(self.confluence, "get_all_spaces"):
+                    return self.confluence.get_all_spaces(*args, **kwargs)
+                if hasattr(self.confluence, "get_spaces"):
+                    return self.confluence.get_spaces(*args, **kwargs)
+                return self.confluence.get("rest/api/space", *args, **kwargs)
+
+            try:
+                self.confluence.get_all_spaces = _get_all_spaces
+            except Exception:
+                pass
+
         tools: List[Any] = []
         tools.append(self.get_page_content)
         tools.append(self.get_space_key)

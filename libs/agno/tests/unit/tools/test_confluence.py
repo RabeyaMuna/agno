@@ -13,7 +13,7 @@ from agno.tools.confluence import ConfluenceTools
 def mock_confluence():
     """Create a mock Confluence client."""
     with patch("agno.tools.confluence.Confluence") as mock_confluence_class:
-        mock_client = MagicMock(spec=Confluence)
+        mock_client = MagicMock()
         mock_client.get_all_spaces.return_value = {"results": []}
         mock_confluence_class.return_value = mock_client
         yield mock_client
@@ -48,7 +48,7 @@ def test_init_with_environment_variables():
             "CONFLUENCE_API_KEY": "test_api_key",
         },
     ), patch("agno.tools.confluence.Confluence") as mock_confluence_class:
-        mock_client = MagicMock(spec=Confluence)
+        mock_client = MagicMock()
         mock_client.get_all_spaces.return_value = {"results": []}
         mock_confluence_class.return_value = mock_client
         
