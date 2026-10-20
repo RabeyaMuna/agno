@@ -83,7 +83,9 @@ class CosmosMongoDb(MongoDb):
         if self._collection is None:
             if self._client is None:
                 self._get_client()
-
+            # Ensure _db is initialized
+            if self._db is None:
+                raise RuntimeError("Database not initialized. Ensure _get_client() sets self._db.")
             self._collection = self._db.get_collection(self.collection_name)
             log_info(f"Using collection: {self.collection_name}")
         return self._collection
