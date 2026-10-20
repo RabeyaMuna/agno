@@ -3451,13 +3451,14 @@ class Agent:
         from agno.document import Document
 
         # Validate the filters against known valid filter keys
-        valid_filters, invalid_keys = self.knowledge.validate_filters(filters)  # type: ignore
+        if self.knowledge is None:
+            return None
+        valid_filters, invalid_keys = self.knowledge.validate_filters(filters)
 
         # Warn about invalid filter keys
         if invalid_keys:
-            # type: ignore
             log_warning(f"Invalid filter keys provided: {invalid_keys}. These filters will be ignored.")
-            log_info(f"Valid filter keys are: {self.knowledge.valid_metadata_filters}")  # type: ignore
+            log_info(f"Valid filter keys are: {self.knowledge.valid_metadata_filters}")
 
             # Only use valid filters
             filters = valid_filters
