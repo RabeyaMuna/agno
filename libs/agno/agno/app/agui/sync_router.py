@@ -32,8 +32,12 @@ def run_agent(agent: Agent, run_input: RunAgentInput) -> Iterator[BaseEvent]:
         yield RunStartedEvent(type=EventType.RUN_STARTED, thread_id=run_input.thread_id, run_id=run_id)
 
         # Request streaming response from agent
+        # The Agent.run method expects a single message or a list of messages.
+        # convert_agui_messages_to_agno_messages returns a list of Message objects.
+        # If the list contains only one message, pass it directly; otherwise pass the list.
+        agno_input = messages[0] if len(messages) == 1 else messages
         response_stream = agent.run(
-            messages=messages,
+            messages=agno_input,
             session_id=run_input.thread_id,
             stream=True,
             stream_intermediate_steps=True,
@@ -60,8 +64,12 @@ def run_team(team: Team, input: RunAgentInput) -> Iterator[BaseEvent]:
         yield RunStartedEvent(type=EventType.RUN_STARTED, thread_id=input.thread_id, run_id=run_id)
 
         # Request streaming response from team
+        # The Team.run method expects a single message or a list of messages.
+        # convert_agui_messages_to_agno_messages returns a list of Message objects.
+        # If the list contains only one message, pass it directly; otherwise pass the list.
+        agno_input = messages[0] if len(messages) == 1 else messages
         response_stream = team.run(
-            messages=messages,
+            messages=agno_input,
             session_id=input.thread_id,
             stream=True,
             stream_intermediate_steps=True,
