@@ -4,7 +4,7 @@ from typing import List, Optional
 from agno.document import Document
 from agno.knowledge.wikipedia import WikipediaKnowledgeBase
 from agno.tools import Toolkit
-from agno.utils.log import log_debug, log_info
+from agno.utils.log import log_debug
 
 
 class WikipediaTools(Toolkit):
@@ -51,6 +51,10 @@ class WikipediaTools(Toolkit):
             raise ImportError(
                 "The `wikipedia` package is not installed. Please install it via `pip install wikipedia`."
             )
+
+        from agno.utils.logger import log_info
+        from agno.knowledge.base import Document
+        import json
 
         log_info(f"Searching wikipedia for: {query}")
         return json.dumps(Document(name=query, content=wikipedia.summary(query)).to_dict())
