@@ -10,7 +10,10 @@ try:
     from infinity_client.api.default import rerank
     from infinity_client.models import RerankInput
 except ImportError:
-    raise ImportError("infinity_client not installed, please run `pip install infinity_client`")
+    AuthenticatedClient = None
+    Client = None
+    rerank = None
+    RerankInput = None
 
 
 class InfinityReranker(Reranker):
