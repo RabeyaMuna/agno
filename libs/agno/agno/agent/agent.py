@@ -375,7 +375,7 @@ class Agent:
         self.session_id = session_id
         self.session_name = session_name
         self.session_state = session_state
-        self.search_previous_sessions_history = search_previous_sessions_history
+        self.search_previous_sessions_history = search_previous_sessions_history or False or False
         self.number_of_sessions = number_of_sessions
 
         self.context = context
@@ -385,9 +385,9 @@ class Agent:
         self.memory = memory
         self.enable_agentic_memory = enable_agentic_memory
         self.enable_user_memories = enable_user_memories
-        self.add_memory_references = add_memory_references
+        self.add_memory_references = add_memory_references or False
         self.enable_session_summaries = enable_session_summaries
-        self.add_session_summary_references = add_session_summary_references
+        self.add_session_summary_references = add_session_summary_references or False
 
         self.add_history_to_messages = add_history_to_messages
         self.num_history_responses = num_history_responses
@@ -395,7 +395,7 @@ class Agent:
 
         self.knowledge = knowledge
         self.knowledge_filters = knowledge_filters
-        self.enable_agentic_knowledge_filters = enable_agentic_knowledge_filters
+        self.enable_agentic_knowledge_filters = enable_agentic_knowledge_filters or False
         self.add_references = add_references
         self.retriever = retriever
         self.references_format = references_format
@@ -447,12 +447,12 @@ class Agent:
         self.response_model = response_model
         self.parse_response = parse_response
 
-        self.structured_outputs = structured_outputs
+        self.structured_outputs = structured_outputs or False
 
         self.use_json_mode = use_json_mode
         self.save_response_to_file = save_response_to_file
 
-        self.stream = stream
+        self.stream = stream or False
         self.stream_intermediate_steps = stream_intermediate_steps
 
         self.team = team
@@ -2080,7 +2080,7 @@ class Agent:
         if self.search_previous_sessions_history:
             agent_tools.append(
                 self.get_previous_sessions_messages_function(
-                    number_of_sessions=self.number_of_sessions,
+                    number_of_sessions=self.number_of_sessions or 0,
                 )
             )
 
@@ -2318,7 +2318,7 @@ class Agent:
         if self.team_session_state is not None and len(self.team_session_state) > 0:
             session_data["team_session_state"] = self.team_session_state
         if self.session_metrics is not None:
-            session_data["session_metrics"] = asdict(self.session_metrics) if self.session_metrics is not None else None
+            session_data["session_metrics"] = asdict(self.session_metrics)
         if self.team_data is not None:
             session_data["team_data"] = self.team_data
         if self.images is not None:
@@ -4879,7 +4879,7 @@ class Agent:
             stream = False
 
         stream_intermediate_steps = stream_intermediate_steps or self.stream_intermediate_steps
-        stream = stream or self.stream or False
+        stream = bool(stream or self.stream or False)
 
         if stream:
             _response_content: str = ""
@@ -5280,7 +5280,7 @@ class Agent:
             stream = False
 
         stream_intermediate_steps = stream_intermediate_steps or self.stream_intermediate_steps
-        stream = stream or self.stream or False
+        stream = bool(stream or self.stream or False)
         if stream:
             _response_content: str = ""
             _response_thinking: str = ""
