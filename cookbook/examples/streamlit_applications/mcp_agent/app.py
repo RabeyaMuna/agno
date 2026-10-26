@@ -110,9 +110,11 @@ async def main() -> None:
             # Loop through the runs and add the messages to the messages list
             for _run in agent_runs:
                 if _run.message is not None:
-                    add_message(_run.message.role, _run.message.content)
+                    add_message(_run.message.role, str(_run.message.content))
                 if _run.response is not None:
-                    add_message("assistant", _run.response.content, _run.response.tools)
+                    add_message(
+                        "assistant", str(_run.response.content), _run.response.tools
+                    )
         else:
             # If there are no runs, create an empty messages list
             logger.debug("No run history found")

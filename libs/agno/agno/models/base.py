@@ -852,8 +852,9 @@ class Model(ABC):
             assistant_message.metrics.stop_timer()
 
             # Populate assistant message from stream data
-            if stream_data.response_content:
-                assistant_message.content = stream_data.response_content
+            if stream_data.response_content is not None:
+                # Ensure content is a string to avoid propagating non-str types (e.g., ints)
+                assistant_message.content = str(stream_data.response_content)
             if stream_data.response_thinking:
                 assistant_message.thinking = stream_data.response_thinking
             if stream_data.response_redacted_thinking:
@@ -932,7 +933,10 @@ class Model(ABC):
         should_yield = False
         # Update stream_data content
         if model_response_delta.content is not None:
-            stream_data.response_content += model_response_delta.content
+            if stream_data.response_content is None:
+                stream_data.response_content = ""
+            # Coerce appended content to string to avoid propagating non-str types
+            stream_data.response_content += str(model_response_delta.content)
             should_yield = True
 
         if model_response_delta.thinking is not None:
@@ -1050,9 +1054,18 @@ class Model(ABC):
         self, fc: FunctionCall, success: bool, output: Optional[Union[List[Any], str]], timer: Timer
     ) -> Message:
         """Create a function call result message."""
+        # Ensure content is a string to avoid propagating non-str types (e.g., ints)
+        if success:
+            if output is None:
+                content = ""
+            else:
+                content = output if isinstance(output, str) else str(output)
+        else:
+            content = fc.error if isinstance(fc.error, str) else (str(fc.error) if fc.error is not None else "")
+
         return Message(
             role=self.tool_message_role,
-            content=output if success else fc.error,
+            content=content,
             tool_call_id=fc.call_id,
             tool_name=fc.function.name,
             tool_args=fc.arguments,

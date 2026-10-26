@@ -529,9 +529,32 @@ class FunctionCall(BaseModel):
                 execution_chain = self._build_nested_execution_chain(entrypoint_args=entrypoint_args)
                 result = execution_chain(self.function.name, self.function.entrypoint, self.arguments or {})
             else:
-                arguments = entrypoint_args
+                # Merge entrypoint args and call-time arguments, but sanitize if enabled
+                def _sanitize_value(v):
+                    if isinstance(v, dict):
+                        return {k: _sanitize_value(val) for k, val in v.items()}
+                    if isinstance(v, list):
+                        return [_sanitize_value(i) for i in v]
+                    if isinstance(v, tuple):
+                        return tuple(_sanitize_value(i) for i in v)
+                    # Convert common primitive types to strings to avoid type mismatches
+                    if isinstance(v, (int, float, bool)) or v is None:
+                        return str(v)
+                    return v
+
+                arguments = dict(entrypoint_args) if entrypoint_args is not None else {}
                 if self.arguments is not None:
-                    arguments.update(self.arguments)
+                    # Merge without mutating the original dicts
+                    merged = dict(arguments)
+                    merged.update(self.arguments)
+                else:
+                    merged = arguments
+
+                if getattr(self.function, "sanitize_arguments", False):
+                    arguments = _sanitize_value(merged)
+                else:
+                    arguments = merged
+
                 result = self.function.entrypoint(**arguments)
 
             # Handle generator case
@@ -712,10 +735,29 @@ class FunctionCall(BaseModel):
                 execution_chain = await self._build_nested_execution_chain_async(entrypoint_args)
                 self.result = await execution_chain(self.function.name, self.function.entrypoint, self.arguments or {})
             else:
-                if self.arguments is None or self.arguments == {}:
-                    result = self.function.entrypoint(**entrypoint_args)
+                # Local sanitizer to coerce common primitive types to strings when enabled
+                def _sanitize_value(v):
+                    if isinstance(v, dict):
+                        return {k: _sanitize_value(val) for k, val in v.items()}
+                    if isinstance(v, list):
+                        return [_sanitize_value(i) for i in v]
+                    if isinstance(v, tuple):
+                        return tuple(_sanitize_value(i) for i in v)
+                    if isinstance(v, (int, float, bool)) or v is None:
+                        return str(v)
+                    return v
+
+                # Merge args safely without mutating originals
+                merged = dict(entrypoint_args) if entrypoint_args is not None else {}
+                if self.arguments:
+                    merged.update(self.arguments)
+
+                if getattr(self.function, "sanitize_arguments", False):
+                    call_args = _sanitize_value(merged)
                 else:
-                    result = self.function.entrypoint(**entrypoint_args, **self.arguments)
+                    call_args = merged
+
+                result = self.function.entrypoint(**call_args)
 
                 if isasyncgen(self.function.entrypoint) or isasyncgenfunction(self.function.entrypoint):
                     self.result = result  # Store async generator directly

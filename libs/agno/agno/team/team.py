@@ -647,7 +647,11 @@ class Team:
                 elif isinstance(message, Message):
                     self.run_input = message.to_dict()
                 else:
-                    self.run_input = message
+                    # Normalize non-string inputs to string to avoid non-str content (e.g., ints)
+                    try:
+                        self.run_input = str(message)
+                    except Exception:
+                        self.run_input = message
 
             # Prepare tools
             _tools: List[Union[Toolkit, Callable, Function, Dict]] = []
@@ -1114,7 +1118,11 @@ class Team:
                 elif isinstance(message, Message):
                     self.run_input = message.to_dict()
                 else:
-                    self.run_input = message
+                    # Normalize non-string inputs to string to avoid non-str content (e.g., ints)
+                    try:
+                        self.run_input = str(message)
+                    except Exception:
+                        self.run_input = message
 
             # Prepare tools
             _tools: List[Union[Function, Callable, Toolkit, Dict]] = []
@@ -1509,6 +1517,21 @@ class Team:
                 if _rm.add_to_agent_memory:
                     messages_for_memory.append(_rm)
             if len(messages_for_memory) > 0:
+                # Ensure message contents are strings before adding to memory
+                for m in messages_for_memory:
+                    try:
+                        # Prefer the canonical content string when available
+                        if hasattr(m, "get_content_string"):
+                            m.content = str(m.get_content_string())
+                        else:
+                            m.content = str(getattr(m, "content", ""))
+                    except Exception:
+                        # Fallback: coerce whatever content exists to a string
+                        try:
+                            m.content = str(getattr(m, "content", ""))
+                        except Exception:
+                            pass
+
                 self.memory.add_messages(messages=messages_for_memory)  # type: ignore
 
             team_run = TeamRun(response=run_response)
@@ -1563,6 +1586,19 @@ class Team:
                 if _rm.add_to_agent_memory:
                     messages_for_memory.append(_rm)
             if len(messages_for_memory) > 0:
+                # Ensure message contents are strings before adding to memory
+                for m in messages_for_memory:
+                    try:
+                        if hasattr(m, "get_content_string"):
+                            m.content = str(m.get_content_string())
+                        else:
+                            m.content = str(getattr(m, "content", ""))
+                    except Exception:
+                        try:
+                            m.content = str(getattr(m, "content", ""))
+                        except Exception:
+                            pass
+
                 self.memory.add_messages(messages=messages_for_memory)  # type: ignore
 
             team_run = TeamRun(response=run_response)
@@ -5801,7 +5837,12 @@ class Team:
                         stream=True,
                     )
                 for member_agent_run_response_chunk in member_agent_run_response_stream:
-                    yield member_agent_run_response_chunk.content or ""
+                    # Normalize chunk content to string to avoid non-str types (e.g., ints)
+                    yield (
+                        str(member_agent_run_response_chunk.content)
+                        if member_agent_run_response_chunk.content is not None
+                        else ""
+                    )
             else:
                 if not member_agent.knowledge_filters and member_agent.knowledge:
                     member_agent_run_response = member_agent.run(
@@ -5938,7 +5979,12 @@ class Team:
                     )
                 async for member_agent_run_response_chunk in member_agent_run_response_stream:
                     check_if_run_cancelled(member_agent_run_response_chunk)
-                    yield member_agent_run_response_chunk.content or ""
+                    # Normalize chunk content to string to avoid non-str types (e.g., ints)
+                    yield (
+                        str(member_agent_run_response_chunk.content)
+                        if member_agent_run_response_chunk.content is not None
+                        else ""
+                    )
             else:
                 if not member_agent.knowledge_filters and member_agent.knowledge:
                     member_agent_run_response = await member_agent.arun(
