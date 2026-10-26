@@ -21,7 +21,7 @@ def get_phone_number_id() -> str:
     return phone_number_id
 
 
-def get_media(media_id: str) -> dict:
+def get_media(media_id: str) -> bytes:
     """
     Sends a GET request to the Facebook Graph API to retrieve media information.
 
@@ -40,7 +40,7 @@ def get_media(media_id: str) -> dict:
 
         media_url = data.get("url")
     except requests.exceptions.RequestException as e:
-        return {"error": str(e)}
+        raise e
 
     try:
         response = requests.get(media_url, headers=headers)
@@ -48,10 +48,10 @@ def get_media(media_id: str) -> dict:
         data = response.content
         return data
     except requests.exceptions.RequestException as e:
-        return {"error": str(e)}
+        raise e
 
 
-async def get_media_async(media_id: str) -> dict:
+async def get_media_async(media_id: str) -> bytes:
     """
     Sends a GET request to the Facebook Graph API to retrieve media information.
 
@@ -71,7 +71,7 @@ async def get_media_async(media_id: str) -> dict:
 
         media_url = data.get("url")
     except httpx.HTTPStatusError as e:
-        return {"error": str(e)}
+        raise e
 
     try:
         async with httpx.AsyncClient() as client:
@@ -80,7 +80,7 @@ async def get_media_async(media_id: str) -> dict:
             data = response.content
         return data
     except httpx.HTTPStatusError as e:
-        return {"error": str(e)}
+        raise e
 
 
 def upload_media(media_data: bytes, mime_type: str, filename: str = "file"):

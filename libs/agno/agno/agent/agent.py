@@ -291,7 +291,7 @@ class Agent:
         session_id: Optional[str] = None,
         session_name: Optional[str] = None,
         session_state: Optional[Dict[str, Any]] = None,
-        search_previous_sessions_history: Optional[bool] = False,
+        search_previous_sessions_history: bool = False,
         number_of_sessions: Optional[int] = None,
         context: Optional[Dict[str, Any]] = None,
         add_context: bool = False,
@@ -611,7 +611,7 @@ class Agent:
             tools=self._tools_for_model,
             functions=self._functions_for_model,
             tool_choice=self.tool_choice,
-            tool_call_limit=self.tool_call_limit,
+            tool_call_limit=(self.tool_call_limit if self.tool_call_limit is not None else 0),
         )
 
         self._update_run_response(model_response=model_response, run_response=run_response, run_messages=run_messages)
@@ -807,6 +807,8 @@ class Agent:
         # If no retries are set, use the agent's default retries
         if retries is None:
             retries = self.retries
+        # Ensure retries is an int for subsequent arithmetic
+        retries = int(retries)
 
         # Use stream override value when necessary
         if stream is None:
@@ -821,8 +823,10 @@ class Agent:
         if stream is False:
             stream_intermediate_steps = False
 
-        self.stream = self.stream or (stream and self.is_streamable)
-        self.stream_intermediate_steps = self.stream_intermediate_steps or (stream_intermediate_steps and self.stream)
+        self.stream = bool(self.stream or (stream and self.is_streamable))
+        self.stream_intermediate_steps = bool(
+            self.stream_intermediate_steps or (stream_intermediate_steps and self.stream)
+        )
 
         # Use the default user_id and session_id when necessary
         if user_id is None:
@@ -1005,7 +1009,7 @@ class Agent:
             tools=self._tools_for_model,
             functions=self._functions_for_model,
             tool_choice=self.tool_choice,
-            tool_call_limit=self.tool_call_limit,
+            tool_call_limit=(self.tool_call_limit if self.tool_call_limit is not None else 0),
         )
 
         self._update_run_response(model_response=model_response, run_response=run_response, run_messages=run_messages)
@@ -1175,6 +1179,8 @@ class Agent:
         # If no retries are set, use the agent's default retries
         if retries is None:
             retries = self.retries
+        # Ensure retries is an int for subsequent arithmetic
+        retries = int(retries)
 
         # Use stream override value when necessary
         if stream is None:
@@ -1189,8 +1195,10 @@ class Agent:
         if stream is False:
             stream_intermediate_steps = False
 
-        self.stream = self.stream or (stream and self.is_streamable)
-        self.stream_intermediate_steps = self.stream_intermediate_steps or (stream_intermediate_steps and self.stream)
+        self.stream = bool(self.stream or (stream and self.is_streamable))
+        self.stream_intermediate_steps = bool(
+            self.stream_intermediate_steps or (stream_intermediate_steps and self.stream)
+        )
 
         # Use the default user_id and session_id when necessary
         if user_id is None:
@@ -2080,7 +2088,7 @@ class Agent:
         if self.search_previous_sessions_history:
             agent_tools.append(
                 self.get_previous_sessions_messages_function(
-                    number_of_sessions=self.number_of_sessions,
+                    number_of_sessions=(self.number_of_sessions or 0),
                 )
             )
 
@@ -3504,7 +3512,10 @@ class Agent:
                     retriever_kwargs = {"agent": self}
                 if "filters" in sig.parameters:
                     retriever_kwargs["filters"] = filters
-                retriever_kwargs.update({"query": query, "num_documents": num_documents, **kwargs})
+                # Always include query; only include num_documents when it is not None
+                retriever_kwargs.update({"query": query, **kwargs})
+                if num_documents is not None:
+                    retriever_kwargs["num_documents"] = num_documents
                 return self.retriever(**retriever_kwargs)
             except Exception as e:
                 log_warning(f"Retriever failed: {e}")
@@ -3565,7 +3576,10 @@ class Agent:
                     retriever_kwargs = {"agent": self}
                 if "filters" in sig.parameters:
                     retriever_kwargs["filters"] = filters
-                retriever_kwargs.update({"query": query, "num_documents": num_documents, **kwargs})
+                # Always include query; only include num_documents when it is not None
+                retriever_kwargs.update({"query": query, **kwargs})
+                if num_documents is not None:
+                    retriever_kwargs["num_documents"] = num_documents
                 result = self.retriever(**retriever_kwargs)
 
                 if isawaitable(result):
@@ -4098,7 +4112,7 @@ class Agent:
             reasoning_messages: List[Message] = []
             all_reasoning_steps: List[ReasoningStep] = []
             log_debug("Starting Reasoning", center=True, symbol="=")
-            while next_action == NextAction.CONTINUE and step_count < self.reasoning_max_steps:
+            while next_action == NextAction.CONTINUE and step_count < (self.reasoning_max_steps or 0):
                 log_debug(f"Step {step_count}", center=True, symbol="=")
                 try:
                     # Run the reasoning agent
@@ -4308,7 +4322,7 @@ class Agent:
             reasoning_messages: List[Message] = []
             all_reasoning_steps: List[ReasoningStep] = []
             log_debug("Starting Reasoning", center=True, symbol="=")
-            while next_action == NextAction.CONTINUE and step_count < self.reasoning_max_steps:
+            while next_action == NextAction.CONTINUE and step_count < (self.reasoning_max_steps or 0):
                 log_debug(f"Step {step_count}", center=True, symbol="=")
                 step_count += 1
                 try:
