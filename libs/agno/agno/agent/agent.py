@@ -1113,7 +1113,7 @@ class Agent:
                     if self.stream and self.stream is True:
                         log_debug("Setting stream=False as response_model is set")
                         self.stream = False
-                    run_response: RunResponse = next(
+                    run_response = next(
                         self._run(
                             message=message,
                             stream=False,
