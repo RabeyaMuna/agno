@@ -584,7 +584,7 @@ class Team:
 
         self.initialize_team(session_id=session_id)
 
-        effective_filters = {}
+        effective_filters: Optional[Dict[str, Any]] = None
         # Handle knowledge filters
         if self.knowledge_filters or knowledge_filters:
             """
@@ -6499,7 +6499,7 @@ class Team:
     ) -> Optional[List[Dict[str, Any]]]:
         """Return a list of references from the knowledge base"""
         from agno.document import Document
-        
+
         # Validate the filters against known valid filter keys
         if self.knowledge is not None:
             valid_filters, invalid_keys = self.knowledge.validate_filters(filters)  # type: ignore
@@ -6605,7 +6605,7 @@ class Team:
 
         Priority: Member filters > Run-time filters > Team filters
         """
-        effective_filters = None
+        effective_filters: Optional[Dict[str, Any]] = None
 
         # Start with team-level filters if they exist
         if self.knowledge_filters:
@@ -6616,14 +6616,15 @@ class Team:
             if effective_filters:
                 effective_filters.update(knowledge_filters)
             else:
-                effective_filters = knowledge_filters
+                # make a shallow copy to ensure we have a dict instance
+                effective_filters = knowledge_filters.copy() if knowledge_filters is not None else None
 
         # Finally, apply member-specific filters if they exist
         if member_filters:
             if effective_filters:
                 effective_filters.update(member_filters)
             else:
-                effective_filters = member_filters
+                effective_filters = member_filters.copy() if member_filters is not None else None
 
         return effective_filters
 
