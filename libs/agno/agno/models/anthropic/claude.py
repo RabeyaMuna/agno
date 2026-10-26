@@ -505,6 +505,8 @@ class Claude(Model):
         # Capture citations from the final response
         elif isinstance(response, MessageStopEvent):
             model_response.citations = Citations(raw=[], urls=[], documents=[])
+            if model_response.citations.documents is None:
+                model_response.citations.documents = []
             for block in response.message.content:
                 citations = getattr(block, "citations", None)
                 if not citations:
