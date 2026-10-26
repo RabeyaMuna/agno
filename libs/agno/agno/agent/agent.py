@@ -992,6 +992,11 @@ class Agent:
         index_of_last_user_message = len(run_messages.messages)
 
         # 2. Generate a response from the Model (includes running function calls)
+        # Ensure self.model is initialized and non-None for mypy/type-safety
+        if self.model is None:
+            self.set_default_model()
+        assert self.model is not None
+
         model_response: ModelResponse = await self.model.aresponse(
             messages=run_messages.messages,
             response_format=response_format,
@@ -1641,6 +1646,8 @@ class Agent:
         stream_intermediate_steps: bool = False,
     ) -> AsyncIterator[RunResponse]:
         self.model = cast(Model, self.model)
+        # ensure mypy/type-safety: assert non-None after casting
+        assert self.model is not None
 
         reasoning_state = {
             "reasoning_started": False,
