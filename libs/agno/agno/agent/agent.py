@@ -1096,15 +1096,15 @@ class Agent:
                 when load is not called the reader's document_lists won't be called and metadata filters won't be initialized
                 so we need to call initialize_valid_filters to make sure the filters are initialized
             """
-            if not self.knowledge.valid_metadata_filters:  # type: ignore
-                self.knowledge.initialize_valid_filters()  # type: ignore
+            if self.knowledge is not None and not self.knowledge.valid_metadata_filters:
+                self.knowledge.initialize_valid_filters()
 
             effective_filters = self._get_effective_filters(knowledge_filters)
 
         # Agentic filters are enabled
-        if self.enable_agentic_filters and not self.knowledge.valid_metadata_filters:
+        if self.enable_agentic_filters and self.knowledge is not None and not self.knowledge.valid_metadata_filters:
             # initialize metadata (specially required in case when load is commented out)
-            self.knowledge.initialize_valid_filters()  # type: ignore
+            self.knowledge.initialize_valid_filters()
 
         # If no retries are set, use the agent's default retries
         if retries is None:
@@ -1730,15 +1730,15 @@ class Agent:
                 when load is not called the reader's document_lists won't be called and metadata filters won't be initialized
                 so we need to call initialize_valid_filters to make sure the filters are initialized
             """
-            if not self.knowledge.valid_metadata_filters:  # type: ignore
-                self.knowledge.initialize_valid_filters()  # type: ignore
+            if self.knowledge is not None and not self.knowledge.valid_metadata_filters:
+                self.knowledge.initialize_valid_filters()
 
             effective_filters = self._get_effective_filters(knowledge_filters)
 
         # Agentic filters are enabled
-        if self.enable_agentic_filters and not self.knowledge.valid_metadata_filters:
+        if self.enable_agentic_filters and self.knowledge is not None and not self.knowledge.valid_metadata_filters:
             # initialize metadata (specially required in case when load is commented out)
-            self.knowledge.initialize_valid_filters()  # type: ignore
+            self.knowledge.initialize_valid_filters()
 
         # If no retries are set, use the agent's default retries
         if retries is None:
@@ -2755,7 +2755,8 @@ class Agent:
 
         # 3.2.4 Add information about agentic filters if enabled
         if self.knowledge is not None and self.enable_agentic_filters:
-            valid_filters = getattr(self.knowledge, "valid_metadata_filters", None)
+            k = self.knowledge
+            valid_filters = getattr(k, "valid_metadata_filters", None)
             if valid_filters:
                 valid_filters_str = ", ".join(valid_filters)
                 additional_information.append(
@@ -3451,13 +3452,17 @@ class Agent:
         from agno.document import Document
 
         # Validate the filters against known valid filter keys
-        valid_filters, invalid_keys = self.knowledge.validate_filters(filters)  # type: ignore
+        if self.knowledge is not None:
+            valid_filters, invalid_keys = self.knowledge.validate_filters(filters)  # type: ignore
+        else:
+            valid_filters, invalid_keys = (filters if filters is not None else {}, [])
 
         # Warn about invalid filter keys
         if invalid_keys:
             # type: ignore
             log_warning(f"Invalid filter keys provided: {invalid_keys}. These filters will be ignored.")
-            log_info(f"Valid filter keys are: {self.knowledge.valid_metadata_filters}")  # type: ignore
+            if self.knowledge is not None:
+                log_info(f"Valid filter keys are: {self.knowledge.valid_metadata_filters}")  # type: ignore
 
             # Only use valid filters
             filters = valid_filters
@@ -3509,12 +3514,16 @@ class Agent:
         from agno.document import Document
 
         # Validate the filters against known valid filter keys
-        valid_filters, invalid_keys = self.knowledge.validate_filters(filters)  # type: ignore
+        if self.knowledge is not None:
+            valid_filters, invalid_keys = self.knowledge.validate_filters(filters)  # type: ignore
+        else:
+            valid_filters, invalid_keys = (filters if filters is not None else {}, [])
 
         # Warn about invalid filter keys
         if invalid_keys:  # type: ignore
             log_warning(f"Invalid filter keys provided: {invalid_keys}. These filters will be ignored.")
-            log_info(f"Valid filter keys are: {self.knowledge.valid_metadata_filters}")  # type: ignore
+            if self.knowledge is not None:
+                log_info(f"Valid filter keys are: {self.knowledge.valid_metadata_filters}")  # type: ignore
 
             # Only use valid filters
             filters = valid_filters
@@ -5670,7 +5679,12 @@ class Agent:
 
     def _append_to_reasoning_content(self, content: str) -> None:
         """Helper to append content to the reasoning_content field."""
-        if not hasattr(self.run_response, "reasoning_content") or not self.run_response.reasoning_content:  # type: ignore
+        # Ensure run_response exists before accessing or mutating its attributes
+        if self.run_response is None:
+            # Nothing to append to; silently ignore to avoid raising AttributeError
+            return
+
+        if not getattr(self.run_response, "reasoning_content", None):  # type: ignore
             self.run_response.reasoning_content = content  # type: ignore
         else:
             self.run_response.reasoning_content += content  # type: ignore
