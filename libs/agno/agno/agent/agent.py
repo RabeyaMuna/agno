@@ -1038,7 +1038,7 @@ class Agent:
                 self.run_messages = run_messages
 
                 if stream and self.is_streamable:
-                    response_iterator = self._run_stream(
+                    return self._run_stream(
                         run_response=run_response,
                         run_messages=run_messages,
                         message=message,
@@ -1048,9 +1048,8 @@ class Agent:
                         messages=messages,
                         stream_intermediate_steps=stream_intermediate_steps,
                     )
-                    return response_iterator
                 else:
-                    response = self._run(
+                    return self._run(
                         run_response=run_response,
                         run_messages=run_messages,
                         message=message,
@@ -1059,7 +1058,6 @@ class Agent:
                         response_format=response_format,
                         messages=messages,
                     )
-                    return response
             except ModelProviderError as e:
                 log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
                 if isinstance(e, StopAgentRun):
@@ -1456,7 +1454,7 @@ class Agent:
 
                 # Pass the new run_response to _arun
                 if stream and self.is_streamable:
-                    response_iterator = self._arun_stream(
+                    return self._arun_stream(
                         run_response=run_response,
                         run_messages=run_messages,
                         message=message,
@@ -1465,8 +1463,7 @@ class Agent:
                         response_format=response_format,
                         messages=messages,
                         stream_intermediate_steps=stream_intermediate_steps,
-                    )  # type: ignore[assignment]
-                    return response_iterator
+                    )
                 else:
                     return await self._arun(
                         run_response=run_response,
@@ -1735,7 +1732,7 @@ class Agent:
 
             try:
                 if stream and self.is_streamable:
-                    response_iterator = self._continue_run_stream(
+                    return self._continue_run_stream(
                         run_response=run_response,
                         run_messages=run_messages,
                         message=user_message,
@@ -1745,10 +1742,8 @@ class Agent:
                         messages=messages,
                         stream_intermediate_steps=stream_intermediate_steps,
                     )
-
-                    return response_iterator
                 else:
-                    response = self._continue_run(
+                    return self._continue_run(
                         run_response=run_response,
                         run_messages=run_messages,
                         message=user_message,
@@ -1757,7 +1752,6 @@ class Agent:
                         response_format=response_format,
                         messages=messages,
                     )
-                    return response
             except ModelProviderError as e:
                 log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
                 if isinstance(e, StopAgentRun):
@@ -2152,7 +2146,7 @@ class Agent:
 
             try:
                 if stream and self.is_streamable:
-                    response_iterator = self._acontinue_run_stream(
+                    return self._acontinue_run_stream(
                         run_response=run_response,
                         run_messages=run_messages,
                         message=user_message,
@@ -2162,8 +2156,6 @@ class Agent:
                         messages=messages,
                         stream_intermediate_steps=stream_intermediate_steps,
                     )
-
-                    return response_iterator
                 else:
                     return await self._acontinue_run(
                         run_response=run_response,
@@ -7034,7 +7026,7 @@ class Agent:
                 if render:
                     live_log.update(Group(*panels))
 
-                result = await self.arun(
+                result: AsyncIterator[RunResponseEvent] = await self.arun(
                     message=message,
                     messages=messages,
                     session_id=session_id,
@@ -7052,15 +7044,16 @@ class Agent:
                 async for resp in result:
                     if isinstance(resp, tuple(get_args(RunResponseEvent))):
                         if resp.is_paused:
+                            resp = cast(RunResponsePausedEvent, resp)
                             response_panel = create_paused_run_response_panel(resp)
                             panels.append(response_panel)
                             live_log.update(Group(*panels))
                             break
 
                         if resp.event == RunEvent.run_response_content:
-                            if isinstance(resp.content, str):
+                            if hasattr(resp, "content") and isinstance(resp.content, str):
                                 _response_content += resp.content
-                            if resp.thinking is not None:
+                            if hasattr(resp, "thinking") and resp.thinking is not None:
                                 _response_thinking += resp.thinking
 
                         if (
