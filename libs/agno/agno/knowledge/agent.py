@@ -1,6 +1,6 @@
 import asyncio
 from pathlib import Path
-from typing import Any, AsyncIterator, Dict, Iterator, List, Optional, Set, Tuple
+from typing import Any, AsyncIterator, Callable, Dict, Iterator, List, Optional, Set, Tuple, Union
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -19,6 +19,8 @@ class AgentKnowledge(BaseModel):
     reader: Optional[Reader] = None
     # Vector db for storing knowledge
     vector_db: Optional[VectorDb] = None
+    # Retriever function for custom retrieval logic
+    retriever: Optional[Callable[..., Optional[List[Union[Dict, str]]]]] = None
     # Number of relevant documents to return on search
     num_documents: int = 5
     # Number of documents to optimize the vector db on

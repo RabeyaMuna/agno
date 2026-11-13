@@ -36,7 +36,12 @@ reasoning_agent = Agent(
     model=Claude(id="claude-sonnet-4-20250514"),
     tools=[
         ReasoningTools(add_instructions=True),
-        YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True, company_news=True),
+        YFinanceTools(
+            stock_price=True,
+            analyst_recommendations=True,
+            company_info=True,
+            company_news=True,
+        ),
     ],
     instructions="Use tables to display data.",
     markdown=True,
@@ -88,7 +93,12 @@ agent = Agent(
     model=Claude(id="claude-sonnet-4-20250514"),
     tools=[
         ReasoningTools(add_instructions=True),
-        YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True, company_news=True),
+        YFinanceTools(
+            stock_price=True,
+            analyst_recommendations=True,
+            company_info=True,
+            company_news=True,
+        ),
     ],
     instructions=[
         "Use tables to display data",
@@ -146,7 +156,9 @@ finance_agent = Agent(
     name="Finance Agent",
     role="Get financial data",
     model=OpenAIChat(id="gpt-4o"),
-    tools=[YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True)],
+    tools=[
+        YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True)
+    ],
     instructions="Use tables to display data",
     show_tool_calls=True,
     markdown=True,
@@ -162,7 +174,10 @@ agent_team = Team(
     markdown=True,
 )
 
-agent_team.print_response("What's the market outlook and financial performance of AI semiconductor companies?", stream=True)
+agent_team.print_response(
+    "What's the market outlook and financial performance of AI semiconductor companies?",
+    stream=True,
+)
 ```
 
 Install dependencies and run the Agent team:
