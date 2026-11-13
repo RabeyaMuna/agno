@@ -3,8 +3,6 @@
 2. Run: `python cookbook/storage/postgres_storage/postgres_storage_for_team.py` to run the team
 """
 
-from typing import List
-
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.storage.postgres import PostgresStorage
@@ -19,7 +17,7 @@ db_url = "postgresql+psycopg://ai:ai@localhost:5532/ai"
 class Article(BaseModel):
     title: str
     summary: str
-    reference_links: List[str]
+    reference_links: list[str]
 
 
 hn_researcher = Agent(

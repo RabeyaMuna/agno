@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from __future__ import annotations
 
 from agno.aws.app.base import AwsApp, ContainerContext  # noqa: F401
 
@@ -10,7 +10,7 @@ class Django(AwsApp):
     # -*- Image Configuration
     image_name: str = "agnohq/django"
     image_tag: str = "4.2.2"
-    command: Optional[Union[str, List[str]]] = "python manage.py runserver 0.0.0.0:8000"
+    command: str | list[str] | None = "python manage.py runserver 0.0.0.0:8000"
 
     # -*- App Ports
     # Open a container port if open_port=True
@@ -25,4 +25,4 @@ class Django(AwsApp):
     ecs_task_cpu: str = "1024"
     ecs_task_memory: str = "2048"
     ecs_service_count: int = 1
-    assign_public_ip: Optional[bool] = True
+    assign_public_ip: bool | None = True

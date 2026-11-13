@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -12,7 +14,7 @@ class IamPolicy(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/iam.html#policy
     """
 
-    resource_type: Optional[str] = "IamPolicy"
+    resource_type: str | None = "IamPolicy"
     service_name: str = "iam"
 
     # PolicyName
@@ -24,13 +26,13 @@ class IamPolicy(AwsResource):
     # CloudFormation always converts a YAML policy to JSON format before submitting it to IAM.
     policy_document: str
     # The path for the policy. This parameter is optional. If it is not included, it defaults to a slash (/).
-    path: Optional[str] = None
+    path: str | None = None
     # A friendly description of the policy.
-    description: Optional[str] = None
+    description: str | None = None
     # A list of tags that you want to attach to the new policy. Each tag consists of a key name and an associated value.
-    tags: Optional[List[Dict[str, str]]] = None
+    tags: list[dict[str, str]] | None = None
 
-    arn: Optional[str] = None
+    arn: str | None = None
 
     def _create(self, aws_client: AwsApiClient) -> bool:
         """Creates the IamPolicy
@@ -42,7 +44,7 @@ class IamPolicy(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
         try:
             # create a dict of args which are not null, otherwise aws type validation fails
-            not_null_args: Dict[str, Any] = {}
+            not_null_args: dict[str, Any] = {}
             if self.path:
                 not_null_args["Path"] = self.path
             if self.description:
@@ -95,7 +97,7 @@ class IamPolicy(AwsResource):
                 logger.error(e)
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the IamPolicy
 
         Args:

@@ -1,8 +1,8 @@
-from typing import Optional
+from __future__ import annotations
 
 from pydantic import BaseModel
 
 
 class AwsBuildContext(BaseModel):
-    aws_region: Optional[str] = None
-    aws_profile: Optional[str] = None
+    aws_region: str | None = None
+    aws_profile: str | None = None

@@ -2,8 +2,10 @@
 Utility functions for Gemini Tutor
 """
 
+from __future__ import annotations
+
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import streamlit as st
 from agno.models.message import Citations
@@ -11,7 +13,7 @@ from agno.utils.log import logger
 
 
 def add_message(
-    role: str, content: str, tool_calls: Optional[List[Dict[str, Any]]] = None, **kwargs
+    role: str, content: str, tool_calls: list[dict[str, Any]] | None = None, **kwargs
 ) -> None:
     """
     Safely add a message to the session state.
@@ -36,7 +38,7 @@ def add_message(
     st.session_state["messages"].append(message)
 
 
-def display_tool_calls(container: Any, tool_calls: List[Dict[str, Any]]) -> None:
+def display_tool_calls(container: Any, tool_calls: list[dict[str, Any]]) -> None:
     """
     Display tool calls in a formatted way.
 
@@ -63,7 +65,7 @@ def display_tool_calls(container: Any, tool_calls: List[Dict[str, Any]]) -> None
                 st.code(formatted_args, language="json")
 
 
-def display_grounding_metadata(citations: Optional[Citations]) -> None:
+def display_grounding_metadata(citations: Citations | None) -> None:
     """
     Display search grounding metadata (sources) if available.
 

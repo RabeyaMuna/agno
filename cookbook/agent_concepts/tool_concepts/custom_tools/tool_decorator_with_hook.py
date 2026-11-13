@@ -2,7 +2,8 @@
 
 import json
 import time
-from typing import Any, Callable, Dict, Iterator
+from collections.abc import Callable, Iterator
+from typing import Any
 
 import httpx
 from agno.agent import Agent
@@ -11,7 +12,7 @@ from agno.utils.log import logger
 
 
 def duration_logger_hook(
-    function_name: str, function_call: Callable, arguments: Dict[str, Any]
+    function_name: str, function_call: Callable, arguments: dict[str, Any]
 ):
     """Log the duration of the function call"""
     start_time = time.time()

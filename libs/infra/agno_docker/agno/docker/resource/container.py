@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from time import sleep
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from agno.cli.console import print_info
 from agno.docker.api_client import DockerApiClient
@@ -14,52 +16,52 @@ class DockerContainerMount(DockerResource):
     source: str
     type: str = "volume"
     read_only: bool = False
-    labels: Optional[Dict[str, Any]] = None
+    labels: dict[str, Any] | None = None
 
 
 class DockerContainer(DockerResource):
     resource_type: str = "Container"
 
     # image (str) – The image to run.
-    image: Optional[str] = None
+    image: str | None = None
     # command (str or list) – The command to run in the container.
-    command: Optional[Union[str, List]] = None
+    command: str | list | None = None
     # auto_remove (bool) – enable auto-removal of the container when the container’s process exits.
     auto_remove: bool = True
     # detach (bool) – Run container in the background and return a Container object.
     detach: bool = True
     # entrypoint (str or list) – The entrypoint for the container.
-    entrypoint: Optional[Union[str, List]] = None
+    entrypoint: str | list | None = None
     # environment (dict or list) – Environment variables to set inside the container
-    environment: Optional[Union[Dict[str, Any], List]] = None
+    environment: dict[str, Any] | list | None = None
     # group_add (list) – List of additional group names and/or IDs that the container process will run as.
-    group_add: Optional[List[Any]] = None
+    group_add: list[Any] | None = None
     # healthcheck (dict) – Specify a test to perform to check that the container is healthy.
-    healthcheck: Optional[Dict[str, Any]] = None
+    healthcheck: dict[str, Any] | None = None
     # hostname (str) – Optional hostname for the container.
-    hostname: Optional[str] = None
+    hostname: str | None = None
     # labels (dict or list) – A dictionary of name-value labels
     # e.g. {"label1": "value1", "label2": "value2"})
     # or a list of names of labels to set with empty values (e.g. ["label1", "label2"])
-    labels: Optional[Dict[str, Any]] = None
+    labels: dict[str, Any] | None = None
     # mounts (list) – Specification for mounts to be added to the container.
     # More powerful alternative to volumes.
     # Each item in the list is a DockerContainerMount object which is
     # then converted to a docker.types.Mount object.
-    mounts: Optional[List[DockerContainerMount]] = None
+    mounts: list[DockerContainerMount] | None = None
     # network (str) – Name of the network this container will be connected to at creation time
-    network: Optional[str] = None
+    network: str | None = None
     # network_disabled (bool) – Disable networking.
-    network_disabled: Optional[str] = None
+    network_disabled: str | None = None
     # network_mode (str) One of:
     # bridge - Create a new network stack for the container on on the bridge network.
     # none - No networking for this container.
     # container:<name|id> - Reuse another container’s network stack.
     # host - Use the host network stack. This mode is incompatible with ports.
     # network_mode is incompatible with network.
-    network_mode: Optional[str] = None
+    network_mode: str | None = None
     # Platform in the format os[/arch[/variant]].
-    platform: Optional[str] = None
+    platform: str | None = None
     # ports (dict) – Ports to bind inside the container.
     # The keys of the dictionary are the ports to bind inside the container,
     # either as an integer or a string in the form port/protocol, where the protocol is either tcp, udp.
@@ -73,24 +75,24 @@ class DockerContainer(DockerResource):
     #       For example, {'1111/tcp': ('127.0.0.1', 1111)}.
     #   - A list of integers, if you want to bind multiple host ports to a single container port.
     #       For example, {'1111/tcp': [1234, 4567]}.
-    ports: Optional[Dict[str, Any]] = None
+    ports: dict[str, Any] | None = None
     # remove (bool) – Remove the container when it has finished running. Default: False.
-    remove: Optional[bool] = None
+    remove: bool | None = None
     # Restart the container when it exits. Configured as a dictionary with keys:
     # Name: One of on-failure, or always.
     # MaximumRetryCount: Number of times to restart the container on failure.
     # For example: {"Name": "on-failure", "MaximumRetryCount": 5}
-    restart_policy: Optional[Dict[str, Any]] = None
+    restart_policy: dict[str, Any] | None = None
     # stdin_open (bool) – Keep STDIN open even if not attached.
-    stdin_open: Optional[bool] = None
+    stdin_open: bool | None = None
     # stdout (bool) – Return logs from STDOUT when detach=False. Default: True.
-    stdout: Optional[bool] = None
+    stdout: bool | None = None
     # stderr (bool) – Return logs from STDERR when detach=False. Default: False.
-    stderr: Optional[bool] = None
+    stderr: bool | None = None
     # tty (bool) – Allocate a pseudo-TTY.
-    tty: Optional[bool] = None
+    tty: bool | None = None
     # user (str or int) – Username or UID to run commands as inside the container.
-    user: Optional[Union[str, int]] = None
+    user: str | int | None = None
     # volumes (dict or list) –
     # A dictionary to configure volumes mounted inside the container.
     # The key is either the host path or a volume name, and the value is a dictionary with the keys:
@@ -101,20 +103,20 @@ class DockerContainer(DockerResource):
     #   '/home/user1/': {'bind': '/mnt/vol2', 'mode': 'rw'},
     #   '/var/www': {'bind': '/mnt/vol1', 'mode': 'ro'}
     # }
-    volumes: Optional[Union[Dict[str, Any], List]] = None
+    volumes: dict[str, Any] | list | None = None
     # working_dir (str) – Path to the working directory.
-    working_dir: Optional[str] = None
-    devices: Optional[list] = None
+    working_dir: str | None = None
+    devices: list | None = None
 
     # Data provided by the resource running on the docker client
-    container_status: Optional[str] = None
+    container_status: str | None = None
 
-    def run_container(self, docker_client: DockerApiClient) -> Optional[Any]:
+    def run_container(self, docker_client: DockerApiClient) -> Any | None:
         from docker import DockerClient
         from docker.errors import APIError, ImageNotFound
         from rich.progress import Progress, SpinnerColumn, TextColumn
 
-        print_info("Starting container: {}".format(self.name))
+        print_info(f"Starting container: {self.name}")
         # logger.debug()(
         #     "Args: {}".format(
         #         self.json(indent=2, exclude_unset=True, exclude_none=True)
@@ -127,7 +129,7 @@ class DockerContainer(DockerResource):
             ) as progress:
                 if self.pull:
                     try:
-                        pull_image_task = progress.add_task("Downloading Image...")  # noqa: F841
+                        pull_image_task = progress.add_task("Downloading Image...")
                         _api_client.images.pull(self.image, platform=self.platform)
                         progress.update(pull_image_task, completed=True)
                     except Exception as pull_exc:
@@ -180,8 +182,8 @@ class DockerContainer(DockerResource):
         """
         from docker.models.containers import Container
 
-        logger.debug("Creating: {}".format(self.get_resource_name()))
-        container_object: Optional[Container] = self._read(docker_client)
+        logger.debug(f"Creating: {self.get_resource_name()}")
+        container_object: Container | None = self._read(docker_client)
 
         # Delete the container if it exists
         if container_object is not None:
@@ -191,7 +193,7 @@ class DockerContainer(DockerResource):
         try:
             container_object = self.run_container(docker_client)
             if container_object is not None:
-                logger.debug("Container Created: {}".format(container_object.name))
+                logger.debug(f"Container Created: {container_object.name}")
             else:
                 logger.debug("Container could not be created")
         except Exception:
@@ -203,7 +205,7 @@ class DockerContainer(DockerResource):
         if container_object is not None:
             container_object.reload()
             self.container_status: str = container_object.status
-            print_info("Container Status: {}".format(self.container_status))
+            print_info(f"Container Status: {self.container_status}")
 
             if self.container_status == "running":
                 logger.debug("Container is running")
@@ -230,7 +232,7 @@ class DockerContainer(DockerResource):
         logger.debug("Container not found")
         return False
 
-    def _read(self, docker_client: DockerApiClient) -> Optional[Any]:
+    def _read(self, docker_client: DockerApiClient) -> Any | None:
         """Returns a Container object if the container is active
 
         Args:
@@ -239,11 +241,11 @@ class DockerContainer(DockerResource):
         from docker import DockerClient
         from docker.models.containers import Container
 
-        logger.debug("Reading: {}".format(self.get_resource_name()))
-        container_name: Optional[str] = self.name
+        logger.debug(f"Reading: {self.get_resource_name()}")
+        container_name: str | None = self.name
         try:
             _api_client: DockerClient = docker_client.api_client
-            container_list: Optional[List[Container]] = _api_client.containers.list(
+            container_list: list[Container] | None = _api_client.containers.list(
                 all=True, filters={"name": container_name}
             )
             if container_list is not None:
@@ -262,7 +264,7 @@ class DockerContainer(DockerResource):
         Args:
             docker_client: The DockerApiClient for the current cluster
         """
-        logger.debug("Updating: {}".format(self.get_resource_name()))
+        logger.debug(f"Updating: {self.get_resource_name()}")
         return self._create(docker_client=docker_client)
 
     def _delete(self, docker_client: DockerApiClient) -> bool:
@@ -274,9 +276,9 @@ class DockerContainer(DockerResource):
         from docker.errors import NotFound
         from docker.models.containers import Container
 
-        logger.debug("Deleting: {}".format(self.get_resource_name()))
-        container_name: Optional[str] = self.name
-        container_object: Optional[Container] = self._read(docker_client)
+        logger.debug(f"Deleting: {self.get_resource_name()}")
+        container_name: str | None = self.name
+        container_object: Container | None = self._read(docker_client)
         # Return True if there is no Container to delete
         if container_object is None:
             return True
@@ -285,24 +287,24 @@ class DockerContainer(DockerResource):
         try:
             self.active_resource = None
             self.container_status = container_object.status
-            logger.debug("Container Status: {}".format(self.container_status))
-            logger.debug("Stopping Container: {}".format(container_name))
+            logger.debug(f"Container Status: {self.container_status}")
+            logger.debug(f"Stopping Container: {container_name}")
             container_object.stop()
             # If self.remove is set, then the container would be auto removed after being stopped
             # If self.remove is not set, we need to manually remove the container
             if not self.remove:
-                logger.debug("Removing Container: {}".format(container_name))
+                logger.debug(f"Removing Container: {container_name}")
                 try:
                     container_object.remove()
                 except Exception as remove_exc:
                     logger.debug(f"Could not remove container: {remove_exc}")
         except Exception as e:
-            logger.exception("Error while deleting container: {}".format(e))
+            logger.exception(f"Error while deleting container: {e}")
 
         # Validate that the Container is deleted
         logger.debug("Validating Container is deleted")
         try:
-            logger.debug("Reloading container_object: {}".format(container_object))
+            logger.debug(f"Reloading container_object: {container_object}")
             for i in range(10):
                 container_object.reload()
                 logger.debug("Waiting for NotFound Exception...")
@@ -316,7 +318,7 @@ class DockerContainer(DockerResource):
         """Returns True if the container is running on the docker cluster"""
         from docker.models.containers import Container
 
-        container_object: Optional[Container] = self.read(docker_client=docker_client)
+        container_object: Container | None = self.read(docker_client=docker_client)
         if container_object is not None:
             # Check if container is stopped/paused
             status: str = container_object.status

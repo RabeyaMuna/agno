@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -15,17 +17,17 @@ class GlueS3Target(AwsResource):
     bucket: S3Bucket
     # A list of glob patterns used to exclude from the crawl.
     # For more information, see https://docs.aws.amazon.com/glue/latest/dg/add-crawler.html
-    exclusions: Optional[List[str]] = None
+    exclusions: list[str] | None = None
     # The name of a connection which allows a job or crawler to access data in Amazon S3 within an
     # Amazon Virtual Private Cloud environment (Amazon VPC).
-    connection_name: Optional[str] = None
+    connection_name: str | None = None
     # Sets the number of files in each leaf folder to be crawled when crawling sample files in a dataset.
     # If not set, all the files are crawled. A valid value is an integer between 1 and 249.
-    sample_size: Optional[int] = None
+    sample_size: int | None = None
     # A valid Amazon SQS ARN. For example, arn:aws:sqs:region:account:sqs .
-    event_queue_arn: Optional[str] = None
+    event_queue_arn: str | None = None
     # A valid Amazon dead-letter SQS ARN. For example, arn:aws:sqs:region:account:deadLetterQueue .
-    dlq_event_queue_arn: Optional[str] = None
+    dlq_event_queue_arn: str | None = None
 
 
 class GlueCrawler(AwsResource):
@@ -34,7 +36,7 @@ class GlueCrawler(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/glue.html
     """
 
-    resource_type: Optional[str] = "GlueCrawler"
+    resource_type: str | None = "GlueCrawler"
     service_name: str = "glue"
 
     # Name of the crawler.
@@ -42,55 +44,55 @@ class GlueCrawler(AwsResource):
     # The IAM role for the crawler
     iam_role: IamRole
     # List of GlueS3Target to add to the targets dict
-    s3_targets: Optional[List[GlueS3Target]] = None
+    s3_targets: list[GlueS3Target] | None = None
     # The Glue database where results are written,
     # such as: arn:aws:daylight:us-east-1::database/sometable/* .
-    database_name: Optional[str] = None
+    database_name: str | None = None
     # A description of the new crawler.
-    description: Optional[str] = None
+    description: str | None = None
     # A list of collection of targets to crawl.
-    targets: Optional[Dict[str, List[dict]]] = None
+    targets: dict[str, list[dict]] | None = None
     # A cron expression used to specify the schedule
     # For example, to run something every day at 12:15 UTC,
     # you would specify: cron(15 12 * * ? *) .
-    schedule: Optional[str] = None
+    schedule: str | None = None
     # A list of custom classifiers that the user has registered.
     # By default, all built-in classifiers are included in a crawl,
     # but these custom classifiers always override the default classifiers for a given classification.
-    classifiers: Optional[List[str]] = None
+    classifiers: list[str] | None = None
     # The table prefix used for catalog tables that are created.
-    table_prefix: Optional[str] = None
+    table_prefix: str | None = None
     # The policy for the crawler's update and deletion behavior.
-    schema_change_policy: Optional[Dict[str, str]] = None
+    schema_change_policy: dict[str, str] | None = None
     # A policy that specifies whether to crawl the entire dataset again,
     # or to crawl only folders that were added since the last crawler run.
-    recrawl_policy: Optional[Dict[str, str]] = None
-    lineage_configuration: Optional[Dict[str, str]] = None
-    lake_formation_configuration: Optional[Dict[str, str]] = None
+    recrawl_policy: dict[str, str] | None = None
+    lineage_configuration: dict[str, str] | None = None
+    lake_formation_configuration: dict[str, str] | None = None
     # Crawler configuration information. This versioned JSON string
     # allows users to specify aspects of a crawler's behavior.
-    configuration: Optional[str] = None
+    configuration: str | None = None
     # The name of the SecurityConfiguration structure to be used by this crawler.
-    crawler_security_configuration: Optional[str] = None
+    crawler_security_configuration: str | None = None
     # The tags to use with this crawler request.
-    tags: Optional[Dict[str, str]] = None
+    tags: dict[str, str] | None = None
 
     # provided by api on create
-    creation_time: Optional[str] = None
-    last_crawl: Optional[str] = None
+    creation_time: str | None = None
+    last_crawl: str | None = None
 
-    def get_glue_crawler_targets(self) -> Optional[Dict[str, List[dict]]]:
+    def get_glue_crawler_targets(self) -> dict[str, list[dict]] | None:
         # start with user provided targets
-        crawler_targets: Optional[Dict[str, List[dict]]] = self.targets
+        crawler_targets: dict[str, list[dict]] | None = self.targets
 
         # Add GlueS3Targets to crawler_targets
         if self.s3_targets is not None:
             # create S3Targets dicts using s3_targets
-            new_s3_targets_list: List[dict] = []
+            new_s3_targets_list: list[dict] = []
             for s3_target in self.s3_targets:
                 _new_s3_target_path = f"s3://{s3_target.bucket.name}/{s3_target.dir}"
                 # start with the only required argument
-                _new_s3_target_dict: Dict[str, Any] = {"Path": _new_s3_target_path}
+                _new_s3_target_dict: dict[str, Any] = {"Path": _new_s3_target_path}
                 # add any optional arguments
                 if s3_target.exclusions is not None:
                     _new_s3_target_dict["Exclusions"] = s3_target.exclusions
@@ -130,7 +132,7 @@ class GlueCrawler(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
         try:
             # create a dict of args which are not null, otherwise aws type validation fails
-            not_null_args: Dict[str, Any] = {}
+            not_null_args: dict[str, Any] = {}
             if self.database_name:
                 not_null_args["DatabaseName"] = self.database_name
             if self.description:
@@ -186,7 +188,7 @@ class GlueCrawler(AwsResource):
             logger.error(e)
         return False
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the GlueCrawler
 
         Args:
@@ -238,7 +240,7 @@ class GlueCrawler(AwsResource):
             logger.error(e)
         return False
 
-    def start_crawler(self, aws_client: Optional[AwsApiClient] = None) -> bool:
+    def start_crawler(self, aws_client: AwsApiClient | None = None) -> bool:
         """Runs the GlueCrawler
 
         Args:

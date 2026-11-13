@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional, Union
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -13,7 +15,7 @@ class EcsContainer(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html
     """
 
-    resource_type: Optional[str] = "EcsContainer"
+    resource_type: str | None = "EcsContainer"
     service_name: str = "ecs"
 
     # The name of a container.
@@ -23,78 +25,78 @@ class EcsContainer(AwsResource):
     # The image used to start a container.
     image: str
     # The private repository authentication credentials to use.
-    repository_credentials: Optional[Dict[str, Any]] = None
+    repository_credentials: dict[str, Any] | None = None
     # The number of cpu units reserved for the container.
-    cpu: Optional[int] = None
+    cpu: int | None = None
     # The amount (in MiB) of memory to present to the container.
-    memory: Optional[int] = None
+    memory: int | None = None
     # The soft limit (in MiB) of memory to reserve for the container.
-    memory_reservation: Optional[int] = None
+    memory_reservation: int | None = None
     # The links parameter allows containers to communicate with each other without the need for port mappings.
-    links: Optional[List[str]] = None
+    links: list[str] | None = None
     # The list of port mappings for the container. Port mappings allow containers to access ports on the host container
     # instance to send or receive traffic.
-    port_mappings: Optional[List[Dict[str, Any]]] = None
+    port_mappings: list[dict[str, Any]] | None = None
     # If the essential parameter of a container is marked as true , and that container fails or stops for any reason,
     # all other containers that are part of the task are stopped. If the essential parameter of a container is marked
     # as false , its failure doesn't affect the rest of the containers in a task. If this parameter is omitted,
     # a container is assumed to be essential.
-    essential: Optional[bool] = None
+    essential: bool | None = None
     # The entry point that's passed to the container.
-    entry_point: Optional[List[str]] = None
+    entry_point: list[str] | None = None
     # The command that's passed to the container.
-    command: Optional[List[str]] = None
+    command: list[str] | None = None
     # The environment variables to pass to a container.
-    environment: Optional[List[Dict[str, Any]]] = None
+    environment: list[dict[str, Any]] | None = None
     # A list of files containing the environment variables to pass to a container.
-    environment_files: Optional[List[Dict[str, Any]]] = None
+    environment_files: list[dict[str, Any]] | None = None
     # Read environment variables from AWS Secrets.
-    env_from_secrets: Optional[Union[SecretsManager, List[SecretsManager]]] = None
+    env_from_secrets: SecretsManager | list[SecretsManager] | None = None
     # The mount points for data volumes in your container.
-    mount_points: Optional[List[Dict[str, Any]]] = None
+    mount_points: list[dict[str, Any]] | None = None
     # Data volumes to mount from another container.
-    volumes_from: Optional[List[Dict[str, Any]]] = None
+    volumes_from: list[dict[str, Any]] | None = None
     # Linux-specific modifications that are applied to the container, such as Linux kernel capabilities.
-    linux_parameters: Optional[Dict[str, Any]] = None
+    linux_parameters: dict[str, Any] | None = None
     # The secrets to pass to the container.
-    secrets: Optional[List[Dict[str, Any]]] = None
+    secrets: list[dict[str, Any]] | None = None
     # The dependencies defined for container startup and shutdown.
-    depends_on: Optional[List[Dict[str, Any]]] = None
+    depends_on: list[dict[str, Any]] | None = None
     # Time duration (in seconds) to wait before giving up on resolving dependencies for a container.
-    start_timeout: Optional[int] = None
+    start_timeout: int | None = None
     # Time duration (in seconds) to wait before the container is forcefully killed if it doesn't exit normally.
-    stop_timeout: Optional[int] = None
+    stop_timeout: int | None = None
     # The hostname to use for your container.
-    hostname: Optional[str] = None
+    hostname: str | None = None
     # The user to use inside the container.
-    user: Optional[str] = None
+    user: str | None = None
     # The working directory to run commands inside the container in.
-    working_directory: Optional[str] = None
+    working_directory: str | None = None
     # When this parameter is true, networking is disabled within the container.
-    disable_networking: Optional[bool] = None
+    disable_networking: bool | None = None
     # When this parameter is true, the container is given elevated privileges
     # on the host container instance (similar to the root user).
-    privileged: Optional[bool] = None
-    readonly_root_filesystem: Optional[bool] = None
-    dns_servers: Optional[List[str]] = None
-    dns_search_domains: Optional[List[str]] = None
-    extra_hosts: Optional[List[Dict[str, Any]]] = None
-    docker_security_options: Optional[List[str]] = None
-    interactive: Optional[bool] = None
-    pseudo_terminal: Optional[bool] = None
-    docker_labels: Optional[Dict[str, Any]] = None
-    ulimits: Optional[List[Dict[str, Any]]] = None
-    log_configuration: Optional[Dict[str, Any]] = None
-    health_check: Optional[Dict[str, Any]] = None
-    system_controls: Optional[List[Dict[str, Any]]] = None
-    resource_requirements: Optional[List[Dict[str, Any]]] = None
-    firelens_configuration: Optional[Dict[str, Any]] = None
+    privileged: bool | None = None
+    readonly_root_filesystem: bool | None = None
+    dns_servers: list[str] | None = None
+    dns_search_domains: list[str] | None = None
+    extra_hosts: list[dict[str, Any]] | None = None
+    docker_security_options: list[str] | None = None
+    interactive: bool | None = None
+    pseudo_terminal: bool | None = None
+    docker_labels: dict[str, Any] | None = None
+    ulimits: list[dict[str, Any]] | None = None
+    log_configuration: dict[str, Any] | None = None
+    health_check: dict[str, Any] | None = None
+    system_controls: list[dict[str, Any]] | None = None
+    resource_requirements: list[dict[str, Any]] | None = None
+    firelens_configuration: dict[str, Any] | None = None
 
-    def get_container_definition(self, aws_client: Optional[AwsApiClient] = None) -> Dict[str, Any]:
-        container_definition: Dict[str, Any] = {}
+    def get_container_definition(self, aws_client: AwsApiClient | None = None) -> dict[str, Any]:
+        container_definition: dict[str, Any] = {}
 
         # Build container environment
-        container_environment: List[Dict[str, Any]] = self.build_container_environment(aws_client=aws_client)
+        container_environment: list[dict[str, Any]] = self.build_container_environment(aws_client=aws_client)
         if container_environment is not None:
             container_definition["environment"] = container_environment
 
@@ -177,9 +179,9 @@ class EcsContainer(AwsResource):
 
         return container_definition
 
-    def build_container_environment(self, aws_client: Optional[AwsApiClient] = None) -> List[Dict[str, Any]]:
+    def build_container_environment(self, aws_client: AwsApiClient | None = None) -> list[dict[str, Any]]:
         logger.debug("Building container environment")
-        container_environment: List[Dict[str, Any]] = []
+        container_environment: list[dict[str, Any]] = []
         if self.environment is not None:
             from agno.aws.resource.reference import AwsReference
 
@@ -204,7 +206,7 @@ class EcsContainer(AwsResource):
                         logger.error(f"Error while converting {env_value} to str: {e}")
 
         if self.env_from_secrets is not None:
-            secrets: Dict[str, Any] = read_secrets(self.env_from_secrets, aws_client=aws_client)
+            secrets: dict[str, Any] = read_secrets(self.env_from_secrets, aws_client=aws_client)
             for secret_name, secret_value in secrets.items():
                 try:
                     secret_value = str(secret_value)

@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional, Union
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -16,29 +18,29 @@ class CacheSubnetGroup(AwsResource):
     Creates a cache subnet group.
     """
 
-    resource_type: Optional[str] = "CacheSubnetGroup"
+    resource_type: str | None = "CacheSubnetGroup"
     service_name: str = "elasticache"
 
     # A name for the cache subnet group. This value is stored as a lowercase string.
     # Constraints: Must contain no more than 255 alphanumeric characters or hyphens.
     name: str
     # A description for the cache subnet group.
-    description: Optional[str] = None
+    description: str | None = None
     # A list of VPC subnet IDs for the cache subnet group.
-    subnet_ids: Optional[Union[List[str], AwsReference]] = None
+    subnet_ids: list[str] | AwsReference | None = None
     # Get Subnet IDs from a VPC CloudFormationStack
     # First gets private subnets from the vpc stack, then public subnets
-    vpc_stack: Optional[CloudFormationStack] = None
+    vpc_stack: CloudFormationStack | None = None
     # A list of tags to be added to this resource.
-    tags: Optional[List[Dict[str, str]]] = None
+    tags: list[dict[str, str]] | None = None
 
-    def get_subnet_ids(self, aws_client: AwsApiClient) -> List[str]:
+    def get_subnet_ids(self, aws_client: AwsApiClient) -> list[str]:
         """Returns the subnet_ids for the CacheSubnetGroup
 
         Args:
             aws_client: The AwsApiClient for the current cluster
         """
-        subnet_ids: List[Any] = []
+        subnet_ids: list[Any] = []
         if self.subnet_ids is not None:
             if isinstance(self.subnet_ids, list):
                 logger.debug("Getting subnet_ids from list")
@@ -71,7 +73,7 @@ class CacheSubnetGroup(AwsResource):
             subnet_ids = self.get_subnet_ids(aws_client=aws_client)
 
             # create a dict of args which are not null, otherwise aws type validation fails
-            not_null_args: Dict[str, Any] = {}
+            not_null_args: dict[str, Any] = {}
             if self.tags:
                 not_null_args["Tags"] = self.tags
 
@@ -96,7 +98,7 @@ class CacheSubnetGroup(AwsResource):
             logger.error(e)
         return False
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the CacheSubnetGroup
 
         Args:

@@ -1,7 +1,7 @@
 import json
 import os
+from collections.abc import Iterator
 from os import getenv
-from typing import Iterator
 
 import httpx
 from agno.agent import Agent
@@ -36,8 +36,10 @@ class HackerNewsReporter(Workflow):
             "Break the article into sections and provide key takeaways at the end.",
             "Make sure the title is catchy and engaging.",
             "Share score, title, url and summary of every article.",
-            "Give the section relevant titles and provide details/facts/processes in each section."
-            "Ignore articles that you cannot read or understand.",
+            (
+                "Give the section relevant titles and provide details/facts/processes in each section."
+                "Ignore articles that you cannot read or understand."
+            ),
             "REMEMBER: you are writing for the New York Times, so the quality of the article is important.",
         ],
     )

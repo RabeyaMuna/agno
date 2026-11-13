@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import Field
 
@@ -31,7 +33,7 @@ class S3Object(AwsResource):
         """
         return f"s3://{self.bucket_name}/{self.name}"
 
-    def get_resource(self, aws_client: Optional[AwsApiClient] = None) -> Any:
+    def get_resource(self, aws_client: AwsApiClient | None = None) -> Any:
         """Returns the s3.Object
 
         Args:
@@ -47,7 +49,7 @@ class S3Object(AwsResource):
             key=self.name,
         )
 
-    def download(self, path: Path, aws_client: Optional[AwsApiClient] = None) -> None:
+    def download(self, path: Path, aws_client: AwsApiClient | None = None) -> None:
         """Downloads the s3.Object to the specified path
 
         Args:

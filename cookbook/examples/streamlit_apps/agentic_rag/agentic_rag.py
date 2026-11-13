@@ -29,7 +29,7 @@ The agent uses:
 View the README for instructions on how to run the application.
 """
 
-from typing import Optional
+from __future__ import annotations
 
 from agno.agent import Agent
 from agno.embedder.openai import OpenAIEmbedder
@@ -47,8 +47,8 @@ db_url = "postgresql+psycopg://ai:ai@localhost:5532/ai"
 
 def get_agentic_rag_agent(
     model_id: str = "openai:gpt-4o",
-    user_id: Optional[str] = None,
-    session_id: Optional[str] = None,
+    user_id: str | None = None,
+    session_id: str | None = None,
     debug_mode: bool = True,
 ) -> Agent:
     """Get an Agentic RAG Agent with Memory."""

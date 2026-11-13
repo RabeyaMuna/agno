@@ -1,4 +1,6 @@
-from typing import Any, Callable, Dict, List, Optional, Union
+from __future__ import annotations
+
+from typing import Any, Callable
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -23,37 +25,37 @@ class InboundRule(AwsResource):
     """
 
     name: str = "InboundRule"
-    resource_type: Optional[str] = "InboundRule"
+    resource_type: str | None = "InboundRule"
     service_name: str = "ec2"
 
     # What to enable ingress for.
     # The IPv4 CIDR range. You can either specify a CIDR range or a source security group, not both.
     # To specify a single IPv4 address, use the /32 prefix length.
-    cidr_ip: Optional[str] = None
+    cidr_ip: str | None = None
     # The function to get the cidr_ip
-    cidr_ip_function: Optional[Callable[..., str]] = None
+    cidr_ip_function: Callable[..., str] | None = None
     # The IPv6 CIDR range. You can either specify a CIDR range or a source security group, not both.
     # To specify a single IPv6 address, use the /128 prefix length.
-    cidr_ipv6: Optional[str] = None
+    cidr_ipv6: str | None = None
     # The function to get the cidr_ipv6
-    cidr_ipv6_function: Optional[Callable[..., str]] = None
+    cidr_ipv6_function: Callable[..., str] | None = None
     # The security group id to allow access from.
-    security_group_id: Optional[Union[str, AwsReference]] = None
+    security_group_id: str | AwsReference | None = None
     # The security group name to allow access from.
     # For a security group in a nondefault VPC, use the security group ID.
-    security_group_name: Optional[str] = None
+    security_group_name: str | None = None
     # A description for this security group rule
-    description: Optional[str] = None
+    description: str | None = None
 
     # The port to allow access from.
     # If provided, sets both from_port and to_port.
-    port: Optional[int] = None
+    port: int | None = None
     # The port range to allow access from.
-    from_port: Optional[int] = None
+    from_port: int | None = None
     # The port range to allow access from.
-    to_port: Optional[int] = None
+    to_port: int | None = None
     # The protocol to allow access from. Default is tcp.
-    ip_protocol: Optional[str] = None
+    ip_protocol: str | None = None
 
 
 class OutboundRule(AwsResource):
@@ -63,37 +65,37 @@ class OutboundRule(AwsResource):
     """
 
     name: str = "OutboundRule"
-    resource_type: Optional[str] = "OutboundRule"
+    resource_type: str | None = "OutboundRule"
     service_name: str = "ec2"
 
     # What to enable egress for.
     # The IPv4 CIDR range. You can either specify a CIDR range or a source security group, not both.
     # To specify a single IPv4 address, use the /32 prefix length.
-    cidr_ip: Optional[str] = None
+    cidr_ip: str | None = None
     # The function to get the cidr_ip
-    cidr_ip_function: Optional[Callable[..., str]] = None
+    cidr_ip_function: Callable[..., str] | None = None
     # The IPv6 CIDR range. You can either specify a CIDR range or a source security group, not both.
     # To specify a single IPv6 address, use the /128 prefix length.
-    cidr_ipv6: Optional[str] = None
+    cidr_ipv6: str | None = None
     # The function to get the cidr_ipv6
-    cidr_ipv6_function: Optional[Callable[..., str]] = None
+    cidr_ipv6_function: Callable[..., str] | None = None
     # The security group id to allow access to.
-    security_group_id: Optional[Union[str, AwsReference]] = None
+    security_group_id: str | AwsReference | None = None
     # The security group name to allow access to.
     # For a security group in a nondefault VPC, use the security group ID.
-    security_group_name: Optional[str] = None
+    security_group_name: str | None = None
     # A description for this security group rule
-    description: Optional[str] = None
+    description: str | None = None
 
     # The port to allow access from.
     # If provided, sets both from_port and to_port.
-    port: Optional[int] = None
+    port: int | None = None
     # The port range to allow access from.
-    from_port: Optional[int] = None
+    from_port: int | None = None
     # The port range to allow access from.
-    to_port: Optional[int] = None
+    to_port: int | None = None
     # The protocol to allow access from. Default is tcp.
-    ip_protocol: Optional[str] = None
+    ip_protocol: str | None = None
 
 
 class SecurityGroup(AwsResource):
@@ -103,38 +105,38 @@ class SecurityGroup(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2/client/create_security_group.html
     """
 
-    resource_type: Optional[str] = "SecurityGroup"
-    resource_type_list: List[str] = ["sg"]
+    resource_type: str | None = "SecurityGroup"
+    resource_type_list: list[str] = ["sg"]
     service_name: str = "ec2"
 
     # The name of the security group.
     name: str
     # A description for the security group.
-    description: Optional[str] = None
+    description: str | None = None
     # The ID of the VPC for the security group.
-    vpc_id: Optional[str] = None
+    vpc_id: str | None = None
     # Derive the vpc_id from the subnets.
     # When more than one subnet is provided, both must be in the same VPC.
-    subnets: Optional[List[Union[str, Subnet]]] = None
+    subnets: list[str | Subnet] | None = None
     # The tags to assign to the security group.
-    tag_specifications: Optional[list] = None
+    tag_specifications: list | None = None
     # Checks whether you have the required permissions for the action,
     # without actually making the request, and provides an error response.
     # If you have the required permissions, the error response is DryRunOperation.
     # Otherwise, it is UnauthorizedOperation.
-    dry_run: Optional[bool] = None
+    dry_run: bool | None = None
 
     # The inbound rules associated with the security group.
-    inbound_rules: Optional[List[InboundRule]] = None
+    inbound_rules: list[InboundRule] | None = None
     # The IP permissions to authorize ingress for
-    ingress_ip_permissions: Optional[List[Dict[str, Any]]] = None
+    ingress_ip_permissions: list[dict[str, Any]] | None = None
     # The outbound rules associated with the security group.
-    outbound_rules: Optional[List[OutboundRule]] = None
+    outbound_rules: list[OutboundRule] | None = None
     # The IP permissions to authorize egress for
-    egress_ip_permissions: Optional[List[Dict[str, Any]]] = None
+    egress_ip_permissions: list[dict[str, Any]] | None = None
 
     # Security Group id
-    group_id: Optional[str] = None
+    group_id: str | None = None
 
     def _create(self, aws_client: AwsApiClient) -> bool:
         """Creates the SecurityGroup
@@ -146,7 +148,7 @@ class SecurityGroup(AwsResource):
 
         # Step 1: Build Security group configuration
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
 
         # Build description
         description = self.description or "Created by Agno"
@@ -226,7 +228,7 @@ class SecurityGroup(AwsResource):
                 return False
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Reads the SecurityGroup
 
         Args:
@@ -283,15 +285,14 @@ class SecurityGroup(AwsResource):
             return True
         except ClientError as ce:
             ce_resp = ce.response
-            if ce_resp is not None:
-                if ce_resp.get("Error", {}).get("Code", "") == "DependencyViolation":
-                    logger.warning(
-                        f"SecurityGroup {self.get_resource_name()} could not be deleted "
-                        f"as it is being used by another resource."
-                    )
-                    if ce_resp.get("Error", {}).get("Message", "") != "":
-                        logger.warning(f"Error: {ce_resp.get('Error', {}).get('Message', '')}")
-                    logger.warning("Please try again later or delete resources manually.")
+            if ce_resp is not None and ce_resp.get("Error", {}).get("Code", "") == "DependencyViolation":
+                logger.warning(
+                    f"SecurityGroup {self.get_resource_name()} could not be deleted "
+                    f"as it is being used by another resource."
+                )
+                if ce_resp.get("Error", {}).get("Message", "") != "":
+                    logger.warning(f"Error: {ce_resp.get('Error', {}).get('Message', '')}")
+                logger.warning("Please try again later or delete resources manually.")
         except Exception as e:
             logger.error(f"{self.get_resource_type()} could not be deleted.")
             logger.error("Please try again or delete resources manually.")
@@ -315,7 +316,7 @@ class SecurityGroup(AwsResource):
                 return False
         return True
 
-    def get_security_group_id(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_security_group_id(self, aws_client: AwsApiClient | None = None) -> str | None:
         """Returns the security group id"""
 
         if self.group_id is not None:
@@ -336,7 +337,7 @@ class SecurityGroup(AwsResource):
         from botocore.exceptions import ClientError
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        api_args: Dict[str, Any] = {}
+        api_args: dict[str, Any] = {}
 
         group_id = self.get_security_group_id(aws_client)
         if group_id is None:
@@ -373,7 +374,7 @@ class SecurityGroup(AwsResource):
         # Add inbound_rules
         if self.inbound_rules is not None:
             for rule in self.inbound_rules:
-                ip_permission: Dict[str, Any] = {"IpProtocol": rule.ip_protocol or "tcp"}
+                ip_permission: dict[str, Any] = {"IpProtocol": rule.ip_protocol or "tcp"}
                 if rule.from_port is not None:
                     ip_permission["FromPort"] = rule.from_port
                 if rule.to_port is not None:
@@ -383,7 +384,7 @@ class SecurityGroup(AwsResource):
                     ip_permission["ToPort"] = rule.port
 
                 # Get cidr_ip
-                _cidr_ip: Optional[str] = None
+                _cidr_ip: str | None = None
                 if rule.cidr_ip is not None:
                     _cidr_ip = rule.cidr_ip
                 elif rule.cidr_ip_function is not None:
@@ -400,7 +401,7 @@ class SecurityGroup(AwsResource):
                     ]
 
                 # Get cidr_ipv6
-                _cidr_ipv6: Optional[str] = None
+                _cidr_ipv6: str | None = None
                 if rule.cidr_ipv6 is not None:
                     _cidr_ipv6 = rule.cidr_ipv6
                 elif rule.cidr_ipv6_function is not None:
@@ -417,7 +418,7 @@ class SecurityGroup(AwsResource):
                     ]
 
                 if _cidr_ip is None and _cidr_ipv6 is None:
-                    source_sg_id: Optional[str] = None
+                    source_sg_id: str | None = None
                     # If security_group_id is specified, use that
                     # Otherwise, use the current security group id
                     if rule.security_group_id is not None:
@@ -471,7 +472,7 @@ class SecurityGroup(AwsResource):
         from botocore.exceptions import ClientError
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        api_args: Dict[str, Any] = {}
+        api_args: dict[str, Any] = {}
 
         group_id = self.get_security_group_id(aws_client)
         if group_id is None:
@@ -508,7 +509,7 @@ class SecurityGroup(AwsResource):
         # Add outbound_rules
         if self.outbound_rules is not None:
             for rule in self.outbound_rules:
-                ip_permission: Dict[str, Any] = {"IpProtocol": rule.ip_protocol or "tcp"}
+                ip_permission: dict[str, Any] = {"IpProtocol": rule.ip_protocol or "tcp"}
                 if rule.from_port is not None:
                     ip_permission["FromPort"] = rule.from_port
                 if rule.to_port is not None:
@@ -518,7 +519,7 @@ class SecurityGroup(AwsResource):
                     ip_permission["ToPort"] = rule.port
 
                 # Get cidr_ip
-                _cidr_ip: Optional[str] = None
+                _cidr_ip: str | None = None
                 if rule.cidr_ip is not None:
                     _cidr_ip = rule.cidr_ip
                 elif rule.cidr_ip_function is not None:
@@ -535,7 +536,7 @@ class SecurityGroup(AwsResource):
                     ]
 
                 # Get cidr_ipv6
-                _cidr_ipv6: Optional[str] = None
+                _cidr_ipv6: str | None = None
                 if rule.cidr_ipv6 is not None:
                     _cidr_ipv6 = rule.cidr_ipv6
                 elif rule.cidr_ipv6_function is not None:
@@ -552,7 +553,7 @@ class SecurityGroup(AwsResource):
                     ]
 
                 if _cidr_ip is None and _cidr_ipv6 is None:
-                    destination_sg_id: Optional[str] = None
+                    destination_sg_id: str | None = None
                     if isinstance(rule.security_group_id, str):
                         destination_sg_id = rule.security_group_id
                     elif isinstance(rule.security_group_id, AwsReference):

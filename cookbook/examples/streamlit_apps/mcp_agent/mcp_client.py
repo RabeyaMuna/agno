@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from contextlib import AsyncExitStack
-from typing import List, Optional
 
 from agno.tools.mcp import MCPTools
 from agno.utils.log import logger
@@ -13,7 +14,7 @@ class MCPServerConfig(BaseModel):
 
     id: str
     command: str
-    args: Optional[List[str]] = None
+    args: list[str] | None = None
 
 
 class MCPClient:

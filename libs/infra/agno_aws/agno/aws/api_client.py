@@ -1,4 +1,7 @@
-from typing import Any, Optional
+from __future__ import annotations
+
+import sys
+from typing import Any
 
 from agno.utils.log import logger
 
@@ -6,18 +9,18 @@ from agno.utils.log import logger
 class AwsApiClient:
     def __init__(
         self,
-        aws_region: Optional[str] = None,
-        aws_profile: Optional[str] = None,
+        aws_region: str | None = None,
+        aws_profile: str | None = None,
     ):
         super().__init__()
-        self.aws_region: Optional[str] = aws_region
-        self.aws_profile: Optional[str] = aws_profile
+        self.aws_region: str | None = aws_region
+        self.aws_profile: str | None = aws_profile
 
         # aws boto3 session
-        self._boto3_session: Optional[Any] = None
+        self._boto3_session: Any | None = None
         logger.debug("**-+-** AwsApiClient created")
 
-    def create_boto3_session(self) -> Optional[Any]:
+    def create_boto3_session(self) -> Any | None:
         """Create a boto3 session"""
         import boto3
 
@@ -33,11 +36,11 @@ class AwsApiClient:
         except Exception as e:
             logger.error("Could not connect to aws. Please confirm aws cli is installed and configured")
             logger.error(e)
-            exit(0)
+            sys.exit(0)
         return self._boto3_session
 
     @property
-    def boto3_session(self) -> Optional[Any]:
+    def boto3_session(self) -> Any | None:
         if self._boto3_session is None:
             self._boto3_session = self.create_boto3_session()
         return self._boto3_session

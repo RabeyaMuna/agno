@@ -1,4 +1,4 @@
-from typing import List, Optional
+from __future__ import annotations
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -12,10 +12,10 @@ class Subnet(AwsResource):
     """
 
     name: str
-    resource_type: Optional[str] = "Subnet"
+    resource_type: str | None = "Subnet"
     service_name: str = "ec2"
 
-    def get_availability_zone(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_availability_zone(self, aws_client: AwsApiClient | None = None) -> str | None:
         # logger.debug(f"Reading {self.get_resource_type()}: {self.get_resource_name()}")
 
         from botocore.exceptions import ClientError
@@ -33,7 +33,7 @@ class Subnet(AwsResource):
             logger.error(f"Error reading {self.get_resource_type()}: {e}")
         return None
 
-    def get_vpc_id(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_vpc_id(self, aws_client: AwsApiClient | None = None) -> str | None:
         # logger.debug(f"Reading {self.get_resource_type()}: {self.get_resource_name()}")
 
         from botocore.exceptions import ClientError
@@ -52,9 +52,7 @@ class Subnet(AwsResource):
         return None
 
 
-def get_vpc_id_from_subnet_ids(
-    subnet_ids: Optional[List[str]], aws_client: Optional[AwsApiClient] = None
-) -> Optional[str]:
+def get_vpc_id_from_subnet_ids(subnet_ids: list[str] | None, aws_client: AwsApiClient | None = None) -> str | None:
     if subnet_ids is None:
         return None
 

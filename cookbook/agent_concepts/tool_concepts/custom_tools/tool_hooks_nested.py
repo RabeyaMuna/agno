@@ -1,7 +1,8 @@
 """Show how to use multiple tool execution hooks, to run logic before and after a tool is called."""
 
 import json
-from typing import Any, Callable, Dict
+from collections.abc import Callable
+from typing import Any
 
 from agno.agent import Agent
 from agno.tools.toolkit import Toolkit
@@ -45,7 +46,7 @@ class CustomerDBTools(Toolkit):
         return f"Customer profile for {customer_id}"
 
 
-def validation_hook(function_name: str, call_func: Callable, arguments: Dict[str, Any]):
+def validation_hook(function_name: str, call_func: Callable, arguments: dict[str, Any]):
     if function_name == "retrieve_customer_profile":
         cust_id = arguments.get("customer_id")
         if cust_id == "123":
@@ -65,7 +66,7 @@ def validation_hook(function_name: str, call_func: Callable, arguments: Dict[str
     return json.dumps(result)
 
 
-def logger_hook(function_name: str, call_func: Callable, arguments: Dict[str, Any]):
+def logger_hook(function_name: str, call_func: Callable, arguments: dict[str, Any]):
     logger.info("Before Logger Hook")
     result = call_func(**arguments)
     logger.info("After Logger Hook")

@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from typing import List
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -16,7 +15,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Define data models
 class SearchTerms(BaseModel):
-    terms: List[str] = Field(
+    terms: list[str] = Field(
         ..., description="List of search terms related to a topic."
     )
 
@@ -24,15 +23,15 @@ class SearchTerms(BaseModel):
 class ArxivSearchResult(BaseModel):
     title: str = Field(..., description="Title of the article.")
     id: str = Field(..., description="The ID of the article.")
-    authors: List[str] = Field(..., description="Authors of the article.")
+    authors: list[str] = Field(..., description="Authors of the article.")
     summary: str = Field(..., description="Summary of the article.")
     pdf_url: str = Field(..., description="URL of the PDF of the article.")
-    links: List[str] = Field(..., description="Links related to the article.")
+    links: list[str] = Field(..., description="Links related to the article.")
     reasoning: str = Field(..., description="Reason for selecting this article.")
 
 
 class ArxivSearchResults(BaseModel):
-    results: List[ArxivSearchResult] = Field(
+    results: list[ArxivSearchResult] = Field(
         ..., description="List of top search results."
     )
 
@@ -40,12 +39,12 @@ class ArxivSearchResults(BaseModel):
 class WebSearchResult(BaseModel):
     title: str = Field(..., description="Title of the article.")
     summary: str = Field(..., description="Summary of the article.")
-    links: List[str] = Field(..., description="Links related to the article.")
+    links: list[str] = Field(..., description="Links related to the article.")
     reasoning: str = Field(..., description="Reason for selecting this article.")
 
 
 class WebSearchResults(BaseModel):
-    results: List[WebSearchResult] = Field(
+    results: list[WebSearchResult] = Field(
         ..., description="List of top search results."
     )
 

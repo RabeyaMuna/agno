@@ -3,8 +3,6 @@
 2. Run: `python cookbook/storage/yaml_storage/yaml_storage_for_team.py` to run the team
 """
 
-from typing import List
-
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.storage.yaml import YamlStorage
@@ -17,7 +15,7 @@ from pydantic import BaseModel
 class Article(BaseModel):
     title: str
     summary: str
-    reference_links: List[str]
+    reference_links: list[str]
 
 
 hn_researcher = Agent(

@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.acm.certificate import AcmCertificate
@@ -15,22 +17,22 @@ class Listener(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2/client/create_listener.html
     """
 
-    resource_type: Optional[str] = "Listener"
+    resource_type: str | None = "Listener"
     service_name: str = "elbv2"
 
     # Name of the Listener
     name: str
-    load_balancer: Optional[LoadBalancer] = None
-    target_group: Optional[TargetGroup] = None
-    load_balancer_arn: Optional[str] = None
-    protocol: Optional[str] = None
-    port: Optional[int] = None
-    ssl_policy: Optional[str] = None
-    certificates: Optional[List[Dict[str, Any]]] = None
-    acm_certificates: Optional[List[AcmCertificate]] = None
-    default_actions: Optional[List[Dict]] = None
-    alpn_policy: Optional[List[str]] = None
-    tags: Optional[List[Dict[str, str]]] = None
+    load_balancer: LoadBalancer | None = None
+    target_group: TargetGroup | None = None
+    load_balancer_arn: str | None = None
+    protocol: str | None = None
+    port: int | None = None
+    ssl_policy: str | None = None
+    certificates: list[dict[str, Any]] | None = None
+    acm_certificates: list[AcmCertificate] | None = None
+    default_actions: list[dict] | None = None
+    alpn_policy: list[str] | None = None
+    tags: list[dict[str, str]] | None = None
 
     def _create(self, aws_client: AwsApiClient) -> bool:
         """Creates the Listener
@@ -50,7 +52,7 @@ class Listener(AwsResource):
         listener_certificates = self.get_listener_certificates(aws_client)
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if listener_port is not None:
             not_null_args["Port"] = listener_port
         if listener_protocol is not None:
@@ -98,7 +100,7 @@ class Listener(AwsResource):
             logger.error(e)
         return False
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the Listener
 
         Args:
@@ -178,7 +180,7 @@ class Listener(AwsResource):
         listener_certificates = self.get_listener_certificates(aws_client)
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if listener_port is not None:
             not_null_args["Port"] = listener_port
         if listener_protocol is not None:
@@ -221,7 +223,7 @@ class Listener(AwsResource):
             logger.error(e)
         return False
 
-    def get_arn(self, aws_client: AwsApiClient) -> Optional[str]:
+    def get_arn(self, aws_client: AwsApiClient) -> str | None:
         listener = self._read(aws_client)
         if listener is None:
             return None

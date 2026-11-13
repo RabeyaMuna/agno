@@ -1,7 +1,8 @@
 """Show how to use a tool execution hook, to run logic before and after a tool is called."""
 
 import json
-from typing import Any, Callable, Dict
+from collections.abc import Callable
+from typing import Any
 
 from agno.agent import Agent
 from agno.tools.toolkit import Toolkit
@@ -46,7 +47,7 @@ class CustomerDBTools(Toolkit):
 
 
 def validation_hook(
-    function_name: str, function_call: Callable, arguments: Dict[str, Any]
+    function_name: str, function_call: Callable, arguments: dict[str, Any]
 ):
     if function_name == "delete_customer_profile":
         cust_id = arguments.get("customer_id")

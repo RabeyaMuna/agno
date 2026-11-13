@@ -4,7 +4,6 @@ This example shows how to use the `requires_user_input` parameter to allow users
 """
 
 import asyncio
-from typing import List
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -40,7 +39,7 @@ async def main():
     ):
         if run_response.is_paused:  # Or agent.run_response.is_paused
             for tool in run_response.tools_requiring_user_input:
-                input_schema: List[UserInputField] = tool.user_input_schema
+                input_schema: list[UserInputField] = tool.user_input_schema
 
                 for field in input_schema:
                     # Get user input for each field in the schema

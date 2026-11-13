@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Optional
 
 from agno.tools import Toolkit
 from agno.tools.duckduckgo import DuckDuckGoTools
@@ -11,7 +12,7 @@ tmp_dir = cwd.joinpath("tmp")
 tmp_dir.mkdir(exist_ok=True, parents=True)
 
 
-def get_toolkit(tool_name: str) -> Optional[Toolkit]:
+def get_toolkit(tool_name: str) -> Toolkit | None:
     if tool_name == "ddg_search":
         return DuckDuckGoTools(fixed_max_results=3)
     elif tool_name == "shell_tools":

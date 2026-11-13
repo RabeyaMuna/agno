@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from agno.agent import Agent
 from agno.eval.reliability import ReliabilityEval, ReliabilityResult
@@ -35,7 +35,7 @@ def evaluate_team_reliability():
         team_response=response,
         expected_tool_calls=expected_tool_calls,
     )
-    result: Optional[ReliabilityResult] = evaluation.run(print_results=True)
+    result: ReliabilityResult | None = evaluation.run(print_results=True)
     result.assert_passed()
 
 

@@ -90,13 +90,13 @@ def main() -> None:
                 f"---*--- Sage session: {st.session_state['sage_session_id']} ---*---"
             )
         except Exception as e:
-            logger.error(f"Session load error: {str(e)}")
+            logger.error(f"Session load error: {e!s}")
             st.warning("Database connection unavailable. Running in memory-only mode.")
             # Generate a temporary session ID to allow the app to function without storage
             if not st.session_state["sage_session_id"]:
                 import uuid
 
-                st.session_state["sage_session_id"] = f"temp-{str(uuid.uuid4())}"
+                st.session_state["sage_session_id"] = f"temp-{uuid.uuid4()!s}"
                 logger.info(
                     f"---*--- Created temporary session: {st.session_state['sage_session_id']} ---*---"
                 )
@@ -154,7 +154,7 @@ def main() -> None:
             if _content is not None:
                 with st.chat_message(message["role"]):
                     # Display tool calls if they exist in the message
-                    if "tool_calls" in message and message["tool_calls"]:
+                    if message.get("tool_calls"):
                         display_tool_calls(st.empty(), message["tool_calls"])
                     st.markdown(_content)
 
@@ -187,7 +187,7 @@ def main() -> None:
 
                     add_message("assistant", response, sage.run_response.tools)
                 except Exception as e:
-                    error_message = f"Sorry, I encountered an error: {str(e)}"
+                    error_message = f"Sorry, I encountered an error: {e!s}"
                     add_message("assistant", error_message)
                     st.error(error_message)
 

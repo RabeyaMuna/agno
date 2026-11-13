@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import streamlit as st
 from agno.utils.log import logger
@@ -17,7 +19,7 @@ def is_json(myjson: str) -> bool:
 def add_message(
     role: str,
     content: str,
-    tool_calls: Optional[List[Dict[str, Any]]] = None,
+    tool_calls: list[dict[str, Any]] | None = None,
 ) -> None:
     """Safely add a message to the session state"""
     if "messages" not in st.session_state or not isinstance(
@@ -29,7 +31,7 @@ def add_message(
     )
 
 
-def display_tool_calls(tool_calls_container: Any, tools: List[Dict[str, Any]]) -> None:
+def display_tool_calls(tool_calls_container: Any, tools: list[dict[str, Any]]) -> None:
     """Display tool calls in a Streamlit container"""
     try:
         with tool_calls_container.container():

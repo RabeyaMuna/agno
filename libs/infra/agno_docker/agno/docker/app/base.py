@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 from agno.docker.context import DockerBuildContext
 from agno.infra.app import InfraApp
@@ -22,10 +24,10 @@ class DockerApp(InfraApp):
     create_volume: bool = False
     # If volume_dir is provided, mount this directory RELATIVE to the workspace_root
     # from the host machine to the volume_container_path
-    volume_dir: Optional[str] = None
+    volume_dir: str | None = None
     # Otherwise, mount a volume named volume_name to the container
     # If volume_name is not provided, use {app-name}-volume
-    volume_name: Optional[str] = None
+    volume_name: str | None = None
     # Path to mount the volume inside the container
     volume_container_path: str = "/mnt/app"
 
@@ -42,8 +44,8 @@ class DockerApp(InfraApp):
     mount_agno_config: bool = True
 
     # -*- Container Configuration
-    container_name: Optional[str] = None
-    container_labels: Optional[Dict[str, str]] = None
+    container_name: str | None = None
+    container_labels: dict[str, str] | None = None
     # Run container in the background and return a Container object
     container_detach: bool = True
     # Enable auto-removal of the container on daemon side when the container’s process exits
@@ -51,27 +53,27 @@ class DockerApp(InfraApp):
     # Remove the container when it has finished running. Default: True
     container_remove: bool = True
     # Username or UID to run commands as inside the container
-    container_user: Optional[Union[str, int]] = None
+    container_user: str | int | None = None
     # Keep STDIN open even if not attached
     container_stdin_open: bool = True
     # Return logs from STDOUT when container_detach=False
-    container_stdout: Optional[bool] = True
+    container_stdout: bool | None = True
     # Return logs from STDERR when container_detach=False
-    container_stderr: Optional[bool] = True
+    container_stderr: bool | None = True
     container_tty: bool = True
     # Specify a test to perform to check that the container is healthy
-    container_healthcheck: Optional[Dict[str, Any]] = None
+    container_healthcheck: dict[str, Any] | None = None
     # Optional hostname for the container
-    container_hostname: Optional[str] = None
+    container_hostname: str | None = None
     # Platform in the format os[/arch[/variant]]
-    container_platform: Optional[str] = None
+    container_platform: str | None = None
     # Path to the working directory
-    container_working_dir: Optional[str] = None
+    container_working_dir: str | None = None
     # Restart the container when it exits. Configured as a dictionary with keys:
     # Name: One of on-failure, or always.
     # MaximumRetryCount: Number of times to restart the container on failure.
     # For example: {"Name": "on-failure", "MaximumRetryCount": 5}
-    container_restart_policy: Optional[Dict[str, Any]] = None
+    container_restart_policy: dict[str, Any] | None = None
     # Add volumes to DockerContainer
     # container_volumes is a dictionary which adds the volumes to mount
     # inside the container. The key is either the host path or a volume name,
@@ -83,7 +85,7 @@ class DockerApp(InfraApp):
     #   '/home/user1/': {'bind': '/mnt/vol2', 'mode': 'rw'},
     #   '/var/www': {'bind': '/mnt/vol1', 'mode': 'ro'}
     # }
-    container_volumes: Optional[Dict[str, dict]] = None
+    container_volumes: dict[str, dict] | None = None
     # Add ports to DockerContainer
     # The keys of the dictionary are the ports to bind inside the container,
     # either as an integer or a string in the form port/protocol, where the protocol is either tcp, udp.
@@ -95,12 +97,12 @@ class DockerApp(InfraApp):
     #     For example, {'1111/tcp': ('127.0.0.1', 1111)}.
     #   - A list of integers, if you want to bind multiple host ports to a single container port.
     #     For example, {'1111/tcp': [1234, 4567]}.
-    container_ports: Optional[Dict[str, Any]] = None
+    container_ports: dict[str, Any] | None = None
 
     def get_container_name(self) -> str:
         return self.container_name or self.get_app_name()
 
-    def get_container_context(self) -> Optional[ContainerContext]:
+    def get_container_context(self) -> ContainerContext | None:
         logger.debug("Building ContainerContext")
 
         if self.container_context is not None:  # type: ignore
@@ -131,7 +133,7 @@ class DockerApp(InfraApp):
 
         return self.container_context
 
-    def get_container_env(self, container_context: ContainerContext) -> Dict[str, str]:
+    def get_container_env(self, container_context: ContainerContext) -> dict[str, str]:
         from agno.constants import (
             AGNO_RUNTIME_ENV_VAR,
             PYTHONPATH_ENV_VAR,
@@ -141,7 +143,7 @@ class DockerApp(InfraApp):
         )
 
         # Container Environment
-        container_env: Dict[str, str] = self.container_env or {}
+        container_env: dict[str, str] = self.container_env or {}
         container_env.update(
             {
                 "INSTALL_REQUIREMENTS": str(self.install_requirements),
@@ -167,7 +169,7 @@ class DockerApp(InfraApp):
             if python_path is None:
                 python_path = container_context.workspace_root
                 if self.mount_resources and self.resources_dir_container_path is not None:
-                    python_path = "{}:{}".format(python_path, self.resources_dir_container_path)
+                    python_path = f"{python_path}:{self.resources_dir_container_path}"
                 if self.add_python_paths is not None:
                     python_path = "{}:{}".format(python_path, ":".join(self.add_python_paths))
             if python_path is not None:
@@ -194,7 +196,7 @@ class DockerApp(InfraApp):
         # logger.debug("Container Environment: {}".format(container_env))
         return container_env
 
-    def get_container_volumes(self, container_context: ContainerContext) -> Dict[str, dict]:
+    def get_container_volumes(self, container_context: ContainerContext) -> dict[str, dict]:
         from agno.utils.defaults import get_default_volume_name
 
         if self.workspace_root is None:
@@ -259,14 +261,14 @@ class DockerApp(InfraApp):
 
         return container_volumes
 
-    def get_container_ports(self) -> Dict[str, int]:
+    def get_container_ports(self) -> dict[str, int]:
         # container_ports is a dictionary which configures the ports to bind
         # inside the container. The key is the port to bind inside the container
         #   either as an integer or a string in the form port/protocol
         # and the value is the corresponding port to open on the host.
         # For example:
         #   {'2222/tcp': 3333} will expose port 2222 inside the container as port 3333 on the host.
-        container_ports: Dict[str, int] = self.container_ports or {}
+        container_ports: dict[str, int] = self.container_ports or {}
 
         if self.open_port:
             _container_port = self.container_port or self.port_number
@@ -275,34 +277,33 @@ class DockerApp(InfraApp):
 
         return container_ports
 
-    def get_container_command(self) -> Optional[List[str]]:
+    def get_container_command(self) -> list[str] | None:
         if isinstance(self.command, str):
             return self.command.strip().split(" ")
         return self.command
 
-    def build_resources(self, build_context: DockerBuildContext) -> List["DockerResource"]:
-        from agno.docker.resource.base import DockerResource
+    def build_resources(self, build_context: DockerBuildContext) -> list[DockerResource]:
         from agno.docker.resource.container import DockerContainer
         from agno.docker.resource.network import DockerNetwork
 
         logger.debug(f"------------ Building {self.get_app_name()} ------------")
         # -*- Get Container Context
-        container_context: Optional[ContainerContext] = self.get_container_context()
+        container_context: ContainerContext | None = self.get_container_context()
         if container_context is None:
             raise Exception("Could not build ContainerContext")
         logger.debug(f"ContainerContext: {container_context.model_dump_json(indent=2)}")
 
         # -*- Get Container Environment
-        container_env: Dict[str, str] = self.get_container_env(container_context=container_context)
+        container_env: dict[str, str] = self.get_container_env(container_context=container_context)
 
         # -*- Get Container Volumes
         container_volumes = self.get_container_volumes(container_context=container_context)
 
         # -*- Get Container Ports
-        container_ports: Dict[str, int] = self.get_container_ports()
+        container_ports: dict[str, int] = self.get_container_ports()
 
         # -*- Get Container Command
-        container_cmd: Optional[List[str]] = self.get_container_command()
+        container_cmd: list[str] | None = self.get_container_command()
         if container_cmd:
             logger.debug("Command: {}".format(" ".join(container_cmd)))
 
@@ -334,7 +335,7 @@ class DockerApp(InfraApp):
         )
 
         # -*- List of DockerResources created by this App
-        app_resources: List[DockerResource] = []
+        app_resources: list[DockerResource] = []
         if self.image:
             app_resources.append(self.image)
         app_resources.extend(
@@ -347,7 +348,7 @@ class DockerApp(InfraApp):
         logger.debug(f"------------ {self.get_app_name()} Built ------------")
         return app_resources
 
-    def get_infra_resources(self) -> Optional[Any]:
+    def get_infra_resources(self) -> Any | None:
         from agno.docker.resources import DockerResources
 
         return DockerResources(

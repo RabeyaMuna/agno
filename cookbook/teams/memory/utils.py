@@ -1,5 +1,4 @@
 import json
-from typing import List
 
 from agno.memory.v2.schema import UserMemory
 from agno.run.team import TeamRunResponse
@@ -41,7 +40,7 @@ def render_panel(title: str, content: str) -> Panel:
     return Panel(JSON(content, indent=4), title=title, expand=True)
 
 
-def print_team_memory(user_id: str, memories: List[UserMemory]):
+def print_team_memory(user_id: str, memories: list[UserMemory]):
     # -*- Print memories
     console.print(
         render_panel(

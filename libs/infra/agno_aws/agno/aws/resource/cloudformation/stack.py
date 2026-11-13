@@ -1,4 +1,6 @@
-from typing import Any, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -12,7 +14,7 @@ class CloudFormationStack(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudformation.html#service-resource
     """
 
-    resource_type: Optional[str] = "CloudFormationStack"
+    resource_type: str | None = "CloudFormationStack"
     service_name: str = "cloudformation"
 
     # StackName: The name must be unique in the Region in which you are creating the stack.
@@ -72,7 +74,7 @@ class CloudFormationStack(AwsResource):
                 return False
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the CloudFormationStack
 
         Args:
@@ -143,7 +145,7 @@ class CloudFormationStack(AwsResource):
                 logger.error(e)
         return True
 
-    def get_stack_resource(self, aws_client: AwsApiClient, logical_id: str) -> Optional[Any]:
+    def get_stack_resource(self, aws_client: AwsApiClient, logical_id: str) -> Any | None:
         # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudformation.html#CloudFormation.StackResource
         # logger.debug(f"Getting StackResource {logical_id} for {self.name}")
         try:
@@ -154,7 +156,7 @@ class CloudFormationStack(AwsResource):
             logger.error(e)
         return None
 
-    def get_stack_resource_physical_id(self, stack_resource: Any) -> Optional[str]:
+    def get_stack_resource_physical_id(self, stack_resource: Any) -> str | None:
         # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudformation.html#CloudFormation.StackResource
         try:
             physical_resource_id = stack_resource.physical_resource_id if stack_resource is not None else None
@@ -163,7 +165,7 @@ class CloudFormationStack(AwsResource):
         except Exception:
             return None
 
-    def get_private_subnets(self, aws_client: Optional[AwsApiClient] = None) -> Optional[List[str]]:
+    def get_private_subnets(self, aws_client: AwsApiClient | None = None) -> list[str] | None:
         try:
             client: AwsApiClient = (
                 aws_client
@@ -193,7 +195,7 @@ class CloudFormationStack(AwsResource):
             logger.error(e)
         return None
 
-    def get_public_subnets(self, aws_client: Optional[AwsApiClient] = None) -> Optional[List[str]]:
+    def get_public_subnets(self, aws_client: AwsApiClient | None = None) -> list[str] | None:
         try:
             client: AwsApiClient = (
                 aws_client
@@ -218,7 +220,7 @@ class CloudFormationStack(AwsResource):
             logger.error(e)
         return None
 
-    def get_security_group(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_security_group(self, aws_client: AwsApiClient | None = None) -> str | None:
         try:
             client: AwsApiClient = (
                 aws_client

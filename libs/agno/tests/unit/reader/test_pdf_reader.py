@@ -127,7 +127,7 @@ async def test_pdf_url_image_reader_async(sample_pdf_url):
 
 def test_pdf_reader_invalid_file():
     reader = PDFReader()
-    with pytest.raises(Exception):
+    with pytest.raises(FileNotFoundError):
         reader.read("nonexistent.pdf")
 
 

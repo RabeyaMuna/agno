@@ -4,8 +4,6 @@ This example shows how to use the Memory class to create a persistent memory.
 Every time you run this, the `Memory` object will be re-initialized from the DB.
 """
 
-from typing import List
-
 from agno.memory.v2.db.schema import MemoryRow
 from agno.memory.v2.db.sqlite import SqliteMemoryDb
 from agno.memory.v2.memory import Memory
@@ -35,6 +33,6 @@ memory.add_user_memory(
     user_id=john_doe_id,
 )
 
-memories: List[MemoryRow] = memory_db.read_memories()
+memories: list[MemoryRow] = memory_db.read_memories()
 print("All memories:")
 pprint(memories)

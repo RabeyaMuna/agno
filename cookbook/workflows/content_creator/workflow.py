@@ -1,9 +1,9 @@
+from __future__ import annotations
+
 import json
-from typing import List, Optional
 
 from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat
-from agno.run.response import RunEvent
 from agno.tools.firecrawl import FirecrawlTools
 from agno.utils.log import logger
 from agno.workflow import Workflow
@@ -41,7 +41,7 @@ class Tweet(BaseModel):
     is_hook: bool = Field(
         default=False, description="Marks if this tweet is the 'hook' (first tweet)"
     )
-    media_urls: Optional[List[str]] = Field(
+    media_urls: list[str] | None = Field(
         default_factory=list, description="Associated media URLs, if any"
     )  # type: ignore
 
@@ -52,7 +52,7 @@ class Thread(BaseModel):
     """
 
     topic: str
-    tweets: List[Tweet]
+    tweets: list[Tweet]
 
 
 class LinkedInPost(BaseModel):
@@ -61,7 +61,7 @@ class LinkedInPost(BaseModel):
     """
 
     content: str
-    media_url: Optional[List[str]] = None  # Optional media attachment URL
+    media_url: list[str] | None = None  # Optional media attachment URL
 
 
 class ContentPlanningWorkflow(Workflow):

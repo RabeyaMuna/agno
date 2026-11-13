@@ -1,4 +1,6 @@
-from typing import Any, Dict, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.cli.console import print_info
 from agno.docker.api_client import DockerApiClient
@@ -10,14 +12,14 @@ class DockerResource(InfraResource):
     """Base class for Docker Resources."""
 
     # Fields received from the DockerApiClient
-    id: Optional[str] = None
-    short_id: Optional[str] = None
-    attrs: Optional[Dict[str, Any]] = None
+    id: str | None = None
+    short_id: str | None = None
+    attrs: dict[str, Any] | None = None
 
     # Pull latest image before create/update
-    pull: Optional[bool] = None
+    pull: bool | None = None
 
-    docker_client: Optional[DockerApiClient] = None
+    docker_client: DockerApiClient | None = None
 
     @staticmethod
     def get_from_cluster(docker_client: DockerApiClient) -> Any:
@@ -53,7 +55,7 @@ class DockerResource(InfraResource):
     def is_active(self, docker_client: DockerApiClient) -> bool:
         """Returns True if the active is active on the docker cluster"""
         self.active_resource = self._read(docker_client=docker_client)
-        return True if self.active_resource is not None else False
+        return self.active_resource is not None
 
     def _create(self, docker_client: DockerApiClient) -> bool:
         logger.warning(f"@_create method not defined for {self.get_resource_name()}")

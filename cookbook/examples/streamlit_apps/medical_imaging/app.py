@@ -42,7 +42,7 @@ def main():
 
     if uploaded_file is not None:
         with image_container:
-            col1, col2, col3 = st.columns([1, 2, 1])
+            _col1, col2, _col3 = st.columns([1, 2, 1])
             with col2:
                 # Use PILImage for display
                 pil_image = PILImage.open(uploaded_file)
@@ -104,7 +104,7 @@ def main():
                         )
 
                     except Exception as e:
-                        st.error(f"Analysis error: {str(e)}")
+                        st.error(f"Analysis error: {e!s}")
                         st.info(
                             "Please try again or contact support if the issue persists."
                         )

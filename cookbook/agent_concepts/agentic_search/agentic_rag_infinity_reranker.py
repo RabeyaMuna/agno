@@ -45,6 +45,8 @@ python cookbook/agent_concepts/agentic_search/agentic_rag_infinity_reranker.py
 - More deployment options: https://michaelfeil.eu/infinity/0.0.76/deploy/
 """
 
+import sys
+
 from agno.agent import Agent
 from agno.embedder.cohere import CohereEmbedder
 from agno.knowledge.url import UrlKnowledge
@@ -96,7 +98,7 @@ def test_infinity_connection():
     try:
         from infinity_client import Client
 
-        client = Client(base_url="http://localhost:7997")
+        Client(base_url="http://localhost:7997")
         print("✅ Successfully connected to Infinity server at localhost:7997")
         return True
     except Exception as e:
@@ -113,7 +115,7 @@ if __name__ == "__main__":
 
     # Test Infinity connection first
     if not test_infinity_connection():
-        exit(1)
+        sys.exit(1)
 
     print("\n📚 Loading knowledge base...")
     # Load the knowledge base, comment after first run

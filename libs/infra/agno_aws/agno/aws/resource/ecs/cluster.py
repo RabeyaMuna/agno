@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -12,32 +14,32 @@ class EcsCluster(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html
     """
 
-    resource_type: Optional[str] = "EcsCluster"
+    resource_type: str | None = "EcsCluster"
     service_name: str = "ecs"
 
     # Name of the cluster.
     name: str
     # Name for the cluster.
     # Use name if not provided.
-    ecs_cluster_name: Optional[str] = None
+    ecs_cluster_name: str | None = None
 
-    tags: Optional[List[Dict[str, str]]] = None
+    tags: list[dict[str, str]] | None = None
     # The setting to use when creating a cluster.
-    settings: Optional[List[Dict[str, Any]]] = None
+    settings: list[dict[str, Any]] | None = None
     # The execute command configuration for the cluster.
-    configuration: Optional[Dict[str, Any]] = None
+    configuration: dict[str, Any] | None = None
     # The short name of one or more capacity providers to associate with the cluster.
     # A capacity provider must be associated with a cluster before it can be included as part of the default capacity
     # provider strategy of the cluster or used in a capacity provider strategy when calling the CreateService/RunTask.
-    capacity_providers: Optional[List[str]] = None
+    capacity_providers: list[str] | None = None
     # The capacity provider strategy to set as the default for the cluster. After a default capacity provider strategy
     # is set for a cluster, when you call the RunTask or CreateService APIs with no capacity provider strategy or
     # launch type specified, the default capacity provider strategy for the cluster is used.
-    default_capacity_provider_strategy: Optional[List[Dict[str, Any]]] = None
+    default_capacity_provider_strategy: list[dict[str, Any]] | None = None
     # Use this parameter to set a default Service Connect namespace.
     # After you set a default Service Connect namespace, any new services with Service Connect turned on that are
     # created in the cluster are added as client services in the namespace.
-    service_connect_namespace: Optional[str] = None
+    service_connect_namespace: str | None = None
 
     def get_ecs_cluster_name(self):
         return self.ecs_cluster_name or self.name
@@ -51,7 +53,7 @@ class EcsCluster(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if self.tags is not None:
             not_null_args["tags"] = self.tags
         if self.settings is not None:
@@ -86,7 +88,7 @@ class EcsCluster(AwsResource):
             logger.error(e)
         return False
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the EcsCluster
 
         Args:
@@ -139,7 +141,7 @@ class EcsCluster(AwsResource):
             logger.error(e)
         return False
 
-    def get_arn(self, aws_client: AwsApiClient) -> Optional[str]:
+    def get_arn(self, aws_client: AwsApiClient) -> str | None:
         tg = self._read(aws_client)
         if tg is None:
             return None

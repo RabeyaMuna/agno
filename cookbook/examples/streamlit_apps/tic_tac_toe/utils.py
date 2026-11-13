@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from __future__ import annotations
 
 import streamlit as st
 
@@ -14,7 +14,7 @@ class TicTacToeBoard:
         self.board = [[EMPTY for _ in range(3)] for _ in range(3)]
         self.current_player = X_PLAYER
 
-    def make_move(self, row: int, col: int) -> Tuple[bool, str]:
+    def make_move(self, row: int, col: int) -> tuple[bool, str]:
         """
         Make a move on the board.
 
@@ -56,7 +56,7 @@ class TicTacToeBoard:
             board_str += f"| {' | '.join(row)} |\n-------------\n"
         return board_str
 
-    def check_winner(self) -> Optional[str]:
+    def check_winner(self) -> str | None:
         """
         Check if there's a winner.
 
@@ -91,7 +91,7 @@ class TicTacToeBoard:
         """
         return all(cell != EMPTY for row in self.board for cell in row)
 
-    def get_valid_moves(self) -> List[Tuple[int, int]]:
+    def get_valid_moves(self) -> list[tuple[int, int]]:
         """
         Get a list of valid moves (empty positions).
 
@@ -105,7 +105,7 @@ class TicTacToeBoard:
                     valid_moves.append((row, col))
         return valid_moves
 
-    def get_game_state(self) -> Tuple[bool, str]:
+    def get_game_state(self) -> tuple[bool, str]:
         """
         Get the current game state.
 
@@ -146,7 +146,7 @@ def show_agent_status(agent_name: str, status: str):
 
 
 def create_mini_board_html(
-    board_state: list, highlight_pos: tuple = None, is_player1: bool = True
+    board_state: list, highlight_pos: tuple | None = None, is_player1: bool = True
 ) -> str:
     """Create HTML for a mini board with player-specific highlighting"""
     html = '<div class="mini-board">'

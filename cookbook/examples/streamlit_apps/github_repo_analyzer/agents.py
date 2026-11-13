@@ -1,12 +1,13 @@
+from __future__ import annotations
+
 from textwrap import dedent
-from typing import Optional
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.tools.github import GithubTools
 
 
-def get_github_agent(debug_mode: bool = True) -> Optional[Agent]:
+def get_github_agent(debug_mode: bool = True) -> Agent | None:
     """
     Args:
         repo_name: Optional repository name ("owner/repo"). If None, agent relies on user query.
@@ -20,7 +21,7 @@ def get_github_agent(debug_mode: bool = True) -> Optional[Agent]:
             with a strong focus on detailed code reviews for Pull Requests.
             Use your tools to answer questions accurately and provide insightful analysis.
         """),
-        instructions=dedent(f"""\
+        instructions=dedent("""\
         **Core Task:** Analyze GitHub repositories and answer user questions based on the available tools and conversation history.
 
         **Repository Context Management:**

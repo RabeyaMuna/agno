@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from agno.agent import Agent
 from agno.knowledge.pdf import PDFKnowledgeBase
 from agno.utils.media import (

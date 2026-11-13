@@ -22,8 +22,9 @@ Example prompts to try:
 Run: `pip install groq agno` to install the dependencies
 """
 
+from __future__ import annotations
+
 from textwrap import dedent
-from typing import List, Optional
 
 import typer
 from agno.agent import Agent, AgentMemory
@@ -46,7 +47,7 @@ memory_db = SqliteMemoryDb(
 
 
 def study_agent(
-    user_id: Optional[str] = typer.Argument(None, help="User ID for the study session"),
+    user_id: str | None = typer.Argument(None, help="User ID for the study session"),
 ):
     """
     Initialize and run the StudyScout agent with the specified user ID.
@@ -56,13 +57,13 @@ def study_agent(
     if user_id is None:
         user_id = typer.prompt("Enter your user ID", default="default_user")
 
-    session_id: Optional[str] = None
+    session_id: str | None = None
 
     # Ask the user if they want to start a new session or continue an existing one
     new = typer.confirm("Do you want to start a new study session?")
 
     if not new:
-        existing_sessions: List[str] = agent_storage.get_all_session_ids(user_id)
+        existing_sessions: list[str] = agent_storage.get_all_session_ids(user_id)
         if len(existing_sessions) > 0:
             print("\nExisting sessions:")
             for i, session in enumerate(existing_sessions, 1):

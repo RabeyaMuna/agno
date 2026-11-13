@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -14,48 +16,48 @@ class SecretsManager(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/secretsmanager.html
     """
 
-    resource_type: Optional[str] = "Secret"
+    resource_type: str | None = "Secret"
     service_name: str = "secretsmanager"
 
     # The name of the secret.
     name: str
-    client_request_token: Optional[str] = None
+    client_request_token: str | None = None
     # The description of the secret.
-    description: Optional[str] = None
-    kms_key_id: Optional[str] = None
+    description: str | None = None
+    kms_key_id: str | None = None
     # The binary data to encrypt and store in the new version of the secret.
     # We recommend that you store your binary data in a file and then pass the contents of the file as a parameter.
-    secret_binary: Optional[bytes] = None
+    secret_binary: bytes | None = None
     # The text data to encrypt and store in this new version of the secret.
     # We recommend you use a JSON structure of key/value pairs for your secret value.
     # Either SecretString or SecretBinary must have a value, but not both.
-    secret_string: Optional[str] = None
+    secret_string: str | None = None
     # A list of tags to attach to the secret.
-    tags: Optional[List[Dict[str, str]]] = None
+    tags: list[dict[str, str]] | None = None
     # A list of Regions and KMS keys to replicate secrets.
-    add_replica_regions: Optional[List[Dict[str, str]]] = None
+    add_replica_regions: list[dict[str, str]] | None = None
     # Specifies whether to overwrite a secret with the same name in the destination Region.
-    force_overwrite_replica_secret: Optional[str] = None
+    force_overwrite_replica_secret: str | None = None
 
     # Read secret key/value pairs from yaml files
-    secret_files: Optional[List[Path]] = None
+    secret_files: list[Path] | None = None
     # Read secret key/value pairs from yaml files in a directory
-    secrets_dir: Optional[Path] = None
+    secrets_dir: Path | None = None
     # Force delete the secret without recovery
-    force_delete: Optional[bool] = True
+    force_delete: bool | None = True
 
     # Provided by api on create
-    secret_arn: Optional[str] = None
-    secret_name: Optional[str] = None
-    secret_value: Optional[dict] = None
+    secret_arn: str | None = None
+    secret_name: str | None = None
+    secret_value: dict | None = None
 
-    cached_secret: Optional[Dict[str, Any]] = None
+    cached_secret: dict[str, Any] | None = None
 
-    def read_secrets_from_files(self) -> Dict[str, Any]:
+    def read_secrets_from_files(self) -> dict[str, Any]:
         """Reads secrets from files"""
         from agno.utils.yaml_io import read_yaml_file
 
-        secret_dict: Dict[str, Any] = {}
+        secret_dict: dict[str, Any] = {}
         if self.secret_files:
             for f in self.secret_files:
                 _s = read_yaml_file(f)
@@ -81,18 +83,18 @@ class SecretsManager(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
 
         # Step 1: Read secrets from files
-        secret_dict: Dict[str, Any] = self.read_secrets_from_files()
+        secret_dict: dict[str, Any] = self.read_secrets_from_files()
 
         # Step 2: Add secret_string if provided
         if self.secret_string is not None:
             secret_dict.update(json.loads(self.secret_string))
 
         # Step 3: Build secret_string
-        secret_string: Optional[str] = json.dumps(secret_dict) if len(secret_dict) > 0 else None
+        secret_string: str | None = json.dumps(secret_dict) if len(secret_dict) > 0 else None
 
         # Step 4: Build SecretsManager configuration
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if self.client_request_token:
             not_null_args["ClientRequestToken"] = self.client_request_token
         if self.description:
@@ -133,7 +135,7 @@ class SecretsManager(AwsResource):
             logger.error(e)
         return False
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the SecretsManager
 
         Args:
@@ -192,7 +194,7 @@ class SecretsManager(AwsResource):
         print_info(f"Updating {self.get_resource_type()}: {self.get_resource_name()}")
 
         # Initialize final secret_dict
-        secret_dict: Dict[str, Any] = {}
+        secret_dict: dict[str, Any] = {}
 
         # Step 1: Read secrets from AWS SecretsManager
         existing_secret_dict = self.get_secrets_as_dict()
@@ -201,7 +203,7 @@ class SecretsManager(AwsResource):
             secret_dict.update(existing_secret_dict)
 
         # Step 2: Read secrets from files
-        new_secret_dict: Dict[str, Any] = self.read_secrets_from_files()
+        new_secret_dict: dict[str, Any] = self.read_secrets_from_files()
         if len(new_secret_dict) > 0:
             secret_dict.update(new_secret_dict)
 
@@ -225,7 +227,7 @@ class SecretsManager(AwsResource):
             logger.error(e)
         return False
 
-    def get_secrets_as_dict(self, aws_client: Optional[AwsApiClient] = None) -> Optional[Dict[str, Any]]:
+    def get_secrets_as_dict(self, aws_client: AwsApiClient | None = None) -> dict[str, Any] | None:
         """Get secret value
 
         Args:
@@ -267,7 +269,7 @@ class SecretsManager(AwsResource):
             logger.error(e)
         return None
 
-    def get_secret_value(self, secret_name: str, aws_client: Optional[AwsApiClient] = None) -> Optional[Any]:
+    def get_secret_value(self, secret_name: str, aws_client: AwsApiClient | None = None) -> Any | None:
         secret_dict = self.get_secrets_as_dict(aws_client=aws_client)
         if secret_dict is not None:
             return secret_dict.get(secret_name, None)

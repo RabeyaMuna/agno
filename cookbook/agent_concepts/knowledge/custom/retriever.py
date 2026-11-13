@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from agno.agent import Agent
 from agno.embedder.openai import OpenAIEmbedder
@@ -29,8 +29,8 @@ knowledge_base.load(recreate=True)  # Comment out after first run
 # Define the custom retriever
 # This is the function that the agent will use to retrieve documents
 def retriever(
-    query: str, agent: Optional[Agent] = None, num_documents: int = 5, **kwargs
-) -> Optional[list[dict]]:
+    query: str, agent: Agent | None = None, num_documents: int = 5, **kwargs
+) -> list[dict] | None:
     """
     Custom retriever function to search the vector database for relevant documents.
 
@@ -57,7 +57,7 @@ def retriever(
         else:
             return None
     except Exception as e:
-        print(f"Error during vector database search: {str(e)}")
+        print(f"Error during vector database search: {e!s}")
         return None
 
 

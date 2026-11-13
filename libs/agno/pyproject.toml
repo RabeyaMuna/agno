@@ -285,6 +285,7 @@ asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 line-length = 120
+target-version = "py39"
 # Ignore `F401` (import violations) in all `__init__.py` files
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
@@ -422,3 +423,38 @@ module = [
   "zep_cloud.*"
 ]
 ignore_missing_imports = true
+
+[tool.ruff.lint]
+ignore = [
+    "BLE001",   # Do not catch blind exception: Exception
+    "TRY002",   # Create your own exception
+    "SIM117",   # Combine `with` statements
+    "RUF012",   # Mutable class defaults
+    "SIM102",   # Combine nested `if` statements
+    "TRY004",   # Prefer `TypeError` over `Exception`
+    "B008",     # Do not perform function calls in argument defaults
+    "B020",     # Loop control variable overrides iterates
+    "PLW0602",  # Using global for a name that doesn't exist in module scope
+    "S110",     # Try, except, pass detected
+    "PERF402",  # Use `list` or `list.copy` to create a copy of a list
+    "PLW0127",  # Self-assignment of a variable
+    "G201",     # Logging `.exception()` should be used instead of `.error()`
+    "TRY203",   # Catching an exception with `Exception` while also catching `BaseException`
+    "SIM113",   # Use `enumerate` to get index when iterating
+    "ASYNC251", # Async functions should not call `time.sleep`
+    "SIM103",   # Return boolean expression directly
+    "PLW1510",  # `subprocess.run` without explicit `check` argument
+    "PLR1704",  # Redefining argument with the local name
+    "B018",     # Found useless expression
+    "ASYNC230", # Async functions should not call `subprocess.run`
+    "YTT204",   # Use `datetime.utcnow()` instead
+    "SIM115",   # Use context handler for opening files
+    "S112",     # Try, except, continue detected
+    "S102",     # Use of `exec` detected
+    "RUF059",   # Use `|=` operator for union
+    "PLE0704",  # Invalid `except` clause
+    "PLC0206",  # Cannot assign to attribute in loop
+    "N999",     # Invalid module name
+    "B023",     # Function definition does not bind loop variable
+    "E722",     # Do not use bare `except`
+]

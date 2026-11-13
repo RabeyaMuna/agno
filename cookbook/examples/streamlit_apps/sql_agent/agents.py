@@ -21,10 +21,11 @@ Examples with table joins:
 View the README for instructions on how to run the application.
 """
 
+from __future__ import annotations
+
 import json
 from pathlib import Path
 from textwrap import dedent
-from typing import Optional
 
 from agno.agent import Agent
 from agno.embedder.openai import OpenAIEmbedder
@@ -127,9 +128,9 @@ semantic_model_str = json.dumps(semantic_model, indent=2)
 
 def get_sql_agent(
     name: str = "SQL Agent",
-    user_id: Optional[str] = None,
+    user_id: str | None = None,
     model_id: str = "openai:gpt-4o",
-    session_id: Optional[str] = None,
+    session_id: str | None = None,
     debug_mode: bool = True,
 ) -> Agent:
     """Returns an instance of the SQL Agent.
@@ -185,7 +186,7 @@ def get_sql_agent(
         - Race strategy evaluation
 
         You combine deep F1 knowledge with advanced SQL expertise to uncover insights from decades of racing data."""),
-        instructions=dedent(f"""\
+        instructions=dedent("""\
         You are a SQL expert focused on writing precise, efficient queries.
 
         When a user messages you, determine if you need query the database or can respond directly.

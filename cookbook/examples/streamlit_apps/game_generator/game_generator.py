@@ -4,8 +4,8 @@
 """
 
 import json
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat
@@ -44,12 +44,16 @@ class GameGenerator(Workflow):
         description="You are a game developer that produces working HTML5 code.",
         model=OpenAIChat(id="gpt-4o"),
         instructions=[
-            "Create a game based on the user's prompt. "
-            "The game should be HTML5, completely self-contained and must be runnable simply by opening on a browser",
+            (
+                "Create a game based on the user's prompt. "
+                "The game should be HTML5, completely self-contained and must be runnable simply by opening on a browser"
+            ),
             "Ensure the game has a alert that pops up if the user dies and then allows the user to restart or exit the game.",
             "add full screen mode to the game",
-            "Ensure instructions for the game are displayed on the HTML page."
-            "Use user-friendly colours and make the game canvas large enough for the game to be playable on a larger screen.",
+            (
+                "Ensure instructions for the game are displayed on the HTML page."
+                "Use user-friendly colours and make the game canvas large enough for the game to be playable on a larger screen."
+            ),
         ],
         response_model=GameOutput,
     )
@@ -59,8 +63,10 @@ class GameGenerator(Workflow):
         model=OpenAIChat(id="gpt-4o"),
         description="You are a game QA and you evaluate html5 code for correctness.",
         instructions=[
-            "You will be given some HTML5 code."
-            "Your task is to read the code and evaluate it for correctness, but also that it matches the original task description.",
+            (
+                "You will be given some HTML5 code."
+                "Your task is to read the code and evaluate it for correctness, but also that it matches the original task description."
+            ),
         ],
         response_model=QAOutput,
     )

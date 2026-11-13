@@ -6,9 +6,10 @@ Recommendations:
 - Try not to nest the structures too deeply, the model will have a hard time understanding them.
 """
 
+from __future__ import annotations
+
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
 
 from agno.agent import Agent
 from agno.tools.decorator import tool
@@ -22,7 +23,7 @@ class UserProfile(BaseModel):
     name: str = Field(..., description="Full name of the user")
     email: str = Field(..., description="Valid email address")
     age: int = Field(..., ge=0, le=120, description="Age of the user")
-    interests: List[str] = Field(
+    interests: list[str] = Field(
         default_factory=list, description="List of user interests"
     )
     created_at: datetime = Field(
@@ -43,12 +44,12 @@ class Task(BaseModel):
     """Task information."""
 
     title: str = Field(..., min_length=1, max_length=100, description="Task title")
-    description: Optional[str] = Field(None, description="Detailed task description")
+    description: str | None = Field(None, description="Detailed task description")
     priority: TaskPriority = Field(
         default=TaskPriority.MEDIUM, description="Task priority level"
     )
-    due_date: Optional[datetime] = Field(None, description="Task due date")
-    assigned_to: Optional[UserProfile] = Field(
+    due_date: datetime | None = Field(None, description="Task due date")
+    assigned_to: UserProfile | None = Field(
         None, description="User assigned to the task"
     )
 

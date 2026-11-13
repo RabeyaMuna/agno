@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from __future__ import annotations
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.app.base import AwsApp
@@ -11,16 +11,16 @@ from agno.utils.log import logger
 class AwsResources(InfraResources):
     infra: str = "aws"
 
-    apps: Optional[List[AwsApp]] = None
-    resources: Optional[List[AwsResource]] = None
+    apps: list[AwsApp] | None = None
+    resources: list[AwsResource] | None = None
 
-    aws_region: Optional[str] = None
-    aws_profile: Optional[str] = None
+    aws_region: str | None = None
+    aws_profile: str | None = None
 
     # -*- Cached Data
-    _api_client: Optional[AwsApiClient] = None
+    _api_client: AwsApiClient | None = None
 
-    def get_aws_region(self) -> Optional[str]:
+    def get_aws_region(self) -> str | None:
         # Priority 1: Use aws_region from ResourceGroup (or cached value)
         if self.aws_region:
             return self.aws_region
@@ -41,7 +41,7 @@ class AwsResources(InfraResources):
             self.aws_region = aws_region_env
         return self.aws_region
 
-    def get_aws_profile(self) -> Optional[str]:
+    def get_aws_profile(self) -> str | None:
         # Priority 1: Use aws_region from ResourceGroup (or cached value)
         if self.aws_profile:
             return self.aws_profile
@@ -70,20 +70,20 @@ class AwsResources(InfraResources):
 
     def create_resources(
         self,
-        group_filter: Optional[str] = None,
-        name_filter: Optional[str] = None,
-        type_filter: Optional[str] = None,
-        dry_run: Optional[bool] = False,
-        auto_confirm: Optional[bool] = False,
-        force: Optional[bool] = None,
-        pull: Optional[bool] = None,
-    ) -> Tuple[int, int]:
+        group_filter: str | None = None,
+        name_filter: str | None = None,
+        type_filter: str | None = None,
+        dry_run: bool | None = False,
+        auto_confirm: bool | None = False,
+        force: bool | None = None,
+        pull: bool | None = None,
+    ) -> tuple[int, int]:
         from agno.aws.resource.types import AwsResourceInstallOrder
         from agno.cli.console import confirm_yes_no, print_heading, print_info
 
         logger.debug("-*- Creating AwsResources")
         # Build a list of AwsResources to create
-        resources_to_create: List[AwsResource] = []
+        resources_to_create: list[AwsResource] = []
 
         # Add resources to resources_to_create
         if self.resources is not None:
@@ -100,7 +100,7 @@ class AwsResources(InfraResources):
                     resources_to_create.append(r)
 
         # Build a list of AwsApps to create
-        apps_to_create: List[AwsApp] = []
+        apps_to_create: list[AwsApp] = []
         if self.apps is not None:
             for app in self.apps:
                 if app.group is None and self.name is not None:
@@ -143,23 +143,22 @@ class AwsResources(InfraResources):
         resources_to_create.sort(key=lambda x: AwsResourceInstallOrder.get(x.__class__.__name__, 5000))
 
         # Deduplicate AwsResources
-        deduped_resources_to_create: List[AwsResource] = []
+        deduped_resources_to_create: list[AwsResource] = []
         for r in resources_to_create:
             if r not in deduped_resources_to_create:
                 deduped_resources_to_create.append(r)
 
         # Implement dependency sorting
-        final_aws_resources: List[AwsResource] = []
+        final_aws_resources: list[AwsResource] = []
         logger.debug("-*- Building AwsResources dependency graph")
         for aws_resource in deduped_resources_to_create:
             # Logic to follow if resource has dependencies
             if aws_resource.depends_on is not None and len(aws_resource.depends_on) > 0:
                 # Add the dependencies before the resource itself
                 for dep in aws_resource.depends_on:
-                    if isinstance(dep, AwsResource):
-                        if dep not in final_aws_resources:
-                            logger.debug(f"-*- Adding {dep.name}, dependency of {aws_resource.name}")
-                            final_aws_resources.append(dep)
+                    if isinstance(dep, AwsResource) and dep not in final_aws_resources:
+                        logger.debug(f"-*- Adding {dep.name}, dependency of {aws_resource.name}")
+                        final_aws_resources.append(dep)
 
                 # Add the resource to be created after its dependencies
                 if aws_resource not in final_aws_resources:
@@ -228,24 +227,24 @@ class AwsResources(InfraResources):
         if num_resources_to_create != num_resources_created:
             logger.error(
                 f"Resources created: {num_resources_created} do not match resources required: {num_resources_to_create}"
-            )  # noqa: E501
+            )
         return num_resources_created, num_resources_to_create
 
     def delete_resources(
         self,
-        group_filter: Optional[str] = None,
-        name_filter: Optional[str] = None,
-        type_filter: Optional[str] = None,
-        dry_run: Optional[bool] = False,
-        auto_confirm: Optional[bool] = False,
-        force: Optional[bool] = None,
-    ) -> Tuple[int, int]:
+        group_filter: str | None = None,
+        name_filter: str | None = None,
+        type_filter: str | None = None,
+        dry_run: bool | None = False,
+        auto_confirm: bool | None = False,
+        force: bool | None = None,
+    ) -> tuple[int, int]:
         from agno.aws.resource.types import AwsResourceInstallOrder
         from agno.cli.console import confirm_yes_no, print_heading, print_info
 
         logger.debug("-*- Deleting AwsResources")
         # Build a list of AwsResources to delete
-        resources_to_delete: List[AwsResource] = []
+        resources_to_delete: list[AwsResource] = []
 
         # Add resources to resources_to_delete
         if self.resources is not None:
@@ -262,7 +261,7 @@ class AwsResources(InfraResources):
                     resources_to_delete.append(r)
 
         # Build a list of AwsApps to delete
-        apps_to_delete: List[AwsApp] = []
+        apps_to_delete: list[AwsApp] = []
         if self.apps is not None:
             for app in self.apps:
                 if app.group is None and self.name is not None:
@@ -289,13 +288,13 @@ class AwsResources(InfraResources):
         resources_to_delete.sort(key=lambda x: AwsResourceInstallOrder.get(x.__class__.__name__, 5000), reverse=True)
 
         # Deduplicate AwsResources
-        deduped_resources_to_delete: List[AwsResource] = []
+        deduped_resources_to_delete: list[AwsResource] = []
         for r in resources_to_delete:
             if r not in deduped_resources_to_delete:
                 deduped_resources_to_delete.append(r)
 
         # Implement dependency sorting
-        final_aws_resources: List[AwsResource] = []
+        final_aws_resources: list[AwsResource] = []
         logger.debug("-*- Building AwsResources dependency graph")
         for aws_resource in deduped_resources_to_delete:
             # Logic to follow if resource has dependencies
@@ -316,10 +315,9 @@ class AwsResources(InfraResources):
 
                 # 4. Add the dependencies back in reverse order
                 for dep in aws_resource.depends_on:
-                    if isinstance(dep, AwsResource):
-                        if dep not in final_aws_resources:
-                            logger.debug(f"-*- Adding {dep.name}, dependency of {aws_resource.name}")
-                            final_aws_resources.append(dep)
+                    if isinstance(dep, AwsResource) and dep not in final_aws_resources:
+                        logger.debug(f"-*- Adding {dep.name}, dependency of {aws_resource.name}")
+                        final_aws_resources.append(dep)
             else:
                 # Add the resource to be deleted if it has no dependencies
                 if aws_resource not in final_aws_resources:
@@ -383,26 +381,26 @@ class AwsResources(InfraResources):
         if num_resources_to_delete != num_resources_deleted:
             logger.error(
                 f"Resources deleted: {num_resources_deleted} do not match resources required: {num_resources_to_delete}"
-            )  # noqa: E501
+            )
         return num_resources_deleted, num_resources_to_delete
 
     def update_resources(
         self,
-        group_filter: Optional[str] = None,
-        name_filter: Optional[str] = None,
-        type_filter: Optional[str] = None,
-        dry_run: Optional[bool] = False,
-        auto_confirm: Optional[bool] = False,
-        force: Optional[bool] = None,
-        pull: Optional[bool] = None,
-    ) -> Tuple[int, int]:
+        group_filter: str | None = None,
+        name_filter: str | None = None,
+        type_filter: str | None = None,
+        dry_run: bool | None = False,
+        auto_confirm: bool | None = False,
+        force: bool | None = None,
+        pull: bool | None = None,
+    ) -> tuple[int, int]:
         from agno.aws.resource.types import AwsResourceInstallOrder
         from agno.cli.console import confirm_yes_no, print_heading, print_info
 
         logger.debug("-*- Updating AwsResources")
 
         # Build a list of AwsResources to update
-        resources_to_update: List[AwsResource] = []
+        resources_to_update: list[AwsResource] = []
 
         # Add resources to resources_to_update
         if self.resources is not None:
@@ -419,7 +417,7 @@ class AwsResources(InfraResources):
                     resources_to_update.append(r)
 
         # Build a list of AwsApps to update
-        apps_to_update: List[AwsApp] = []
+        apps_to_update: list[AwsApp] = []
         if self.apps is not None:
             for app in self.apps:
                 if app.group is None and self.name is not None:
@@ -446,23 +444,22 @@ class AwsResources(InfraResources):
         resources_to_update.sort(key=lambda x: AwsResourceInstallOrder.get(x.__class__.__name__, 5000))
 
         # Deduplicate AwsResources
-        deduped_resources_to_update: List[AwsResource] = []
+        deduped_resources_to_update: list[AwsResource] = []
         for r in resources_to_update:
             if r not in deduped_resources_to_update:
                 deduped_resources_to_update.append(r)
 
         # Implement dependency sorting
-        final_aws_resources: List[AwsResource] = []
+        final_aws_resources: list[AwsResource] = []
         logger.debug("-*- Building AwsResources dependency graph")
         for aws_resource in deduped_resources_to_update:
             # Logic to follow if resource has dependencies
             if aws_resource.depends_on is not None and len(aws_resource.depends_on) > 0:
                 # Add the dependencies before the resource itself
                 for dep in aws_resource.depends_on:
-                    if isinstance(dep, AwsResource):
-                        if dep not in final_aws_resources:
-                            logger.debug(f"-*- Adding {dep.name}, dependency of {aws_resource.name}")
-                            final_aws_resources.append(dep)
+                    if isinstance(dep, AwsResource) and dep not in final_aws_resources:
+                        logger.debug(f"-*- Adding {dep.name}, dependency of {aws_resource.name}")
+                        final_aws_resources.append(dep)
 
                 # Add the resource to be created after its dependencies
                 if aws_resource not in final_aws_resources:
@@ -531,13 +528,13 @@ class AwsResources(InfraResources):
         if num_resources_to_update != num_resources_updated:
             logger.error(
                 f"Resources updated: {num_resources_updated} do not match resources required: {num_resources_to_update}"
-            )  # noqa: E501
+            )
         return num_resources_updated, num_resources_to_update
 
     def save_resources(
         self,
-        group_filter: Optional[str] = None,
-        name_filter: Optional[str] = None,
-        type_filter: Optional[str] = None,
-    ) -> Tuple[int, int]:
+        group_filter: str | None = None,
+        name_filter: str | None = None,
+        type_filter: str | None = None,
+    ) -> tuple[int, int]:
         raise NotImplementedError

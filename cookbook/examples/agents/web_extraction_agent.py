@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from textwrap import dedent
-from typing import Dict, List, Optional
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -11,7 +12,7 @@ from rich.pretty import pprint
 class ContentSection(BaseModel):
     """Represents a section of content from the webpage."""
 
-    heading: Optional[str] = Field(None, description="Section heading")
+    heading: str | None = Field(None, description="Section heading")
     content: str = Field(..., description="Section content text")
 
 
@@ -20,20 +21,20 @@ class PageInformation(BaseModel):
 
     url: str = Field(..., description="URL of the page")
     title: str = Field(..., description="Title of the page")
-    description: Optional[str] = Field(
+    description: str | None = Field(
         None, description="Meta description or summary of the page"
     )
-    features: Optional[List[str]] = Field(None, description="Key feature list")
-    content_sections: Optional[List[ContentSection]] = Field(
+    features: list[str] | None = Field(None, description="Key feature list")
+    content_sections: list[ContentSection] | None = Field(
         None, description="Main content sections of the page"
     )
-    links: Optional[Dict[str, str]] = Field(
+    links: dict[str, str] | None = Field(
         None, description="Important links found on the page with description"
     )
-    contact_info: Optional[Dict[str, str]] = Field(
+    contact_info: dict[str, str] | None = Field(
         None, description="Contact information if available"
     )
-    metadata: Optional[Dict[str, str]] = Field(
+    metadata: dict[str, str] | None = Field(
         None, description="Important metadata from the page"
     )
 

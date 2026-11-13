@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import datetime
-from typing import Any, Dict, Optional
+from typing import Any
 
 import requests
 from agno.utils.log import logger
@@ -15,23 +17,23 @@ from cookbook.workflows.content_creator_workflow.config import (
 load_dotenv()
 
 
-def json_to_typefully_content(thread_json: Dict[str, Any]) -> str:
+def json_to_typefully_content(thread_json: dict[str, Any]) -> str:
     """Convert JSON thread format to Typefully's format with 4 newlines between tweets."""
     tweets = thread_json["tweets"]
     formatted_tweets = []
     for tweet in tweets:
         tweet_text = tweet["content"]
-        if "media_urls" in tweet and tweet["media_urls"]:
+        if tweet.get("media_urls"):
             tweet_text += f"\n{tweet['media_urls'][0]}"
         formatted_tweets.append(tweet_text)
 
     return "\n\n\n\n".join(formatted_tweets)
 
 
-def json_to_linkedin_content(thread_json: Dict[str, Any]) -> str:
+def json_to_linkedin_content(thread_json: dict[str, Any]) -> str:
     """Convert JSON thread format to Typefully's format."""
     content = thread_json["content"]
-    if "url" in thread_json and thread_json["url"]:
+    if thread_json.get("url"):
         content += f"\n{thread_json['url']}"
     return content
 
@@ -43,7 +45,7 @@ def schedule_thread(
     share: bool = False,
     auto_retweet_enabled: bool = False,
     auto_plug_enabled: bool = False,
-) -> Optional[Dict[str, Any]]:
+) -> dict[str, Any] | None:
     """Schedule a thread on Typefully."""
     payload = {
         "content": content,
@@ -71,7 +73,7 @@ def schedule(
     threadify: bool = False,
     share: bool = True,
     post_type: PostType = PostType.TWITTER,
-) -> Optional[Dict[str, Any]]:
+) -> dict[str, Any] | None:
     """
     Schedule a thread from a Pydantic model.
 
@@ -118,5 +120,5 @@ def schedule(
         return None
 
     except Exception as e:
-        logger.error(f"Error: {str(e)}")
+        logger.error(f"Error: {e!s}")
         return None

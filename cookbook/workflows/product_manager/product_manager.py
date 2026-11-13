@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import os
 from datetime import datetime
-from typing import Dict, List, Optional
 
 from agno.agent.agent import Agent
-from agno.run.response import RunEvent, RunResponse
+from agno.run.response import RunResponse
 from agno.run.workflow import WorkflowCompletedEvent
 from agno.storage.postgres import PostgresStorage
 from agno.tools.linear import LinearTools
@@ -15,27 +16,27 @@ from pydantic import BaseModel, Field
 
 class Task(BaseModel):
     task_title: str = Field(..., description="The title of the task")
-    task_description: Optional[str] = Field(
+    task_description: str | None = Field(
         None, description="The description of the task"
     )
-    task_assignee: Optional[str] = Field(None, description="The assignee of the task")
+    task_assignee: str | None = Field(None, description="The assignee of the task")
 
 
 class LinearIssue(BaseModel):
     issue_title: str = Field(..., description="The title of the issue")
-    issue_description: Optional[str] = Field(
+    issue_description: str | None = Field(
         None, description="The description of the issue"
     )
-    issue_assignee: Optional[str] = Field(None, description="The assignee of the issue")
-    issue_link: Optional[str] = Field(None, description="The link to the issue")
+    issue_assignee: str | None = Field(None, description="The assignee of the issue")
+    issue_link: str | None = Field(None, description="The link to the issue")
 
 
 class LinearIssueList(BaseModel):
-    issues: List[LinearIssue] = Field(..., description="A list of issues")
+    issues: list[LinearIssue] = Field(..., description="A list of issues")
 
 
 class TaskList(BaseModel):
-    tasks: List[Task] = Field(..., description="A list of tasks")
+    tasks: list[Task] = Field(..., description="A list of tasks")
 
 
 class ProductManagerWorkflow(Workflow):
@@ -68,16 +69,16 @@ class ProductManagerWorkflow(Workflow):
         tools=[SlackTools()],
     )
 
-    def get_tasks_from_cache(self, current_date: str) -> Optional[TaskList]:
+    def get_tasks_from_cache(self, current_date: str) -> TaskList | None:
         if "meeting_notes" in self.session_state:
             for cached_tasks in self.session_state["meeting_notes"]:
                 if cached_tasks["date"] == current_date:
                     return cached_tasks["tasks"]
         return None
 
-    def get_tasks_from_meeting_notes(self, meeting_notes: str) -> Optional[TaskList]:
+    def get_tasks_from_meeting_notes(self, meeting_notes: str) -> TaskList | None:
         num_tries = 0
-        tasks: Optional[TaskList] = None
+        tasks: TaskList | None = None
         while tasks is None and num_tries < 3:
             num_tries += 1
             try:
@@ -96,8 +97,8 @@ class ProductManagerWorkflow(Workflow):
         return tasks
 
     def create_linear_issues(
-        self, tasks: TaskList, linear_users: Dict[str, str]
-    ) -> Optional[LinearIssueList]:
+        self, tasks: TaskList, linear_users: dict[str, str]
+    ) -> LinearIssueList | None:
         project_id = os.getenv("LINEAR_PROJECT_ID")
         team_id = os.getenv("LINEAR_TEAM_ID")
         if project_id is None:
@@ -118,13 +119,13 @@ class ProductManagerWorkflow(Workflow):
         return linear_issues
 
     def run(
-        self, meeting_notes: str, linear_users: Dict[str, str], use_cache: bool = False
+        self, meeting_notes: str, linear_users: dict[str, str], use_cache: bool = False
     ) -> RunResponse:
         logger.info(f"Generating tasks from meeting notes: {meeting_notes}")
         current_date = datetime.now().strftime("%Y-%m-%d")
 
         if use_cache:
-            tasks: Optional[TaskList] = self.get_tasks_from_cache(current_date)
+            tasks: TaskList | None = self.get_tasks_from_cache(current_date)
         else:
             tasks = self.get_tasks_from_meeting_notes(meeting_notes)
 

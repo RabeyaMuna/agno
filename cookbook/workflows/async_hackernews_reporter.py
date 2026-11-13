@@ -4,7 +4,7 @@ pip install openai newspaper4k lxml_html_clean agno httpx
 
 import asyncio
 import json
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
 
 import httpx
 from agno.agent import Agent, RunResponse
@@ -12,7 +12,7 @@ from agno.run.workflow import WorkflowCompletedEvent
 from agno.tools.newspaper4k import Newspaper4kTools
 from agno.utils.log import logger
 from agno.utils.pprint import pprint_run_response
-from agno.workflow import RunEvent, Workflow
+from agno.workflow import Workflow
 
 
 class AsyncHackerNewsReporter(Workflow):
@@ -36,8 +36,10 @@ class AsyncHackerNewsReporter(Workflow):
             "Break the article into sections and provide key takeaways at the end.",
             "Make sure the title is catchy and engaging.",
             "Share score, title, url and summary of every article.",
-            "Give the section relevant titles and provide details/facts/processes in each section."
-            "Ignore articles that you cannot read or understand.",
+            (
+                "Give the section relevant titles and provide details/facts/processes in each section."
+                "Ignore articles that you cannot read or understand."
+            ),
             "REMEMBER: you are writing for the New York Times, so the quality of the article is important.",
         ],
     )

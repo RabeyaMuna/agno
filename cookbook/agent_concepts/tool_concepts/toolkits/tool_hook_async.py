@@ -1,8 +1,9 @@
 """Show how to use a tool execution hook with async functions, to run logic before and after a tool is called."""
 
 import asyncio
+from collections.abc import Callable
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Dict
+from typing import Any
 
 from agno.agent import Agent
 from agno.tools.duckduckgo import DuckDuckGoTools
@@ -10,7 +11,7 @@ from agno.utils.log import logger
 
 
 async def logger_hook(
-    function_name: str, function_call: Callable, arguments: Dict[str, Any]
+    function_name: str, function_call: Callable, arguments: dict[str, Any]
 ):
     # Pre-hook logic: this runs before the tool is called
     logger.info(f"Running {function_name} with arguments {arguments}")

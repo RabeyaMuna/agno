@@ -1,6 +1,7 @@
 # Recipe agent for image generation
+from __future__ import annotations
+
 from textwrap import dedent
-from typing import Optional
 
 from agno.agent import Agent
 from agno.document.reader.pdf_reader import PDFImageReader
@@ -21,7 +22,7 @@ DEFAULT_RECIPE_TABLE = "recipe_documents"
 
 
 def get_recipe_agent(
-    local_pdf_path: Optional[str] = None,
+    local_pdf_path: str | None = None,
 ) -> Agent:
     """
     Returns a RecipeImageAgent backed by a recipe PDF knowledge base.

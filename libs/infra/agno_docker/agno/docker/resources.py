@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from __future__ import annotations
 
 from agno.docker.api_client import DockerApiClient
 from agno.docker.app.base import DockerApp
@@ -14,13 +14,13 @@ class DockerResources(InfraResources):
     infra: str = "docker"
     network: str = "agno"
     # URL for the Docker server. For example, unix:///var/run/docker.sock or tcp://127.0.0.1:1234
-    base_url: Optional[str] = None
+    base_url: str | None = None
 
-    apps: Optional[List[DockerApp]] = None
-    resources: Optional[List[DockerResource]] = None
+    apps: list[DockerApp] | None = None
+    resources: list[DockerResource] | None = None
 
     # -*- Cached Data
-    _api_client: Optional[DockerApiClient] = None
+    _api_client: DockerApiClient | None = None
 
     @property
     def docker_client(self) -> DockerApiClient:
@@ -30,20 +30,20 @@ class DockerResources(InfraResources):
 
     def create_resources(
         self,
-        group_filter: Optional[str] = None,
-        name_filter: Optional[str] = None,
-        type_filter: Optional[str] = None,
-        dry_run: Optional[bool] = False,
-        auto_confirm: Optional[bool] = False,
-        force: Optional[bool] = None,
-        pull: Optional[bool] = None,
-    ) -> Tuple[int, int]:
+        group_filter: str | None = None,
+        name_filter: str | None = None,
+        type_filter: str | None = None,
+        dry_run: bool | None = False,
+        auto_confirm: bool | None = False,
+        force: bool | None = None,
+        pull: bool | None = None,
+    ) -> tuple[int, int]:
         from agno.cli.console import confirm_yes_no, print_heading, print_info
         from agno.docker.resource.types import DockerContainer, DockerResourceInstallOrder
 
         logger.debug("-*- Creating DockerResources")
         # Build a list of DockerResources to create
-        resources_to_create: List[DockerResource] = []
+        resources_to_create: list[DockerResource] = []
 
         # Add resources to resources_to_create
         if self.resources is not None:
@@ -60,7 +60,7 @@ class DockerResources(InfraResources):
                     resources_to_create.append(r)
 
         # Build a list of DockerApps to create
-        apps_to_create: List[DockerApp] = []
+        apps_to_create: list[DockerApp] = []
         if self.apps is not None:
             for app in self.apps:
                 if app.group is None and self.name is not None:
@@ -99,23 +99,22 @@ class DockerResources(InfraResources):
         resources_to_create.sort(key=lambda x: DockerResourceInstallOrder.get(x.__class__.__name__, 5000))
 
         # Deduplicate DockerResources
-        deduped_resources_to_create: List[DockerResource] = []
+        deduped_resources_to_create: list[DockerResource] = []
         for r in resources_to_create:
             if r not in deduped_resources_to_create:
                 deduped_resources_to_create.append(r)
 
         # Implement dependency sorting
-        final_docker_resources: List[DockerResource] = []
+        final_docker_resources: list[DockerResource] = []
         logger.debug("-*- Building DockerResources dependency graph")
         for docker_resource in deduped_resources_to_create:
             # Logic to follow if resource has dependencies
             if docker_resource.depends_on is not None:
                 # Add the dependencies before the resource itself
                 for dep in docker_resource.depends_on:
-                    if isinstance(dep, DockerResource):
-                        if dep not in final_docker_resources:
-                            logger.debug(f"-*- Adding {dep.name}, dependency of {docker_resource.name}")
-                            final_docker_resources.append(dep)
+                    if isinstance(dep, DockerResource) and dep not in final_docker_resources:
+                        logger.debug(f"-*- Adding {dep.name}, dependency of {docker_resource.name}")
+                        final_docker_resources.append(dep)
 
                 # Add the resource to be created after its dependencies
                 if docker_resource not in final_docker_resources:
@@ -185,24 +184,24 @@ class DockerResources(InfraResources):
         if num_resources_to_create != num_resources_created:
             logger.error(
                 f"Resources created: {num_resources_created} do not match resources required: {num_resources_to_create}"
-            )  # noqa: E501
+            )
         return num_resources_created, num_resources_to_create
 
     def delete_resources(
         self,
-        group_filter: Optional[str] = None,
-        name_filter: Optional[str] = None,
-        type_filter: Optional[str] = None,
-        dry_run: Optional[bool] = False,
-        auto_confirm: Optional[bool] = False,
-        force: Optional[bool] = None,
-    ) -> Tuple[int, int]:
+        group_filter: str | None = None,
+        name_filter: str | None = None,
+        type_filter: str | None = None,
+        dry_run: bool | None = False,
+        auto_confirm: bool | None = False,
+        force: bool | None = None,
+    ) -> tuple[int, int]:
         from agno.cli.console import confirm_yes_no, print_heading, print_info
         from agno.docker.resource.types import DockerContainer, DockerResourceInstallOrder
 
         logger.debug("-*- Deleting DockerResources")
         # Build a list of DockerResources to delete
-        resources_to_delete: List[DockerResource] = []
+        resources_to_delete: list[DockerResource] = []
 
         # Add resources to resources_to_delete
         if self.resources is not None:
@@ -219,7 +218,7 @@ class DockerResources(InfraResources):
                     resources_to_delete.append(r)
 
         # Build a list of DockerApps to delete
-        apps_to_delete: List[DockerApp] = []
+        apps_to_delete: list[DockerApp] = []
         if self.apps is not None:
             for app in self.apps:
                 if app.group is None and self.name is not None:
@@ -258,13 +257,13 @@ class DockerResources(InfraResources):
         resources_to_delete.sort(key=lambda x: DockerResourceInstallOrder.get(x.__class__.__name__, 5000), reverse=True)
 
         # Deduplicate DockerResources
-        deduped_resources_to_delete: List[DockerResource] = []
+        deduped_resources_to_delete: list[DockerResource] = []
         for r in resources_to_delete:
             if r not in deduped_resources_to_delete:
                 deduped_resources_to_delete.append(r)
 
         # Implement dependency sorting
-        final_docker_resources: List[DockerResource] = []
+        final_docker_resources: list[DockerResource] = []
         logger.debug("-*- Building DockerResources dependency graph")
         for docker_resource in deduped_resources_to_delete:
             # Logic to follow if resource has dependencies
@@ -285,10 +284,9 @@ class DockerResources(InfraResources):
 
                 # 4. Add the dependencies back in reverse order
                 for dep in docker_resource.depends_on:
-                    if isinstance(dep, DockerResource):
-                        if dep not in final_docker_resources:
-                            logger.debug(f"-*- Adding {dep.name}, dependency of {docker_resource.name}")
-                            final_docker_resources.append(dep)
+                    if isinstance(dep, DockerResource) and dep not in final_docker_resources:
+                        logger.debug(f"-*- Adding {dep.name}, dependency of {docker_resource.name}")
+                        final_docker_resources.append(dep)
             else:
                 # Add the resource to be deleted if it has no dependencies
                 if docker_resource not in final_docker_resources:
@@ -349,25 +347,25 @@ class DockerResources(InfraResources):
         if num_resources_to_delete != num_resources_deleted:
             logger.error(
                 f"Resources deleted: {num_resources_deleted} do not match resources required: {num_resources_to_delete}"
-            )  # noqa: E501
+            )
         return num_resources_deleted, num_resources_to_delete
 
     def update_resources(
         self,
-        group_filter: Optional[str] = None,
-        name_filter: Optional[str] = None,
-        type_filter: Optional[str] = None,
-        dry_run: Optional[bool] = False,
-        auto_confirm: Optional[bool] = False,
-        force: Optional[bool] = None,
-        pull: Optional[bool] = None,
-    ) -> Tuple[int, int]:
+        group_filter: str | None = None,
+        name_filter: str | None = None,
+        type_filter: str | None = None,
+        dry_run: bool | None = False,
+        auto_confirm: bool | None = False,
+        force: bool | None = None,
+        pull: bool | None = None,
+    ) -> tuple[int, int]:
         from agno.cli.console import confirm_yes_no, print_heading, print_info
         from agno.docker.resource.types import DockerContainer, DockerResourceInstallOrder
 
         logger.debug("-*- Updating DockerResources")
         # Build a list of DockerResources to update
-        resources_to_update: List[DockerResource] = []
+        resources_to_update: list[DockerResource] = []
 
         # Add resources to resources_to_update
         if self.resources is not None:
@@ -384,7 +382,7 @@ class DockerResources(InfraResources):
                     resources_to_update.append(r)
 
         # Build a list of DockerApps to update
-        apps_to_update: List[DockerApp] = []
+        apps_to_update: list[DockerApp] = []
         if self.apps is not None:
             for app in self.apps:
                 if app.group is None and self.name is not None:
@@ -423,23 +421,22 @@ class DockerResources(InfraResources):
         resources_to_update.sort(key=lambda x: DockerResourceInstallOrder.get(x.__class__.__name__, 5000), reverse=True)
 
         # Deduplicate DockerResources
-        deduped_resources_to_update: List[DockerResource] = []
+        deduped_resources_to_update: list[DockerResource] = []
         for r in resources_to_update:
             if r not in deduped_resources_to_update:
                 deduped_resources_to_update.append(r)
 
         # Implement dependency sorting
-        final_docker_resources: List[DockerResource] = []
+        final_docker_resources: list[DockerResource] = []
         logger.debug("-*- Building DockerResources dependency graph")
         for docker_resource in deduped_resources_to_update:
             # Logic to follow if resource has dependencies
             if docker_resource.depends_on is not None:
                 # Add the dependencies before the resource itself
                 for dep in docker_resource.depends_on:
-                    if isinstance(dep, DockerResource):
-                        if dep not in final_docker_resources:
-                            logger.debug(f"-*- Adding {dep.name}, dependency of {docker_resource.name}")
-                            final_docker_resources.append(dep)
+                    if isinstance(dep, DockerResource) and dep not in final_docker_resources:
+                        logger.debug(f"-*- Adding {dep.name}, dependency of {docker_resource.name}")
+                        final_docker_resources.append(dep)
 
                 # Add the resource to be created after its dependencies
                 if docker_resource not in final_docker_resources:
@@ -507,14 +504,14 @@ class DockerResources(InfraResources):
         if num_resources_to_update != num_resources_updated:
             logger.error(
                 f"Resources updated: {num_resources_updated} do not match resources required: {num_resources_to_update}"
-            )  # noqa: E501
+            )
         return num_resources_updated, num_resources_to_update
 
     def save_resources(
         self,
-        group_filter: Optional[str] = None,
-        name_filter: Optional[str] = None,
-        type_filter: Optional[str] = None,
-        workspace_settings: Optional[WorkspaceSettings] = None,
-    ) -> Tuple[int, int]:
+        group_filter: str | None = None,
+        name_filter: str | None = None,
+        type_filter: str | None = None,
+        workspace_settings: WorkspaceSettings | None = None,
+    ) -> tuple[int, int]:
         raise NotImplementedError

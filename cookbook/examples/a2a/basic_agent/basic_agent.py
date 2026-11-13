@@ -1,5 +1,3 @@
-from typing import List
-
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.types import Part, TextPart
@@ -27,10 +25,9 @@ class BasicAgentExecutor(AgentExecutor):
     ) -> None:
         message: Message = Message(role="user", content="")
         for part in context.message.parts:
-            if isinstance(part, Part):
-                if isinstance(part.root, TextPart):
-                    message.content = part.root.text
-                    break
+            if isinstance(part, Part) and isinstance(part.root, TextPart):
+                message.content = part.root.text
+                break
 
         result: RunResponse = await self.agent.arun(message)
         event_queue.enqueue_event(new_agent_text_message(result.content))

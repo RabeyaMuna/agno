@@ -17,11 +17,9 @@ The team leader coordinates the agents by:
 """
 
 import asyncio
-from typing import List
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
-from agno.run.team import TeamRunResponse  # type: ignore
 from agno.team import Team
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.hackernews import HackerNewsTools
@@ -32,7 +30,7 @@ from pydantic import BaseModel, Field
 class Article(BaseModel):
     title: str = Field(..., description="The title of the article")
     summary: str = Field(..., description="A summary of the article")
-    reference_links: List[str] = Field(
+    reference_links: list[str] = Field(
         ..., description="A list of reference links to the article"
     )
 

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from textwrap import dedent
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from typing_extensions import Literal
 
@@ -19,7 +21,7 @@ class EcsTaskDefinition(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs/client/register_task_definition.html
     """
 
-    resource_type: Optional[str] = "TaskDefinition"
+    resource_type: str | None = "TaskDefinition"
     service_name: str = "ecs"
 
     # Name of the task definition.
@@ -29,25 +31,25 @@ class EcsTaskDefinition(AwsResource):
     # Use name as family if not provided
     # You can use it track multiple versions of the same task definition.
     # The family is used as a name for your task definition.
-    family: Optional[str] = None
+    family: str | None = None
     # Networking mode to use for the containers in the task.
     # The valid values are none, bridge, awsvpc, and host.
     # If no network mode is specified, the default is bridge.
-    network_mode: Optional[Literal["bridge", "host", "awsvpc", "none"]] = None
+    network_mode: Literal["bridge", "host", "awsvpc", "none"] | None = None
     # A list of container definitions that describe the different containers that make up the task.
-    containers: Optional[List[EcsContainer]] = None
-    volumes: Optional[List[EcsVolume]] = None
-    placement_constraints: Optional[List[Dict[str, Any]]] = None
-    requires_compatibilities: Optional[List[str]] = None
-    cpu: Optional[str] = None
-    memory: Optional[str] = None
-    tags: Optional[List[Dict[str, str]]] = None
-    pid_mode: Optional[Literal["host", "task"]] = None
-    ipc_mode: Optional[Literal["host", "task", "none"]] = None
-    proxy_configuration: Optional[Dict[str, Any]] = None
-    inference_accelerators: Optional[List[Dict[str, Any]]] = None
-    ephemeral_storage: Optional[Dict[str, Any]] = None
-    runtime_platform: Optional[Dict[str, Any]] = None
+    containers: list[EcsContainer] | None = None
+    volumes: list[EcsVolume] | None = None
+    placement_constraints: list[dict[str, Any]] | None = None
+    requires_compatibilities: list[str] | None = None
+    cpu: str | None = None
+    memory: str | None = None
+    tags: list[dict[str, str]] | None = None
+    pid_mode: Literal["host", "task"] | None = None
+    ipc_mode: Literal["host", "task", "none"] | None = None
+    proxy_configuration: dict[str, Any] | None = None
+    inference_accelerators: list[dict[str, Any]] | None = None
+    ephemeral_storage: dict[str, Any] | None = None
+    runtime_platform: dict[str, Any] | None = None
 
     # Amazon ECS IAM roles
     # The short name or full Amazon Resource Name (ARN) of the IAM role that containers in this task can assume.
@@ -56,15 +58,15 @@ class EcsTaskDefinition(AwsResource):
     # If your containerized applications need to call AWS APIs, they must sign their
     # AWS API requests with AWS credentials, and a task IAM role provides a strategy for managing credentials
     # for your applications to use
-    task_role_arn: Optional[str] = None
+    task_role_arn: str | None = None
     # If task_role_arn is None, a default role is created if create_task_role is True
     create_task_role: bool = True
     # Name for the default role when task_role_arn is None, use "name-task-role" if not provided
-    task_role_name: Optional[str] = None
+    task_role_name: str | None = None
     # Provide a list of policy ARNs to attach to the role
-    add_policy_arns_to_task_role: Optional[List[str]] = None
+    add_policy_arns_to_task_role: list[str] | None = None
     # Provide a list of IamPolicy to attach to the task role
-    add_policies_to_task_role: Optional[List[IamPolicy]] = None
+    add_policies_to_task_role: list[IamPolicy] | None = None
     # Add bedrock access to task role
     add_bedrock_access_to_task: bool = False
     # Add ecs_exec_policy to task role
@@ -77,15 +79,15 @@ class EcsTaskDefinition(AwsResource):
     # The Amazon Resource Name (ARN) of the task execution role that grants the Amazon ECS container agent permission
     # to make Amazon Web Services API calls on your behalf. The task execution IAM role is required depending on the
     # requirements of your task.
-    execution_role_arn: Optional[str] = None
+    execution_role_arn: str | None = None
     # If execution_role_arn is None, a default role is created if create_execution_role is True
     create_execution_role: bool = True
     # Name for the default role when execution_role_arn is None, use "name-execution-role" if not provided
-    execution_role_name: Optional[str] = None
+    execution_role_name: str | None = None
     # Provide a list of policy ARNs to attach to the role
-    add_policy_arns_to_execution_role: Optional[List[str]] = None
+    add_policy_arns_to_execution_role: list[str] | None = None
     # Provide a list of IamPolicy to attach to the execution role
-    add_policies_to_execution_role: Optional[List[IamPolicy]] = None
+    add_policies_to_execution_role: list[IamPolicy] | None = None
     # Add policy to read secrets to execution role
     add_secret_access_to_ecs: bool = False
 
@@ -125,7 +127,7 @@ class EcsTaskDefinition(AwsResource):
                 return False
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if task_role_arn is not None:
             not_null_args["taskRoleArn"] = task_role_arn
         if execution_role_arn is not None:
@@ -180,7 +182,7 @@ class EcsTaskDefinition(AwsResource):
             logger.error(e)
         return False
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Read EcsTaskDefinition"""
         from botocore.exceptions import ClientError
 

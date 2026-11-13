@@ -45,8 +45,10 @@ The workflow will guide you through validating your startup idea with AI-powered
 analysis and research. Use the insights to refine your concept and business plan!
 """
 
+from __future__ import annotations
+
 import json
-from typing import Iterator, Optional
+from collections.abc import Iterator
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -55,7 +57,7 @@ from agno.storage.sqlite import SqliteStorage
 from agno.tools.googlesearch import GoogleSearchTools
 from agno.utils.log import logger
 from agno.utils.pprint import pprint_run_response
-from agno.workflow import RunEvent, RunResponse, Workflow
+from agno.workflow import RunResponse, Workflow
 from pydantic import BaseModel, Field
 
 
@@ -133,7 +135,7 @@ class StartupIdeaValidator(Workflow):
         debug_mode=False,
     )
 
-    def get_idea_clarification(self, startup_idea: str) -> Optional[IdeaClarification]:
+    def get_idea_clarification(self, startup_idea: str) -> IdeaClarification | None:
         try:
             response: RunResponse = self.idea_clarifier_agent.run(startup_idea)
 
@@ -147,13 +149,13 @@ class StartupIdeaValidator(Workflow):
             return response.content
 
         except Exception as e:
-            logger.warning(f"Failed: {str(e)}")
+            logger.warning(f"Failed: {e!s}")
 
         return None
 
     def get_market_research(
         self, startup_idea: str, idea_clarification: IdeaClarification
-    ) -> Optional[MarketResearch]:
+    ) -> MarketResearch | None:
         agent_input = {"startup_idea": startup_idea, **idea_clarification.model_dump()}
 
         try:
@@ -172,13 +174,13 @@ class StartupIdeaValidator(Workflow):
             return response.content
 
         except Exception as e:
-            logger.warning(f"Failed: {str(e)}")
+            logger.warning(f"Failed: {e!s}")
 
         return None
 
     def get_competitor_analysis(
         self, startup_idea: str, market_research: MarketResearch
-    ) -> Optional[str]:
+    ) -> str | None:
         agent_input = {"startup_idea": startup_idea, **market_research.model_dump()}
 
         try:
@@ -193,7 +195,7 @@ class StartupIdeaValidator(Workflow):
             return response.content
 
         except Exception as e:
-            logger.warning(f"Failed: {str(e)}")
+            logger.warning(f"Failed: {e!s}")
 
         return None
 
@@ -201,7 +203,7 @@ class StartupIdeaValidator(Workflow):
         logger.info(f"Generating a startup validation report for: {startup_idea}")
 
         # Clarify and quantify the idea
-        idea_clarification: Optional[IdeaClarification] = self.get_idea_clarification(
+        idea_clarification: IdeaClarification | None = self.get_idea_clarification(
             startup_idea
         )
 
@@ -213,7 +215,7 @@ class StartupIdeaValidator(Workflow):
             return
 
         # Do some market research
-        market_research: Optional[MarketResearch] = self.get_market_research(
+        market_research: MarketResearch | None = self.get_market_research(
             startup_idea, idea_clarification
         )
 
@@ -224,7 +226,7 @@ class StartupIdeaValidator(Workflow):
             )
             return
 
-        competitor_analysis: Optional[str] = self.get_competitor_analysis(
+        competitor_analysis: str | None = self.get_competitor_analysis(
             startup_idea, market_research
         )
 

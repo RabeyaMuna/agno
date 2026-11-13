@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
 from textwrap import dedent
-from typing import List, Optional
 
 from agno.agent import Agent
 from agno.embedder.openai import OpenAIEmbedder
@@ -44,12 +45,12 @@ agent_knowledge = UrlKnowledge(
 
 
 def get_mcp_agent(
-    user_id: Optional[str] = None,
+    user_id: str | None = None,
     model_str: str = "openai:gpt-4o",
-    session_id: Optional[str] = None,
+    session_id: str | None = None,
     num_history_responses: int = 5,
-    mcp_tools: Optional[List[MCPTools]] = None,
-    mcp_server_ids: Optional[List[str]] = None,
+    mcp_tools: list[MCPTools] | None = None,
+    mcp_server_ids: list[str] | None = None,
     debug_mode: bool = True,
 ) -> Agent:
     model = get_model_for_provider(model_str)

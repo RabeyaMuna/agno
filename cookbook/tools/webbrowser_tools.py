@@ -7,8 +7,10 @@ agent = Agent(
     model=Gemini("gemini-2.0-flash"),
     tools=[WebBrowserTools(), DuckDuckGoTools()],
     instructions=[
-        "Find related websites and pages using DuckDuckGo"
-        "Use web browser to open the site"
+        (
+            "Find related websites and pages using DuckDuckGo"
+            "Use web browser to open the site"
+        )
     ],
     show_tool_calls=True,
     markdown=True,

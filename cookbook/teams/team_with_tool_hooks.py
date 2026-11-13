@@ -1,5 +1,6 @@
 import time
-from typing import Any, Callable, Dict
+from collections.abc import Callable
+from typing import Any
 from uuid import uuid4
 
 from agno.agent.agent import Agent
@@ -12,7 +13,7 @@ from agno.tools.reddit import RedditTools
 from agno.utils.log import logger
 
 
-def logger_hook(function_name: str, function_call: Callable, arguments: Dict[str, Any]):
+def logger_hook(function_name: str, function_call: Callable, arguments: dict[str, Any]):
     if function_name == "transfer_task_to_member":
         member_id = arguments.get("member_id")
         logger.info(f"Transferring task to member {member_id}")

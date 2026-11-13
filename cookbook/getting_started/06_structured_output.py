@@ -9,7 +9,6 @@ Run `pip install openai agno` to install dependencies.
 """
 
 from textwrap import dedent
-from typing import List
 
 from agno.agent import Agent, RunResponse  # noqa
 from agno.models.openai import OpenAIChat
@@ -33,7 +32,7 @@ class MovieScript(BaseModel):
         ...,
         description="An attention-grabbing, memorable title that captures the essence of the story and appeals to target audience.",
     )
-    characters: List[str] = Field(
+    characters: list[str] = Field(
         ...,
         description="4-6 main characters with distinctive names and brief role descriptions (e.g., 'Sarah Chen - brilliant quantum physicist with a dark secret').",
     )

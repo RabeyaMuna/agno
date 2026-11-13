@@ -1,5 +1,3 @@
-from typing import List
-
 from agno.agent import Agent
 from agno.media import Image
 from agno.models.mistral.mistral import MistralChat
@@ -13,7 +11,7 @@ class GroceryItem(BaseModel):
 
 class GroceryListElements(BaseModel):
     bill_number: str
-    items: List[GroceryItem]
+    items: list[GroceryItem]
     total_price: float
 
 

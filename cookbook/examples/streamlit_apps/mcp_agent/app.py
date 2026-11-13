@@ -95,7 +95,7 @@ async def main() -> None:
             st.session_state["mcp_agent_session_id"] = mcp_agent.load_session()
         except Exception as e:
             st.warning(
-                f"Could not create Agent session: {str(e)}. Is the database running?"
+                f"Could not create Agent session: {e!s}. Is the database running?"
             )
             return
 
@@ -138,7 +138,7 @@ async def main() -> None:
                 if _content is not None:
                     with st.chat_message(message["role"]):
                         # Display tool calls if they exist in the message
-                        if "tool_calls" in message and message["tool_calls"]:
+                        if message.get("tool_calls"):
                             display_tool_calls(st.empty(), message["tool_calls"])
                         st.markdown(_content)
 
@@ -173,8 +173,8 @@ async def main() -> None:
 
                         add_message("assistant", response, mcp_agent.run_response.tools)
                     except Exception as e:
-                        logger.error(f"Error during agent run: {str(e)}", exc_info=True)
-                        error_message = f"Sorry, I encountered an error: {str(e)}"
+                        logger.error(f"Error during agent run: {e!s}", exc_info=True)
+                        error_message = f"Sorry, I encountered an error: {e!s}"
                         add_message("assistant", error_message)
                         st.error(error_message)
 
@@ -196,8 +196,8 @@ async def main() -> None:
         about_widget()
 
     except Exception as e:
-        logger.error(f"Error during agent run: {str(e)}", exc_info=True)
-        error_message = f"Sorry, I encountered an error: {str(e)}"
+        logger.error(f"Error during agent run: {e!s}", exc_info=True)
+        error_message = f"Sorry, I encountered an error: {e!s}"
         add_message("assistant", error_message)
         st.error(error_message)
     finally:

@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from typing_extensions import Literal
 
@@ -14,75 +16,75 @@ class EmrCluster(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/emr.html
     """
 
-    resource_type: Optional[str] = "EmrCluster"
+    resource_type: str | None = "EmrCluster"
     service_name: str = "emr"
 
     # Name of the cluster.
     name: str
     # The location in Amazon S3 to write the log files of the job flow.
     # If a value is not provided, logs are not created.
-    log_uri: Optional[str] = None
+    log_uri: str | None = None
     # The KMS key used for encrypting log files. If a value is not provided, the logs remain encrypted by AES-256.
     # This attribute is only available with Amazon EMR version 5.30.0 and later, excluding Amazon EMR 6.0.0.
-    log_encryption_kms_key_id: Optional[str] = None
+    log_encryption_kms_key_id: str | None = None
     # A JSON string for selecting additional features.
-    additional_info: Optional[str] = None
+    additional_info: str | None = None
     # The Amazon EMR release label, which determines the version of open-source application packages installed on the
     # cluster. Release labels are in the form emr-x.x.x,
     # where x.x.x is an Amazon EMR release version such as emr-5.14.0 .
-    release_label: Optional[str] = None
+    release_label: str | None = None
     # A specification of the number and type of Amazon EC2 instances.
-    instances: Optional[Dict[str, Any]] = None
+    instances: dict[str, Any] | None = None
     # A list of steps to run.
-    steps: Optional[List[Dict[str, Any]]] = None
+    steps: list[dict[str, Any]] | None = None
     # A list of bootstrap actions to run before Hadoop starts on the cluster nodes.
-    bootstrap_actions: Optional[List[Dict[str, Any]]] = None
+    bootstrap_actions: list[dict[str, Any]] | None = None
     # For Amazon EMR releases 3.x and 2.x. For Amazon EMR releases 4.x and later, use Applications.
     # A list of strings that indicates third-party software to use.
-    supported_products: Optional[List[str]]
-    new_supported_products: Optional[List[Dict[str, Any]]] = None
+    supported_products: list[str] | None
+    new_supported_products: list[dict[str, Any]] | None = None
     # Applies to Amazon EMR releases 4.0 and later.
     # A case-insensitive list of applications for Amazon EMR to install and configure when launching the cluster.
-    applications: Optional[List[Dict[str, Any]]] = None
+    applications: list[dict[str, Any]] | None = None
     # For Amazon EMR releases 4.0 and later. The list of configurations supplied for the EMR cluster you are creating.
-    configurations: Optional[List[Dict[str, Any]]] = None
+    configurations: list[dict[str, Any]] | None = None
     # Also called instance profile and EC2 role. An IAM role for an EMR cluster.
     # The EC2 instances of the cluster assume this role. The default role is EMR_EC2_DefaultRole.
     # In order to use the default role, you must have already created it using the CLI or console.
-    job_flow_role: Optional[str] = None
+    job_flow_role: str | None = None
     # he IAM role that Amazon EMR assumes in order to access Amazon Web Services resources on your behalf.
-    service_role: Optional[str] = None
+    service_role: str | None = None
     # A list of tags to associate with a cluster and propagate to Amazon EC2 instances.
-    tags: Optional[List[Dict[str, str]]] = None
+    tags: list[dict[str, str]] | None = None
     # The name of a security configuration to apply to the cluster.
-    security_configuration: Optional[str] = None
+    security_configuration: str | None = None
     # An IAM role for automatic scaling policies. The default role is EMR_AutoScaling_DefaultRole.
     # The IAM role provides permissions that the automatic scaling feature requires to launch and terminate EC2
     # instances in an instance group.
-    auto_scaling_role: Optional[str] = None
-    scale_down_behavior: Optional[Literal["TERMINATE_AT_INSTANCE_HOUR", "TERMINATE_AT_TASK_COMPLETION"]] = None
-    custom_ami_id: Optional[str] = None
+    auto_scaling_role: str | None = None
+    scale_down_behavior: Literal["TERMINATE_AT_INSTANCE_HOUR", "TERMINATE_AT_TASK_COMPLETION"] | None = None
+    custom_ami_id: str | None = None
     # The size, in GiB, of the Amazon EBS root device volume of the Linux AMI that is used for each EC2 instance.
-    ebs_root_volume_size: Optional[int] = None
-    repo_upgrade_on_boot: Optional[Literal["SECURITY", "NONE"]] = None
+    ebs_root_volume_size: int | None = None
+    repo_upgrade_on_boot: Literal["SECURITY", "NONE"] | None = None
     # Attributes for Kerberos configuration when Kerberos authentication is enabled using a security configuration.
-    kerberos_attributes: Optional[Dict[str, str]] = None
+    kerberos_attributes: dict[str, str] | None = None
     # Specifies the number of steps that can be executed concurrently.
     # The default value is 1 . The maximum value is 256 .
-    step_concurrency_level: Optional[int] = None
+    step_concurrency_level: int | None = None
     # The specified managed scaling policy for an Amazon EMR cluster.
-    managed_scaling_policy: Optional[Dict[str, Any]] = None
-    placement_group_configs: Optional[List[Dict[str, Any]]] = None
+    managed_scaling_policy: dict[str, Any] | None = None
+    placement_group_configs: list[dict[str, Any]] | None = None
     # The auto-termination policy defines the amount of idle time in seconds after which a cluster terminates.
-    auto_termination_policy: Optional[Dict[str, int]] = None
+    auto_termination_policy: dict[str, int] | None = None
 
     # provided by api on create
     # A unique identifier for the job flow.
-    job_flow_id: Optional[str] = None
+    job_flow_id: str | None = None
     # The Amazon Resource Name (ARN) of the cluster.
-    cluster_arn: Optional[str] = None
+    cluster_arn: str | None = None
     # ClusterSummary returned on read
-    cluster_summary: Optional[Dict] = None
+    cluster_summary: dict | None = None
 
     def _create(self, aws_client: AwsApiClient) -> bool:
         """Creates the EmrCluster
@@ -94,7 +96,7 @@ class EmrCluster(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
         try:
             # create a dict of args which are not null, otherwise aws type validation fails
-            not_null_args: Dict[str, Any] = {}
+            not_null_args: dict[str, Any] = {}
 
             if self.log_uri:
                 not_null_args["LogUri"] = self.log_uri
@@ -192,7 +194,7 @@ class EmrCluster(AwsResource):
                 logger.error(e)
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the EmrCluster
 
         Args:

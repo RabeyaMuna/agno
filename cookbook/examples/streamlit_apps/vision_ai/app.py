@@ -89,7 +89,7 @@ def main():
 
         # Web Search Option (Enable/Disable DuckDuckGo)
         enable_search_option = st.radio("🌐 Enable Web Search?", ["Yes", "No"], index=1)
-        enable_search = True if enable_search_option == "Yes" else False
+        enable_search = enable_search_option == "Yes"
 
     ####################################################################
     # Ensure Model is Initialized Properly
@@ -180,7 +180,7 @@ def main():
             and str(st.session_state["last_extracted_image"]) != str(image_path)
         ):
             logger.info(
-                f"New image detected. Resetting chat history and reinitializing agents."
+                "New image detected. Resetting chat history and reinitializing agents."
             )
             clear_chat()
 
@@ -203,35 +203,34 @@ def main():
             instruction = None
 
         # ADD Extract Data Button
-        if st.button("🔍 Extract Data"):
-            if (
-                image_path
-                and (mode == "Auto" or instruction)
-                and (
-                    "last_image_response" not in st.session_state
-                    or st.session_state["last_extracted_image"] != image_path
+        if st.button("🔍 Extract Data") and (
+            image_path
+            and (mode == "Auto" or instruction)
+            and (
+                "last_image_response" not in st.session_state
+                or st.session_state["last_extracted_image"] != image_path
+            )
+        ):
+            with st.spinner("📤 Processing Image! Extracting image data..."):
+                extracted_data = image_agent.run(
+                    extraction_prompt,
+                    images=[Image(filepath=image_path)],
+                    instructions=instruction if instruction else None,
                 )
-            ):
-                with st.spinner("📤 Processing Image! Extracting image data..."):
-                    extracted_data = image_agent.run(
-                        extraction_prompt,
-                        images=[Image(filepath=image_path)],
-                        instructions=instruction if instruction else None,
-                    )
 
-                # Store last extracted response for chat follow-ups
-                st.session_state["last_image_response"] = extracted_data.content
-                st.session_state["last_extracted_image"] = image_path
+            # Store last extracted response for chat follow-ups
+            st.session_state["last_image_response"] = extracted_data.content
+            st.session_state["last_extracted_image"] = image_path
 
-                # Create a temporary success message container
-                success_message = st.empty()
-                success_message.success("✅ Image processing completed successfully!")
+            # Create a temporary success message container
+            success_message = st.empty()
+            success_message.success("✅ Image processing completed successfully!")
 
-                logger.info(f"Extracted Data Response: {extracted_data.content}")
+            logger.info(f"Extracted Data Response: {extracted_data.content}")
 
-                # Wait for 1 seconds, then clear the success message
-                time.sleep(1)
-                success_message.empty()
+            # Wait for 1 seconds, then clear the success message
+            time.sleep(1)
+            success_message.empty()
 
         # Display Extracted Image Data Persistently
         if st.session_state["last_image_response"]:
@@ -305,7 +304,7 @@ def main():
                             add_message("assistant", response_text)
 
                         except Exception as e:
-                            error_message = f"❌ Error: {str(e)}"
+                            error_message = f"❌ Error: {e!s}"
                             add_message("assistant", error_message)
                             st.error(error_message)
 

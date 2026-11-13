@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import streamlit as st
 from agno.utils.log import log_debug, log_error, log_info
 
 
 def add_message(
-    role: str, content: str, tool_calls: Optional[List[Dict[str, Any]]] = None
+    role: str, content: str, tool_calls: list[dict[str, Any]] | None = None
 ) -> None:
     """Safely add a message to the session state"""
     if "messages" not in st.session_state or not isinstance(
@@ -116,8 +118,7 @@ def display_tool_calls(tool_calls_container, tools):
                         if execution_time is not None:
                             execution_time_str = f"{execution_time:.4f}s"
                 except Exception as e:
-                    log_error(f"Error displaying tool calls: {str(e)}")
-                    pass
+                    log_error(f"Error displaying tool calls: {e!s}")
 
                 with st.expander(
                     f"🛠️ {tool_name.replace('_', ' ').title()} ({execution_time_str})",
@@ -140,7 +141,7 @@ def display_tool_calls(tool_calls_container, tools):
                         except Exception as e:
                             log_debug(f"Skipped tool call content: {e}")
     except Exception as e:
-        log_error(f"Error displaying tool calls: {str(e)}")
+        log_error(f"Error displaying tool calls: {e!s}")
         tool_calls_container.error("Failed to display tool results")
 
 

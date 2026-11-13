@@ -27,10 +27,11 @@ Sage integrates:
 Sage intelligently selects the optimal tool based on query complexity to provide insightful, comprehensive answers.
 """
 
+from __future__ import annotations
+
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 # Importing the Agent and model classes
 from agno.agent import Agent
@@ -70,9 +71,9 @@ agent_storage = SqliteAgentStorage(
 
 
 def get_sage(
-    user_id: Optional[str] = None,
+    user_id: str | None = None,
     model_id: str = "openai:gpt-4o",
-    session_id: Optional[str] = None,
+    session_id: str | None = None,
     num_history_responses: int = 5,
     debug_mode: bool = True,
 ) -> Agent:

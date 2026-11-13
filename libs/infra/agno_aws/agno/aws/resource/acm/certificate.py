@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel
 from typing_extensions import Literal
@@ -12,7 +14,7 @@ from agno.utils.log import logger
 
 class CertificateSummary(BaseModel):
     CertificateArn: str
-    DomainName: Optional[str] = None
+    DomainName: str | None = None
 
 
 class AcmCertificate(AwsResource):
@@ -24,7 +26,7 @@ class AcmCertificate(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/acm.html
     """
 
-    resource_type: Optional[str] = "AcmCertificate"
+    resource_type: str | None = "AcmCertificate"
     service_name: str = "acm"
 
     # website base domain name, such as example.com
@@ -39,7 +41,7 @@ class AcmCertificate(AwsResource):
     # Each subsequent Subject Alternative Name (SAN), however, can be up to 253 octets in length.
 
     # If None, defaults to "*.name"
-    domain_name: Optional[str] = None
+    domain_name: str | None = None
     # The method you want to use if you are requesting a public certificate to validate that you own or control domain.
     # You can validate with DNS or validate with email .
     # We recommend that you use DNS validation.
@@ -49,23 +51,23 @@ class AcmCertificate(AwsResource):
     # if users can reach your site by using either name. The maximum number of domain names that you can add to an
     # ACM certificate is 100. However, the initial quota is 10 domain names. If you need more than 10 names,
     # you must request a quota increase.
-    subject_alternative_names: Optional[List[str]] = None
+    subject_alternative_names: list[str] | None = None
     # Customer chosen string that can be used to distinguish between calls to RequestCertificate .
     # Idempotency tokens time out after one hour. Therefore, if you call RequestCertificate multiple times with
     # the same idempotency token within one hour, ACM recognizes that you are requesting only one certificate
     # and will issue only one. If you change the idempotency token for each call, ACM recognizes that you are
     # requesting multiple certificates.
-    idempotency_token: Optional[str] = None
+    idempotency_token: str | None = None
     # The domain name that you want ACM to use to send you emails so that you can validate domain ownership.
-    domain_validation_options: Optional[List[dict]] = None
-    options: Optional[dict] = None
-    certificate_authority_arn: Optional[str] = None
-    tags: Optional[List[dict]] = None
+    domain_validation_options: list[dict] | None = None
+    options: dict | None = None
+    certificate_authority_arn: str | None = None
+    tags: list[dict] | None = None
 
     # If True, stores the certificate summary in the file `certificate_summary_file`
     store_cert_summary: bool = False
     # Path for the certificate_summary_file
-    certificate_summary_file: Optional[Path] = None
+    certificate_summary_file: Path | None = None
 
     wait_for_create: bool = False
 
@@ -84,7 +86,7 @@ class AcmCertificate(AwsResource):
         print_info(f"Requesting AcmCertificate for: {domain_name}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if self.subject_alternative_names is not None:
             not_null_args["SubjectAlternativeNames"] = self.subject_alternative_names
             print_info("SANs:")
@@ -159,14 +161,14 @@ class AcmCertificate(AwsResource):
                     self.certificate_summary_file.parent.mkdir(parents=True, exist_ok=True)
                     self.certificate_summary_file.touch(exist_ok=True)
                 self.certificate_summary_file.write_text(cert_summary.json(indent=2))
-                print_info(f"Certificate Summary stored at: {str(self.certificate_summary_file)}")
+                print_info(f"Certificate Summary stored at: {self.certificate_summary_file!s}")
             except Exception as e:
                 logger.error("Could not writing Certificate Summary to file")
                 logger.error(e)
 
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the Certificate ARN
 
         Args:
@@ -225,7 +227,7 @@ class AcmCertificate(AwsResource):
             logger.error(e)
         return False
 
-    def get_certificate_arn(self, aws_client: AwsApiClient) -> Optional[str]:
+    def get_certificate_arn(self, aws_client: AwsApiClient) -> str | None:
         cert_summary = self._read(aws_client)
         if cert_summary is None:
             return None

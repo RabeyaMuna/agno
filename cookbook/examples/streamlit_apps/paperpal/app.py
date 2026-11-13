@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import json
-from typing import Optional
 
 import pandas as pd
 import streamlit as st
@@ -38,9 +39,9 @@ def main() -> None:
     st.sidebar.markdown("## Agents")
     search_exa = st.sidebar.checkbox("Exa Search", value=True)
     search_arxiv = st.sidebar.checkbox("ArXiv Search", value=False)
-    # search_pubmed = st.sidebar.checkbox("PubMed Search", disabled=True)  # noqa
-    # search_google_scholar = st.sidebar.checkbox("Google Scholar Search", disabled=True)  # noqa
-    # use_cache = st.sidebar.toggle("Use Cache", value=False, disabled=True)  # noqa
+    # search_pubmed = st.sidebar.checkbox("PubMed Search", disabled=True)
+    # search_google_scholar = st.sidebar.checkbox("Google Scholar Search", disabled=True)
+    # use_cache = st.sidebar.toggle("Use Cache", value=False, disabled=True)
     num_search_terms = st.sidebar.number_input(
         "Number of Search Terms",
         value=2,
@@ -70,7 +71,7 @@ def main() -> None:
     if "topic" in st.session_state:
         report_topic = st.session_state["topic"]
 
-        search_terms: Optional[SearchTerms] = None
+        search_terms: SearchTerms | None = None
         with st.status("Generating Search Terms", expanded=True) as status:
             with st.container():
                 search_terms_container = st.empty()
@@ -91,8 +92,8 @@ def main() -> None:
             st.write("Sorry report generation failed. Please try again.")
             return
 
-        exa_content: Optional[str] = None
-        arxiv_content: Optional[str] = None
+        exa_content: str | None = None
+        arxiv_content: str | None = None
 
         if search_exa:
             with st.status("Searching Exa", expanded=True) as status:

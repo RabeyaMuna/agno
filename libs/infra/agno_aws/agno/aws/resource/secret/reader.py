@@ -1,14 +1,16 @@
-from typing import Any, Dict, List, Optional, Union
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.secret.manager import SecretsManager
 
 
 def read_secrets(
-    secrets: Union[SecretsManager, List[SecretsManager]],
-    aws_client: Optional[AwsApiClient] = None,
-) -> Dict[str, Any]:
-    secret_dict: Dict[str, str] = {}
+    secrets: SecretsManager | list[SecretsManager],
+    aws_client: AwsApiClient | None = None,
+) -> dict[str, Any]:
+    secret_dict: dict[str, str] = {}
     if secrets is not None:
         if isinstance(secrets, SecretsManager):
             _secret_dict = secrets.get_secrets_as_dict(aws_client=aws_client)

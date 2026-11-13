@@ -49,10 +49,12 @@ If DEMO_MODE=True, it prints the email to the console for review.
 Then you can confidently send the refined emails to your prospects!
 """
 
+from __future__ import annotations
+
 import json
+from collections.abc import Iterator
 from datetime import datetime
 from textwrap import dedent
-from typing import Dict, Iterator, List, Optional
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -70,7 +72,7 @@ DEMO_MODE = True
 today = datetime.now().strftime("%Y-%m-%d")
 
 # Example leads - Replace with your actual targets
-leads: Dict[str, Dict[str, str]] = {
+leads: dict[str, dict[str, str]] = {
     "Notion": {
         "name": "Notion",
         "website": "https://www.notion.so",
@@ -81,7 +83,7 @@ leads: Dict[str, Dict[str, str]] = {
 }
 
 # Updated sender details for an AI analytics company
-sender_details_dict: Dict[str, str] = {
+sender_details_dict: dict[str, str] = {
     "name": "Sarah Chen",
     "email": "your.email@company.com",  # Your email goes here
     "organization": "Data Consultants Inc",
@@ -121,64 +123,60 @@ class CompanyInfo(BaseModel):
     website_url: str = Field(..., description="Company website URL")
 
     # Business Details
-    industry: Optional[str] = Field(None, description="Primary industry")
-    core_business: Optional[str] = Field(None, description="Main business focus")
-    business_model: Optional[str] = Field(None, description="B2B, B2C, etc.")
+    industry: str | None = Field(None, description="Primary industry")
+    core_business: str | None = Field(None, description="Main business focus")
+    business_model: str | None = Field(None, description="B2B, B2C, etc.")
 
     # Marketing Information
-    motto: Optional[str] = Field(None, description="Company tagline/slogan")
-    value_proposition: Optional[str] = Field(None, description="Main value proposition")
-    target_audience: Optional[List[str]] = Field(
+    motto: str | None = Field(None, description="Company tagline/slogan")
+    value_proposition: str | None = Field(None, description="Main value proposition")
+    target_audience: list[str] | None = Field(
         None, description="Target customer segments"
     )
 
     # Company Metrics
-    company_size: Optional[str] = Field(None, description="Employee count range")
-    founded_year: Optional[int] = Field(None, description="Year founded")
-    locations: Optional[List[str]] = Field(None, description="Office locations")
+    company_size: str | None = Field(None, description="Employee count range")
+    founded_year: int | None = Field(None, description="Year founded")
+    locations: list[str] | None = Field(None, description="Office locations")
 
     # Technical Details
-    technologies: Optional[List[str]] = Field(None, description="Technology stack")
-    integrations: Optional[List[str]] = Field(None, description="Software integrations")
+    technologies: list[str] | None = Field(None, description="Technology stack")
+    integrations: list[str] | None = Field(None, description="Software integrations")
 
     # Market Position
-    competitors: Optional[List[str]] = Field(None, description="Main competitors")
-    unique_selling_points: Optional[List[str]] = Field(
+    competitors: list[str] | None = Field(None, description="Main competitors")
+    unique_selling_points: list[str] | None = Field(
         None, description="Key differentiators"
     )
-    market_position: Optional[str] = Field(None, description="Market positioning")
+    market_position: str | None = Field(None, description="Market positioning")
 
     # Social Proof
-    customers: Optional[List[str]] = Field(None, description="Notable customers")
-    case_studies: Optional[List[str]] = Field(None, description="Success stories")
-    awards: Optional[List[str]] = Field(None, description="Awards and recognition")
+    customers: list[str] | None = Field(None, description="Notable customers")
+    case_studies: list[str] | None = Field(None, description="Success stories")
+    awards: list[str] | None = Field(None, description="Awards and recognition")
 
     # Recent Activity
-    recent_news: Optional[List[str]] = Field(None, description="Recent news/updates")
-    blog_topics: Optional[List[str]] = Field(None, description="Recent blog topics")
+    recent_news: list[str] | None = Field(None, description="Recent news/updates")
+    blog_topics: list[str] | None = Field(None, description="Recent blog topics")
 
     # Pain Points & Opportunities
-    challenges: Optional[List[str]] = Field(None, description="Potential pain points")
-    growth_areas: Optional[List[str]] = Field(None, description="Growth opportunities")
+    challenges: list[str] | None = Field(None, description="Potential pain points")
+    growth_areas: list[str] | None = Field(None, description="Growth opportunities")
 
     # Contact Information
-    email_address: Optional[str] = Field(None, description="Contact email")
-    phone: Optional[str] = Field(None, description="Contact phone")
-    social_media: Optional[Dict[str, str]] = Field(
-        None, description="Social media links"
-    )
+    email_address: str | None = Field(None, description="Contact email")
+    phone: str | None = Field(None, description="Contact phone")
+    social_media: dict[str, str] | None = Field(None, description="Social media links")
 
     # Additional Fields
-    pricing_model: Optional[str] = Field(None, description="Pricing strategy and tiers")
-    user_base: Optional[str] = Field(None, description="Estimated user base size")
-    key_features: Optional[List[str]] = Field(None, description="Main product features")
-    integration_ecosystem: Optional[List[str]] = Field(
+    pricing_model: str | None = Field(None, description="Pricing strategy and tiers")
+    user_base: str | None = Field(None, description="Estimated user base size")
+    key_features: list[str] | None = Field(None, description="Main product features")
+    integration_ecosystem: list[str] | None = Field(
         None, description="Integration partners"
     )
-    funding_status: Optional[str] = Field(
-        None, description="Latest funding information"
-    )
-    growth_metrics: Optional[Dict[str, str]] = Field(
+    funding_status: str | None = Field(None, description="Latest funding information")
+    growth_metrics: dict[str, str] | None = Field(
         None, description="Key growth indicators"
     )
 
@@ -309,7 +307,7 @@ class PersonalisedEmailGenerator(Workflow):
         add_datetime_to_instructions=True,
     )
 
-    def get_cached_company_data(self, company_name: str) -> Optional[CompanyInfo]:
+    def get_cached_company_data(self, company_name: str) -> CompanyInfo | None:
         """Retrieve cached company research data"""
         logger.info(f"Checking cache for company data: {company_name}")
         cached_data = self.session_state.get("company_research", {}).get(company_name)
@@ -324,7 +322,7 @@ class PersonalisedEmailGenerator(Workflow):
         self.session_state["company_research"][company_name] = company_data.model_dump()
         self.write_to_storage()
 
-    def get_cached_email(self, company_name: str) -> Optional[str]:
+    def get_cached_email(self, company_name: str) -> str | None:
         """Retrieve cached email content"""
         logger.info(f"Checking cache for email: {company_name}")
         return self.session_state.get("generated_emails", {}).get(company_name)
@@ -415,7 +413,6 @@ class PersonalisedEmailGenerator(Workflow):
                 self.cache_email(company_name, self.email_creator.run_response.content)
 
                 # Obtain final email content:
-                email_content = self.email_creator.run_response.content
 
                 # 3. If not in demo mode, you'd handle sending the email here.
                 #    Implementation details omitted.

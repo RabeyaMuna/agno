@@ -1,4 +1,4 @@
-from typing import Iterator
+from collections.abc import Iterator
 
 from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat

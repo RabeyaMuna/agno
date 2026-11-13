@@ -1,11 +1,13 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 import streamlit as st
 from agno.utils.log import logger
 
 
 def add_message(
-    role: str, content: str, tool_calls: Optional[List[Dict[str, Any]]] = None
+    role: str, content: str, tool_calls: list[dict[str, Any]] | None = None
 ) -> None:
     """Safely add a message to the session state"""
     if "messages" not in st.session_state or not isinstance(
@@ -91,7 +93,7 @@ def display_tool_calls(tool_calls_container, tools):
                     st.markdown("**Results:**")
                     try:
                         st.json(_content)
-                    except Exception as e:
+                    except Exception:
                         st.markdown(_content)
 
                 if _metrics:

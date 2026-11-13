@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional, Union
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -14,19 +16,19 @@ class LoadBalancer(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2.html
     """
 
-    resource_type: Optional[str] = "LoadBalancer"
+    resource_type: str | None = "LoadBalancer"
     service_name: str = "elbv2"
 
     # Name of the Load Balancer.
     name: str
-    subnets: Optional[List[Union[str, Subnet]]] = None
-    subnet_mappings: Optional[List[Dict[str, str]]] = None
-    security_groups: Optional[List[Union[str, SecurityGroup]]] = None
-    scheme: Optional[str] = None
-    tags: Optional[List[Dict[str, str]]] = None
-    type: Optional[str] = None
-    ip_address_type: Optional[str] = None
-    customer_owned_ipv_4_pool: Optional[str] = None
+    subnets: list[str | Subnet] | None = None
+    subnet_mappings: list[dict[str, str]] | None = None
+    security_groups: list[str | SecurityGroup] | None = None
+    scheme: str | None = None
+    tags: list[dict[str, str]] | None = None
+    type: str | None = None
+    ip_address_type: str | None = None
+    customer_owned_ipv_4_pool: str | None = None
 
     # Protocol for load_balancer: HTTP or HTTPS
     protocol: str = "HTTP"
@@ -40,7 +42,7 @@ class LoadBalancer(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
 
         if self.subnets is not None:
             subnet_ids = []
@@ -118,7 +120,7 @@ class LoadBalancer(AwsResource):
             print_info(f"LoadBalancer DNS: {self.protocol.lower()}://{dns_name}")
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the LoadBalancer
 
         Args:
@@ -186,7 +188,7 @@ class LoadBalancer(AwsResource):
                 logger.error(e)
         return True
 
-    def get_arn(self, aws_client: AwsApiClient) -> Optional[str]:
+    def get_arn(self, aws_client: AwsApiClient) -> str | None:
         lb = self._read(aws_client)
         if lb is None:
             return None

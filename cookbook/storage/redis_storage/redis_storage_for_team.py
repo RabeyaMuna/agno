@@ -10,8 +10,6 @@ docker run --name my-redis -p 6379:6379 -d redis
 docker ps
 """
 
-from typing import List
-
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.storage.redis import RedisStorage
@@ -26,7 +24,7 @@ storage = RedisStorage(prefix="agno_test", host="localhost", port=6379)
 class Article(BaseModel):
     title: str
     summary: str
-    reference_links: List[str]
+    reference_links: list[str]
 
 
 hn_researcher = Agent(

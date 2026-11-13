@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from agno.agent import Agent
 from agno.eval.accuracy import AccuracyEval, AccuracyResult
@@ -18,5 +18,5 @@ evaluation = AccuracyEval(
     additional_guidelines="Its ok for the output to include additional text or information relevant to the comparison.",
 )
 
-result: Optional[AccuracyResult] = evaluation.run(print_results=True)
+result: AccuracyResult | None = evaluation.run(print_results=True)
 assert result is not None and result.avg_score >= 8

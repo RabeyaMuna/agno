@@ -1,4 +1,4 @@
-from typing import List, Optional
+from __future__ import annotations
 
 import typer
 from agno.agent import Agent
@@ -21,10 +21,10 @@ storage = PostgresAgentStorage(table_name="pdf_agent", db_url=db_url)
 
 
 def pdf_agent(new: bool = False, user: str = "user"):
-    session_id: Optional[str] = None
+    session_id: str | None = None
 
     if not new:
-        existing_sessions: List[str] = storage.get_all_session_ids(user)
+        existing_sessions: list[str] = storage.get_all_session_ids(user)
         if len(existing_sessions) > 0:
             session_id = existing_sessions[0]
 

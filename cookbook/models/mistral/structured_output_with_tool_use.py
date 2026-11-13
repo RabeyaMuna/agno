@@ -19,9 +19,11 @@ researcher = Agent(
     model=model,
     role="You find people with a specific role at a provided company.",
     instructions=[
-        "- Search the web for the person described"
-        "- Find out if they have public contact details"
-        "- Return the information in a structured format"
+        (
+            "- Search the web for the person described"
+            "- Find out if they have public contact details"
+            "- Return the information in a structured format"
+        )
     ],
     show_tool_calls=True,
     tools=[DuckDuckGoTools()],

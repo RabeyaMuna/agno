@@ -9,7 +9,7 @@ Docs on Agent UI: https://docs.agno.com/agent-ui
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.models.response import FileType
-from agno.playground import Playground, serve_playground_app
+from agno.playground import Playground
 from agno.storage.sqlite import SqliteStorage
 from agno.tools.dalle import DalleTools
 from agno.tools.eleven_labs import ElevenLabsTools
@@ -161,8 +161,10 @@ audio_agent = Agent(
     instructions=[
         "When the user asks you to generate audio, use the `text_to_speech` tool to generate the audio.",
         "You'll generate the appropriate prompt to send to the tool to generate audio.",
-        "You don't need to find the appropriate voice first, I already specified the voice to user."
-        "Don't return file name or file url in your response or markdown just tell the audio was created successfully.",
+        (
+            "You don't need to find the appropriate voice first, I already specified the voice to user."
+            "Don't return file name or file url in your response or markdown just tell the audio was created successfully."
+        ),
         "The audio should be long and detailed.",
     ],
     markdown=True,

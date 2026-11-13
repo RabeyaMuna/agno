@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from typing_extensions import Literal
 
@@ -21,15 +23,15 @@ class DbInstance(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html
     """
 
-    resource_type: Optional[str] = "DbInstance"
+    resource_type: str | None = "DbInstance"
     service_name: str = "rds"
 
     # Name of the db instance.
     name: str
     # The name of the database engine to be used for this instance.
-    engine: Union[
-        str,
-        Literal[
+    engine: (
+        str
+        | Literal[
             "aurora",
             "aurora-mysql",
             "aurora-postgresql",
@@ -48,51 +50,51 @@ class DbInstance(AwsResource):
             "sqlserver-se",
             "sqlserver-ex",
             "sqlserver-web",
-        ],
-    ]
+        ]
+    )
     # The version number of the database engine to use.
-    engine_version: Optional[str] = None
+    engine_version: str | None = None
     # Compute and memory capacity of the DB instance, for example db.m5.large.
-    db_instance_class: Optional[str] = None
+    db_instance_class: str | None = None
 
     # This is the name of the database to create when the DB instance is created.
     # Note: The meaning of this parameter differs according to the database engine you use.
     # Provide DB_NAME here or as DB_NAME in secrets_file
-    db_name: Optional[str] = None
+    db_name: str | None = None
     # The identifier for this DB instance. This parameter is stored as a lowercase string.
     # If None, use the name as the db_instance_identifier
     # Constraints:
     # - Must contain from 1 to 63 letters, numbers, or hyphens.
     # - First character must be a letter.
     # - Can't end with a hyphen or contain two consecutive hyphens.
-    db_instance_identifier: Optional[str] = None
+    db_instance_identifier: str | None = None
     # The amount of storage in gibibytes (GiB) to allocate for the DB instance.
-    allocated_storage: Optional[int] = None
+    allocated_storage: int | None = None
     # The name of the DB parameter group to associate with this DB instance.
-    db_parameter_group_name: Optional[str] = None
+    db_parameter_group_name: str | None = None
 
     # The port number on which the database accepts connections.
-    port: Optional[int] = None
+    port: int | None = None
 
     # The name for the master user.
     # Provide MASTER_USERNAME here or as MASTER_USERNAME in secrets_file
-    master_username: Optional[str] = None
+    master_username: str | None = None
     # The password for the master user.
     # The password can include any printable ASCII character except "/", """, or "@".
     # Provide MASTER_USER_PASSWORD here or as MASTER_USER_PASSWORD in secrets_file
-    master_user_password: Optional[str] = None
+    master_user_password: str | None = None
     # Read secrets from a file in yaml format
-    secrets_file: Optional[Path] = None
+    secrets_file: Path | None = None
     # Read secret variables from AWS Secret
-    aws_secret: Optional[SecretsManager] = None
+    aws_secret: SecretsManager | None = None
 
     # The Availability Zone (AZ) where the database will be created.
-    availability_zone: Optional[str] = None
+    availability_zone: str | None = None
     # A DB subnet group to associate with this DB instance.
-    db_subnet_group_name: Optional[str] = None
+    db_subnet_group_name: str | None = None
     # If db_subnet_group_name is None,
     # Read the db_subnet_group_name from db_subnet_group
-    db_subnet_group: Optional[DbSubnetGroup] = None
+    db_subnet_group: DbSubnetGroup | None = None
 
     # Specifies whether the DB instance is publicly accessible.
     # When the DB instance is publicly accessible, its Domain Name System (DNS) endpoint resolves to the private IP
@@ -102,75 +104,75 @@ class DbInstance(AwsResource):
     #
     # When the DB instance isn't publicly accessible, it is an internal DB instance with a DNS name that resolves
     # to a private IP address.
-    publicly_accessible: Optional[bool] = None
+    publicly_accessible: bool | None = None
     # The identifier of the DB cluster that the instance will belong to.
-    db_cluster_identifier: Optional[str] = None
+    db_cluster_identifier: str | None = None
     # Specifies the storage type to be associated with the DB instance.
     # Valid values: gp2 | gp3 | io1 | standard
     # If you specify io1 or gp3 , you must also include a value for the Iops parameter.
     # Default: io1 if the Iops parameter is specified, otherwise gp2
-    storage_type: Optional[str] = None
-    iops: Optional[int] = None
+    storage_type: str | None = None
+    iops: int | None = None
 
     # A list of VPC security groups to associate with this DB instance.
-    vpc_security_group_ids: Optional[List[str]] = None
+    vpc_security_group_ids: list[str] | None = None
     # If vpc_security_group_ids is None,
     # Read the security_group_id from vpc_stack
-    vpc_stack: Optional[CloudFormationStack] = None
+    vpc_stack: CloudFormationStack | None = None
     # Add security_group_ids from db_security_groups
-    db_security_groups: Optional[List[SecurityGroup]] = None
+    db_security_groups: list[SecurityGroup] | None = None
 
-    backup_retention_period: Optional[int] = None
-    character_set_name: Optional[str] = None
-    preferred_backup_window: Optional[str] = None
+    backup_retention_period: int | None = None
+    character_set_name: str | None = None
+    preferred_backup_window: str | None = None
     # The time range each week during which system maintenance can occur, in Universal Coordinated Time (UTC).
-    preferred_maintenance_window: Optional[str] = None
+    preferred_maintenance_window: str | None = None
     # A value that indicates whether the DB instance is a Multi-AZ deployment.
     # You can't set the AvailabilityZone parameter if the DB instance is a Multi-AZ deployment.
-    multi_az: Optional[bool] = None
-    auto_minor_version_upgrade: Optional[bool] = None
-    license_model: Optional[str] = None
-    option_group_name: Optional[str] = None
-    nchar_character_set_name: Optional[str] = None
-    tags: Optional[List[Dict[str, str]]] = None
-    tde_credential_arn: Optional[str] = None
-    tde_credential_password: Optional[str] = None
-    storage_encrypted: Optional[bool] = None
-    kms_key_id: Optional[str] = None
-    domain: Optional[str] = None
-    copy_tags_to_snapshot: Optional[bool] = None
-    monitoring_interval: Optional[int] = None
-    monitoring_role_arn: Optional[str] = None
-    domain_iam_role_name: Optional[str] = None
-    promotion_tier: Optional[int] = None
-    timezone: Optional[str] = None
-    enable_iam_database_authentication: Optional[bool] = None
-    enable_performance_insights: Optional[bool] = None
-    performance_insights_kms_key_id: Optional[str] = None
-    performance_insights_retention_period: Optional[int] = None
-    enable_cloudwatch_logs_exports: Optional[List[str]] = None
-    processor_features: Optional[List[Dict[str, str]]] = None
+    multi_az: bool | None = None
+    auto_minor_version_upgrade: bool | None = None
+    license_model: str | None = None
+    option_group_name: str | None = None
+    nchar_character_set_name: str | None = None
+    tags: list[dict[str, str]] | None = None
+    tde_credential_arn: str | None = None
+    tde_credential_password: str | None = None
+    storage_encrypted: bool | None = None
+    kms_key_id: str | None = None
+    domain: str | None = None
+    copy_tags_to_snapshot: bool | None = None
+    monitoring_interval: int | None = None
+    monitoring_role_arn: str | None = None
+    domain_iam_role_name: str | None = None
+    promotion_tier: int | None = None
+    timezone: str | None = None
+    enable_iam_database_authentication: bool | None = None
+    enable_performance_insights: bool | None = None
+    performance_insights_kms_key_id: str | None = None
+    performance_insights_retention_period: int | None = None
+    enable_cloudwatch_logs_exports: list[str] | None = None
+    processor_features: list[dict[str, str]] | None = None
     # A value that indicates whether the DB instance has deletion protection enabled. The database can't be deleted
     # when deletion protection is enabled. By default, deletion protection isn't enabled.
-    deletion_protection: Optional[bool] = None
+    deletion_protection: bool | None = None
     # The upper limit in gibibytes (GiB) to which Amazon RDS can automatically scale the storage of the DB instance.
-    max_allocated_storage: Optional[int] = None
-    enable_customer_owned_ip: Optional[bool] = None
-    custom_iam_instance_profile: Optional[str] = None
-    backup_target: Optional[str] = None
-    network_type: Optional[str] = None
-    storage_throughput: Optional[int] = None
-    ca_certificate_identifier: Optional[str] = None
-    db_system_id: Optional[str] = None
-    dedicated_log_volume: Optional[bool] = None
+    max_allocated_storage: int | None = None
+    enable_customer_owned_ip: bool | None = None
+    custom_iam_instance_profile: str | None = None
+    backup_target: str | None = None
+    network_type: str | None = None
+    storage_throughput: int | None = None
+    ca_certificate_identifier: str | None = None
+    db_system_id: str | None = None
+    dedicated_log_volume: bool | None = None
 
     # Specifies whether to manage the master user password with Amazon Web Services Secrets Manager.
     # Constraints:
     # Can’t manage the master user password with Amazon Web Services Secrets Manager if MasterUserPassword is specified.
-    manage_master_user_password: Optional[bool] = None
+    manage_master_user_password: bool | None = None
     # The Amazon Web Services KMS key identifier to encrypt a secret that is automatically generated and
     # managed in Amazon Web Services Secrets Manager.
-    master_user_secret_kms_key_id: Optional[str] = None
+    master_user_secret_kms_key_id: str | None = None
 
     # Parameters for delete function
     # Skip the creation of a final DB snapshot before the instance is deleted.
@@ -178,34 +180,34 @@ class DbInstance(AwsResource):
     # If skip_final_snapshot = None | False, a DB snapshot is created before the instance is deleted.
     #   You must specify a FinalDBSnapshotIdentifier parameter
     #   if skip_final_snapshot = None | False
-    skip_final_snapshot: Optional[bool] = True
+    skip_final_snapshot: bool | None = True
     # The DB cluster snapshot identifier of the new DB cluster snapshot created when SkipFinalSnapshot is disabled.
-    final_db_snapshot_identifier: Optional[str] = None
+    final_db_snapshot_identifier: str | None = None
     # Specifies whether to remove automated backups immediately after the DB cluster is deleted.
     # The default is to remove automated backups immediately after the DB cluster is deleted.
-    delete_automated_backups: Optional[bool] = None
+    delete_automated_backups: bool | None = None
 
     # Parameters for update function
-    apply_immediately: Optional[bool] = True
-    allow_major_version_upgrade: Optional[bool] = None
-    new_db_instance_identifier: Optional[str] = None
-    db_port_number: Optional[int] = None
-    cloudwatch_logs_export_configuration: Optional[Dict[str, Any]] = None
-    use_default_processor_features: Optional[bool] = None
-    certificate_rotation_restart: Optional[bool] = None
-    replica_mode: Optional[str] = None
-    aws_backup_recovery_point_arn: Optional[str] = None
-    automation_mode: Optional[str] = None
-    resume_full_automation_mode_minutes: Optional[int] = None
-    rotate_master_user_password: Optional[bool] = None
+    apply_immediately: bool | None = True
+    allow_major_version_upgrade: bool | None = None
+    new_db_instance_identifier: str | None = None
+    db_port_number: int | None = None
+    cloudwatch_logs_export_configuration: dict[str, Any] | None = None
+    use_default_processor_features: bool | None = None
+    certificate_rotation_restart: bool | None = None
+    replica_mode: str | None = None
+    aws_backup_recovery_point_arn: str | None = None
+    automation_mode: str | None = None
+    resume_full_automation_mode_minutes: int | None = None
+    rotate_master_user_password: bool | None = None
 
     # Cache secret_data
-    cached_secret_data: Optional[Dict[str, Any]] = None
+    cached_secret_data: dict[str, Any] | None = None
 
     def get_db_instance_identifier(self):
         return self.db_instance_identifier or self.name
 
-    def get_master_username(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_master_username(self, aws_client: AwsApiClient | None = None) -> str | None:
         master_username = self.master_username
         if master_username is None and self.secrets_file is not None:
             # read from secrets_file
@@ -219,7 +221,7 @@ class DbInstance(AwsResource):
 
         return master_username
 
-    def get_master_user_password(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_master_user_password(self, aws_client: AwsApiClient | None = None) -> str | None:
         master_user_password = self.master_user_password
         if master_user_password is None and self.secrets_file is not None:
             # read from secrets_file
@@ -233,7 +235,7 @@ class DbInstance(AwsResource):
 
         return master_user_password
 
-    def get_db_name(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_db_name(self, aws_client: AwsApiClient | None = None) -> str | None:
         db_name = self.db_name
         if db_name is None and self.secrets_file is not None:
             # read from secrets_file
@@ -251,7 +253,7 @@ class DbInstance(AwsResource):
                 db_name = self.aws_secret.get_secret_value("DATABASE_NAME", aws_client=aws_client)
         return db_name
 
-    def get_database_name(self) -> Optional[str]:
+    def get_database_name(self) -> str | None:
         # Alias for get_db_name because db_instances use `db_name` and db_clusters use `database_name`
         return self.get_db_name()
 
@@ -264,7 +266,7 @@ class DbInstance(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
 
         # Step 1: Get the VpcSecurityGroupIds
         vpc_security_group_ids = self.vpc_security_group_ids
@@ -446,7 +448,7 @@ class DbInstance(AwsResource):
                 logger.error(e)
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the DbInstance
 
         Args:
@@ -488,7 +490,7 @@ class DbInstance(AwsResource):
         self.active_resource = None
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if self.final_db_snapshot_identifier:
             not_null_args["FinalDBSnapshotIdentifier"] = self.final_db_snapshot_identifier
         if self.delete_automated_backups:
@@ -542,7 +544,7 @@ class DbInstance(AwsResource):
         db_instance = self.read(aws_client)
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {
+        not_null_args: dict[str, Any] = {
             "ApplyImmediately": self.apply_immediately,
         }
 
@@ -697,14 +699,14 @@ class DbInstance(AwsResource):
             logger.error(e)
         return False
 
-    def get_db_endpoint(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_db_endpoint(self, aws_client: AwsApiClient | None = None) -> str | None:
         """Returns the DbInstance endpoint
 
         Returns:
             The DbInstance endpoint
         """
         logger.debug(f"Getting endpoint for {self.get_resource_name()}")
-        _db_endpoint: Optional[str] = None
+        _db_endpoint: str | None = None
         if self.active_resource:
             _db_endpoint = self.active_resource.get("Endpoint", {}).get("Address", None)
         if _db_endpoint is None:
@@ -719,14 +721,14 @@ class DbInstance(AwsResource):
         logger.debug(f"DBInstance Endpoint: {_db_endpoint}")
         return _db_endpoint
 
-    def get_db_port(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_db_port(self, aws_client: AwsApiClient | None = None) -> str | None:
         """Returns the DbInstance port
 
         Returns:
             The DbInstance port
         """
         logger.debug(f"Getting port for {self.get_resource_name()}")
-        _db_port: Optional[str] = None
+        _db_port: str | None = None
         if self.active_resource:
             _db_port = self.active_resource.get("Endpoint", {}).get("Port", None)
         if _db_port is None:

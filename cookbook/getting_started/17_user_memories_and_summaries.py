@@ -21,9 +21,10 @@ Agent: *Recalls previous memories about John*
 Run: `pip install openai sqlalchemy agno` to install dependencies
 """
 
+from __future__ import annotations
+
 import json
 from textwrap import dedent
-from typing import Optional
 
 import typer
 from agno.agent import Agent
@@ -38,7 +39,7 @@ from rich.prompt import Prompt
 
 
 def create_agent(user: str = "user"):
-    session_id: Optional[str] = None
+    session_id: str | None = None
 
     # Ask if user wants to start new session or continue existing one
     new = typer.confirm("Do you want to start a new session?")

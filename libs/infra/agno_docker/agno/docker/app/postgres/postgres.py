@@ -1,6 +1,6 @@
-from typing import Dict, Optional
+from __future__ import annotations
 
-from agno.docker.app.base import ContainerContext, DockerApp  # noqa: F401
+from agno.docker.app.base import ContainerContext, DockerApp
 from agno.infra.db_app import DbApp
 
 
@@ -25,42 +25,42 @@ class PostgresDb(DockerApp, DbApp):
 
     # -*- Postgres Configuration
     # Provide POSTGRES_USER as pg_user or POSTGRES_USER in secrets_file
-    pg_user: Optional[str] = None
+    pg_user: str | None = None
     # Provide POSTGRES_PASSWORD as pg_password or POSTGRES_PASSWORD in secrets_file
-    pg_password: Optional[str] = None
+    pg_password: str | None = None
     # Provide POSTGRES_DB as pg_database or POSTGRES_DB in secrets_file
-    pg_database: Optional[str] = None
+    pg_database: str | None = None
     pg_driver: str = "postgresql+psycopg"
-    pgdata: Optional[str] = "/var/lib/postgresql/data/pgdata"
-    postgres_initdb_args: Optional[str] = None
-    postgres_initdb_waldir: Optional[str] = None
-    postgres_host_auth_method: Optional[str] = None
-    postgres_password_file: Optional[str] = None
-    postgres_user_file: Optional[str] = None
-    postgres_db_file: Optional[str] = None
-    postgres_initdb_args_file: Optional[str] = None
+    pgdata: str | None = "/var/lib/postgresql/data/pgdata"
+    postgres_initdb_args: str | None = None
+    postgres_initdb_waldir: str | None = None
+    postgres_host_auth_method: str | None = None
+    postgres_password_file: str | None = None
+    postgres_user_file: str | None = None
+    postgres_db_file: str | None = None
+    postgres_initdb_args_file: str | None = None
 
-    def get_db_user(self) -> Optional[str]:
+    def get_db_user(self) -> str | None:
         return self.pg_user or self.get_secret_from_file("POSTGRES_USER")
 
-    def get_db_password(self) -> Optional[str]:
+    def get_db_password(self) -> str | None:
         return self.pg_password or self.get_secret_from_file("POSTGRES_PASSWORD")
 
-    def get_db_database(self) -> Optional[str]:
+    def get_db_database(self) -> str | None:
         return self.pg_database or self.get_secret_from_file("POSTGRES_DB")
 
-    def get_db_driver(self) -> Optional[str]:
+    def get_db_driver(self) -> str | None:
         return self.pg_driver
 
-    def get_db_host(self) -> Optional[str]:
+    def get_db_host(self) -> str | None:
         return self.get_container_name()
 
-    def get_db_port(self) -> Optional[int]:
+    def get_db_port(self) -> int | None:
         return self.container_port
 
-    def get_container_env(self, container_context: ContainerContext) -> Dict[str, str]:
+    def get_container_env(self, container_context: ContainerContext) -> dict[str, str]:
         # Container Environment
-        container_env: Dict[str, str] = self.container_env or {}
+        container_env: dict[str, str] = self.container_env or {}
 
         # Set postgres env vars
         # Check: https://hub.docker.com/_/postgres

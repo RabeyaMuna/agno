@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 from copy import deepcopy
 from pathlib import Path
 from textwrap import dedent
-from typing import Optional
 
 from agno.agent import Agent
 from agno.knowledge import AgentKnowledge
@@ -22,7 +23,7 @@ tmp_dir.mkdir(exist_ok=True, parents=True)
 
 def get_agent(
     agent_name: str, model: Model, memory: Memory, knowledge: AgentKnowledge
-) -> Optional[Agent]:
+) -> Agent | None:
     # Create a copy of the model to avoid side effects of the model being modified
     model_copy = deepcopy(model)
     if agent_name == "calculator":

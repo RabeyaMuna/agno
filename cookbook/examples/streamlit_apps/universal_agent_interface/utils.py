@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import streamlit as st
 from agno.document import Document
@@ -9,14 +11,14 @@ from agno.document.reader.docx_reader import DocxReader
 from agno.document.reader.pdf_reader import PDFReader
 from agno.document.reader.text_reader import TextReader
 from agno.document.reader.website_reader import WebsiteReader
-from agno.memory.v2 import Memory, UserMemory
+from agno.memory.v2 import Memory
 from agno.team import Team
 from agno.utils.log import logger
 from uagi import UAgIConfig, create_uagi
 
 
 async def initialize_session_state():
-    logger.info(f"---*--- Initializing session state ---*---")
+    logger.info("---*--- Initializing session state ---*---")
     if "uagi" not in st.session_state:
         st.session_state["uagi"] = None
     if "session_id" not in st.session_state:
@@ -28,7 +30,7 @@ async def initialize_session_state():
 async def add_message(
     role: str,
     content: str,
-    tool_calls: Optional[List[Dict[str, Any]]] = None,
+    tool_calls: list[dict[str, Any]] | None = None,
     intermediate_steps_displayed: bool = False,
 ) -> None:
     """Safely add a message to the session state"""
@@ -65,7 +67,7 @@ async def selected_model() -> str:
     return model_id
 
 
-async def selected_tools() -> List[str]:
+async def selected_tools() -> list[str]:
     """Display a tool selector in the sidebar."""
     tool_options = {
         "Web Search (DDG)": "ddg_search",
@@ -81,7 +83,7 @@ async def selected_tools() -> List[str]:
     return [tool_options[tool] for tool in selected_tools]
 
 
-async def selected_agents() -> List[str]:
+async def selected_agents() -> list[str]:
     """Display a selector for agents in the sidebar."""
     agent_options = {
         "Calculator": "calculator",
@@ -258,8 +260,8 @@ def display_tool_calls(tool_calls_container, tools):
                         if execution_time is not None:
                             execution_time_str = f"{execution_time:.4f}s"
                 except Exception as e:
-                    logger.error(f"Error getting tool metrics time: {str(e)}")
-                    pass  # Keep default "N/A"
+                    logger.error(f"Error getting tool metrics time: {e!s}")
+                    # Keep default "N/A"
 
                 # Check if this is a transfer task
                 is_task_transfer = "transfer_task_to_member" in tool_name
@@ -269,7 +271,7 @@ def display_tool_calls(tool_calls_container, tools):
                     member_id = tool_args.get("member_id")
                     expander_title = f"🔄 {member_id.title()}"
                 elif is_memory_task:
-                    expander_title = f"💭 Updating Memory"
+                    expander_title = "💭 Updating Memory"
                 else:
                     expander_title = f"🛠️ {tool_name.replace('_', ' ').title()}"
 
@@ -313,7 +315,7 @@ def display_tool_calls(tool_calls_container, tools):
                             logger.debug(f"Could not display tool content: {e}")
                             st.error("Could not display tool content.")
     except Exception as e:
-        logger.error(f"Error displaying tool calls: {str(e)}")
+        logger.error(f"Error displaying tool calls: {e!s}")
         tool_calls_container.error("Failed to display tool results")
 
 
@@ -330,18 +332,17 @@ async def knowledge_widget(uagi: Team) -> None:
             key=st.session_state["url_scrape_key"],
         )
         add_url_button = st.sidebar.button("Add URL")
-        if add_url_button:
-            if input_url is not None:
-                alert = st.sidebar.info("Processing URLs...", icon="ℹ️")
-                if f"{input_url}_scraped" not in st.session_state:
-                    scraper = WebsiteReader(max_links=2, max_depth=1)
-                    web_documents: List[Document] = scraper.read(input_url)
-                    if web_documents:
-                        uagi.knowledge.load_documents(web_documents, upsert=True)
-                    else:
-                        st.sidebar.error("Could not read website")
-                    st.session_state[f"{input_url}_uploaded"] = True
-                alert.empty()
+        if add_url_button and input_url is not None:
+            alert = st.sidebar.info("Processing URLs...", icon="ℹ️")
+            if f"{input_url}_scraped" not in st.session_state:
+                scraper = WebsiteReader(max_links=2, max_depth=1)
+                web_documents: list[Document] = scraper.read(input_url)
+                if web_documents:
+                    uagi.knowledge.load_documents(web_documents, upsert=True)
+                else:
+                    st.sidebar.error("Could not read website")
+                st.session_state[f"{input_url}_uploaded"] = True
+            alert.empty()
 
         # Add documents to knowledge base
         if "file_uploader_key" not in st.session_state:
@@ -368,7 +369,7 @@ async def knowledge_widget(uagi: Team) -> None:
                 else:
                     st.sidebar.error("Unsupported file type")
                     return
-                uploaded_file_documents: List[Document] = reader.read(uploaded_file)
+                uploaded_file_documents: list[Document] = reader.read(uploaded_file)
                 if uploaded_file_documents:
                     uagi.knowledge.load_documents(uploaded_file_documents, upsert=True)
                 else:
@@ -462,7 +463,7 @@ async def session_selector(uagi: Team, uagi_config: UAgIConfig) -> None:
                 if st.button("✎", key="edit_session_name"):
                     st.session_state.session_edit_mode = True
     except Exception as e:
-        logger.error(f"Error in session selector: {str(e)}")
+        logger.error(f"Error in session selector: {e!s}")
         st.sidebar.error("Failed to load sessions")
 
 
@@ -473,9 +474,9 @@ def export_chat_history():
         str: Formatted markdown string of the chat history
     """
     if "messages" not in st.session_state or not st.session_state["messages"]:
-        return f"# UAgI - Chat History\n\nNo messages to export."
+        return "# UAgI - Chat History\n\nNo messages to export."
 
-    chat_text = f"# UAgI - Chat History\n\n"
+    chat_text = "# UAgI - Chat History\n\n"
     for msg in st.session_state["messages"]:
         role_label = "🤖 Assistant" if msg["role"] == "assistant" else "👤 User"
         chat_text += f"### {role_label}\n{msg['content']}\n\n"
@@ -504,7 +505,7 @@ async def utilities_widget(uagi: Team) -> None:
         if st.button("🔄 Start New Chat"):
             restart_uagi()
     with col2:
-        fn = f"uagi_chat_history.md"
+        fn = "uagi_chat_history.md"
         if "session_id" in st.session_state:
             fn = f"uagi_{st.session_state['session_id']}.md"
         if st.download_button(

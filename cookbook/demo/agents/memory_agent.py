@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from agno.agent import Agent
 from agno.memory.v2.db.postgres import PostgresMemoryDb
@@ -28,8 +28,8 @@ memory_agent_storage = PostgresAgentStorage(
 
 
 def get_memory_agent(
-    user_id: Optional[str] = None,
-    session_id: Optional[str] = None,
+    user_id: str | None = None,
+    session_id: str | None = None,
     debug_mode: bool = False,
 ) -> Agent:
     return Agent(

@@ -1,7 +1,6 @@
 import io
 import os
 from datetime import datetime
-from typing import List
 
 import requests
 from agno.run.response import RunResponse
@@ -122,11 +121,11 @@ class EmployeeRecruitmentWorkflow(Workflow):
             return text_content
 
         except Exception as e:
-            print(f"Error processing PDF: {str(e)}")
+            print(f"Error processing PDF: {e!s}")
             return ""
 
     def run(
-        self, candidate_resume_urls: List[str], job_description: str
+        self, candidate_resume_urls: list[str], job_description: str
     ) -> RunResponse:
         selected_candidates = []
 

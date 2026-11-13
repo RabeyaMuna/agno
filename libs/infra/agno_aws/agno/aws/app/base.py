@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from pydantic import Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
@@ -28,22 +30,22 @@ class AwsApp(InfraApp):
     # -*- Networking Configuration
     # List of subnets for the app: Type: Union[str, Subnet]
     # Added to the load balancer, target group, and ECS service
-    subnets: Optional[List[Any]] = None
+    subnets: list[Any] | None = None
 
     # -*- ECS Configuration
-    ecs_cluster: Optional[Any] = None
+    ecs_cluster: Any | None = None
     # Create a cluster if ecs_cluster is None
     create_ecs_cluster: bool = True
     # Name of the ECS cluster
-    ecs_cluster_name: Optional[str] = None
+    ecs_cluster_name: str | None = None
     ecs_launch_type: str = "FARGATE"
     ecs_task_cpu: str = "1024"
     ecs_task_memory: str = "2048"
     ecs_service_count: int = 1
     ecs_enable_service_connect: bool = False
-    ecs_service_connect_protocol: Optional[str] = None
+    ecs_service_connect_protocol: str | None = None
     ecs_service_connect_namespace: str = "default"
-    assign_public_ip: Optional[bool] = None
+    assign_public_ip: bool | None = None
     ecs_bedrock_access: bool = True
     ecs_exec_access: bool = True
     ecs_secret_access: bool = True
@@ -51,17 +53,17 @@ class AwsApp(InfraApp):
 
     # -*- Security Group Configuration
     # List of security groups for the ECS Service. Type: SecurityGroup
-    security_groups: Optional[List[Any]] = None
+    security_groups: list[Any] | None = None
     # If create_security_groups=True,
     # Create security groups for the app and load balancer
     create_security_groups: bool = True
     # inbound_security_groups to add to the app security group
-    inbound_security_groups: Optional[List[Any]] = None
+    inbound_security_groups: list[Any] | None = None
     # inbound_security_group_ids to add to the app security group
-    inbound_security_group_ids: Optional[List[str]] = None
+    inbound_security_group_ids: list[str] | None = None
 
     # -*- LoadBalancer Configuration
-    load_balancer: Optional[Any] = None
+    load_balancer: Any | None = None
     # Create a load balancer if load_balancer is None
     create_load_balancer: bool = False
     # Enable HTTPS on the load balancer
@@ -69,43 +71,43 @@ class AwsApp(InfraApp):
     # ACM certificate for HTTPS
     # load_balancer_certificate or load_balancer_certificate_arn
     # is required if enable_https is True
-    load_balancer_certificate: Optional[Any] = None
+    load_balancer_certificate: Any | None = None
     # ARN of the certificate for HTTPS, required if enable_https is True
-    load_balancer_certificate_arn: Optional[str] = None
+    load_balancer_certificate_arn: str | None = None
     # Security groups for the load balancer: List[SecurityGroup]
     # The App creates a security group for the load balancer if:
     # load_balancer_security_groups is None
     # and create_load_balancer is True
     # and create_security_groups is True
-    load_balancer_security_groups: Optional[List[Any]] = None
+    load_balancer_security_groups: list[Any] | None = None
 
     # -*- Listener Configuration
-    listeners: Optional[List[Any]] = None
+    listeners: list[Any] | None = None
     # Create a listener if listener is None
-    create_listeners: Optional[bool] = Field(None, validate_default=True)
+    create_listeners: bool | None = Field(None, validate_default=True)
 
     # -*- TargetGroup Configuration
-    target_group: Optional[Any] = None
+    target_group: Any | None = None
     # Create a target group if target_group is None
-    create_target_group: Optional[bool] = Field(None, validate_default=True)
+    create_target_group: bool | None = Field(None, validate_default=True)
     # HTTP or HTTPS. Recommended to use HTTP because HTTPS is handled by the load balancer
     target_group_protocol: str = "HTTP"
     # Port number for the target group
     # If target_group_port is None, then use container_port
-    target_group_port: Optional[int] = None
+    target_group_port: int | None = None
     target_group_type: str = "ip"
-    health_check_protocol: Optional[str] = None
-    health_check_port: Optional[str] = None
-    health_check_enabled: Optional[bool] = None
-    health_check_path: Optional[str] = None
-    health_check_interval_seconds: Optional[int] = None
-    health_check_timeout_seconds: Optional[int] = None
-    healthy_threshold_count: Optional[int] = None
-    unhealthy_threshold_count: Optional[int] = None
+    health_check_protocol: str | None = None
+    health_check_port: str | None = None
+    health_check_enabled: bool | None = None
+    health_check_path: str | None = None
+    health_check_interval_seconds: int | None = None
+    health_check_timeout_seconds: int | None = None
+    healthy_threshold_count: int | None = None
+    unhealthy_threshold_count: int | None = None
 
     # -*- Add NGINX reverse proxy
     enable_nginx: bool = False
-    nginx_image: Optional[Any] = None
+    nginx_image: Any | None = None
     nginx_image_name: str = "nginx"
     nginx_image_tag: str = "1.25.2-alpine"
     nginx_container_port: int = 80
@@ -126,7 +128,7 @@ class AwsApp(InfraApp):
         # If create_target_group is False, then create a target group if create_load_balancer is True
         return info.data.get("create_load_balancer", None)
 
-    def get_container_context(self) -> Optional[ContainerContext]:
+    def get_container_context(self) -> ContainerContext | None:
         logger.debug("Building ContainerContext")
 
         if self.container_context is not None:  # type: ignore
@@ -157,7 +159,7 @@ class AwsApp(InfraApp):
 
         return self.container_context
 
-    def get_container_env(self, container_context: ContainerContext, build_context: AwsBuildContext) -> Dict[str, str]:
+    def get_container_env(self, container_context: ContainerContext, build_context: AwsBuildContext) -> dict[str, str]:
         from agno.constants import (
             AGNO_RUNTIME_ENV_VAR,
             PYTHONPATH_ENV_VAR,
@@ -167,7 +169,7 @@ class AwsApp(InfraApp):
         )
 
         # Container Environment
-        container_env: Dict[str, str] = self.container_env or {}
+        container_env: dict[str, str] = self.container_env or {}
         container_env.update(
             {
                 "INSTALL_REQUIREMENTS": str(self.install_requirements),
@@ -215,10 +217,10 @@ class AwsApp(InfraApp):
         # logger.debug("Container Environment: {}".format(container_env))
         return container_env
 
-    def get_load_balancer_security_groups(self) -> Optional[List["SecurityGroup"]]:
+    def get_load_balancer_security_groups(self) -> list[SecurityGroup] | None:
         from agno.aws.resource.ec2.security_group import InboundRule, SecurityGroup
 
-        load_balancer_security_groups: Optional[List[SecurityGroup]] = self.load_balancer_security_groups
+        load_balancer_security_groups: list[SecurityGroup] | None = self.load_balancer_security_groups
         if load_balancer_security_groups is None:
             # Create security group for the load balancer
             if self.create_load_balancer and self.create_security_groups:
@@ -247,7 +249,7 @@ class AwsApp(InfraApp):
                 load_balancer_security_groups.append(lb_sg)
         return load_balancer_security_groups
 
-    def security_group_definition(self) -> "SecurityGroup":
+    def security_group_definition(self) -> SecurityGroup:
         from agno.aws.resource.ec2.security_group import InboundRule, SecurityGroup
         from agno.aws.resource.reference import AwsReference
 
@@ -310,10 +312,9 @@ class AwsApp(InfraApp):
 
         return app_sg
 
-    def get_security_groups(self) -> Optional[List["SecurityGroup"]]:
-        from agno.aws.resource.ec2.security_group import SecurityGroup
+    def get_security_groups(self) -> list[SecurityGroup] | None:
 
-        security_groups: Optional[List[SecurityGroup]] = self.security_groups
+        security_groups: list[SecurityGroup] | None = self.security_groups
         if security_groups is None:
             # Create security group for the service
             if self.create_security_groups:
@@ -323,10 +324,10 @@ class AwsApp(InfraApp):
                     security_groups.append(app_security_group)
         return security_groups
 
-    def get_all_security_groups(self) -> Optional[List["SecurityGroup"]]:
+    def get_all_security_groups(self) -> list[SecurityGroup] | None:
         from agno.aws.resource.ec2.security_group import SecurityGroup
 
-        security_groups: List[SecurityGroup] = []
+        security_groups: list[SecurityGroup] = []
 
         load_balancer_security_groups = self.get_load_balancer_security_groups()
         if load_balancer_security_groups is not None:
@@ -342,7 +343,7 @@ class AwsApp(InfraApp):
 
         return security_groups if len(security_groups) > 0 else None
 
-    def ecs_cluster_definition(self) -> "EcsCluster":
+    def ecs_cluster_definition(self) -> EcsCluster:
         from agno.aws.resource.ecs.cluster import EcsCluster
 
         ecs_cluster = EcsCluster(
@@ -354,7 +355,7 @@ class AwsApp(InfraApp):
             ecs_cluster.service_connect_namespace = self.ecs_service_connect_namespace
         return ecs_cluster
 
-    def get_ecs_cluster(self) -> "EcsCluster":
+    def get_ecs_cluster(self) -> EcsCluster:
         from agno.aws.resource.ecs.cluster import EcsCluster
 
         if self.ecs_cluster is None:
@@ -366,7 +367,7 @@ class AwsApp(InfraApp):
         else:
             raise Exception(f"Invalid ECSCluster: {self.ecs_cluster} - Must be of type EcsCluster")
 
-    def load_balancer_definition(self) -> "LoadBalancer":
+    def load_balancer_definition(self) -> LoadBalancer:
         from agno.aws.resource.elb.load_balancer import LoadBalancer
 
         return LoadBalancer(
@@ -376,7 +377,7 @@ class AwsApp(InfraApp):
             protocol="HTTPS" if self.load_balancer_enable_https else "HTTP",
         )
 
-    def get_load_balancer(self) -> Optional["LoadBalancer"]:
+    def get_load_balancer(self) -> LoadBalancer | None:
         from agno.aws.resource.elb.load_balancer import LoadBalancer
 
         if self.load_balancer is None:
@@ -388,7 +389,7 @@ class AwsApp(InfraApp):
         else:
             raise Exception(f"Invalid LoadBalancer: {self.load_balancer} - Must be of type LoadBalancer")
 
-    def target_group_definition(self) -> "TargetGroup":
+    def target_group_definition(self) -> TargetGroup:
         from agno.aws.resource.elb.target_group import TargetGroup
 
         return TargetGroup(
@@ -407,7 +408,7 @@ class AwsApp(InfraApp):
             unhealthy_threshold_count=self.unhealthy_threshold_count,
         )
 
-    def get_target_group(self) -> Optional["TargetGroup"]:
+    def get_target_group(self) -> TargetGroup | None:
         from agno.aws.resource.elb.target_group import TargetGroup
 
         if self.target_group is None:
@@ -420,8 +421,8 @@ class AwsApp(InfraApp):
             raise Exception(f"Invalid TargetGroup: {self.target_group} - Must be of type TargetGroup")
 
     def listeners_definition(
-        self, load_balancer: Optional["LoadBalancer"], target_group: Optional["TargetGroup"]
-    ) -> List["Listener"]:
+        self, load_balancer: LoadBalancer | None, target_group: TargetGroup | None
+    ) -> list[Listener]:
         from agno.aws.resource.elb.listener import Listener
 
         listener = Listener(
@@ -434,7 +435,7 @@ class AwsApp(InfraApp):
         if self.load_balancer_certificate is not None:
             listener.acm_certificates = [self.load_balancer_certificate]
 
-        listeners: List[Listener] = [listener]
+        listeners: list[Listener] = [listener]
         if self.load_balancer_enable_https:
             # Add a listener to redirect HTTP to HTTPS
             listeners.append(
@@ -461,8 +462,8 @@ class AwsApp(InfraApp):
         return listeners
 
     def get_listeners(
-        self, load_balancer: Optional["LoadBalancer"], target_group: Optional["TargetGroup"]
-    ) -> Optional[List["Listener"]]:
+        self, load_balancer: LoadBalancer | None, target_group: TargetGroup | None
+    ) -> list[Listener] | None:
         from agno.aws.resource.elb.listener import Listener
 
         if self.listeners is None:
@@ -477,13 +478,13 @@ class AwsApp(InfraApp):
         else:
             raise Exception(f"Invalid Listener: {self.listeners} - Must be of type List[Listener]")
 
-    def get_container_command(self) -> Optional[List[str]]:
+    def get_container_command(self) -> list[str] | None:
         if isinstance(self.command, str):
             return self.command.strip().split(" ")
         return self.command
 
-    def get_ecs_container_port_mappings(self) -> List[Dict[str, Any]]:
-        port_mapping: Dict[str, Any] = {"containerPort": self.container_port}
+    def get_ecs_container_port_mappings(self) -> list[dict[str, Any]]:
+        port_mapping: dict[str, Any] = {"containerPort": self.container_port}
         # To enable service connect, we need to set the port name to the app name
         if self.ecs_enable_service_connect:
             port_mapping["name"] = self.get_app_name()
@@ -491,16 +492,16 @@ class AwsApp(InfraApp):
                 port_mapping["appProtocol"] = self.ecs_service_connect_protocol
         return [port_mapping]
 
-    def get_ecs_container(self, container_context: ContainerContext, build_context: AwsBuildContext) -> "EcsContainer":
+    def get_ecs_container(self, container_context: ContainerContext, build_context: AwsBuildContext) -> EcsContainer:
         from agno.aws.resource.ecs.container import EcsContainer
 
         # -*- Get Container Environment
-        container_env: Dict[str, str] = self.get_container_env(
+        container_env: dict[str, str] = self.get_container_env(
             container_context=container_context, build_context=build_context
         )
 
         # -*- Get Container Command
-        container_cmd: Optional[List[str]] = self.get_container_command()
+        container_cmd: list[str] | None = self.get_container_command()
         if container_cmd:
             logger.debug("Command: {}".format(" ".join(container_cmd)))
 
@@ -527,7 +528,7 @@ class AwsApp(InfraApp):
             env_from_secrets=self.aws_secrets,
         )
 
-    def get_ecs_task_definition(self, ecs_container: "EcsContainer") -> "EcsTaskDefinition":
+    def get_ecs_task_definition(self, ecs_container: EcsContainer) -> EcsTaskDefinition:
         from agno.aws.resource.ecs.task_definition import EcsTaskDefinition
 
         return EcsTaskDefinition(
@@ -547,11 +548,11 @@ class AwsApp(InfraApp):
 
     def get_ecs_service(
         self,
-        ecs_container: "EcsContainer",
-        ecs_task_definition: "EcsTaskDefinition",
-        ecs_cluster: "EcsCluster",
-        target_group: Optional["TargetGroup"],
-    ) -> Optional["EcsService"]:
+        ecs_container: EcsContainer,
+        ecs_task_definition: EcsTaskDefinition,
+        ecs_cluster: EcsCluster,
+        target_group: TargetGroup | None,
+    ) -> EcsService | None:
         from agno.aws.resource.ecs.service import EcsService
 
         service_security_groups = self.get_security_groups()
@@ -591,38 +592,30 @@ class AwsApp(InfraApp):
             }
         return ecs_service
 
-    def build_resources(self, build_context: AwsBuildContext) -> List["AwsResource"]:
-        from agno.aws.resource.base import AwsResource
-        from agno.aws.resource.ec2.security_group import SecurityGroup
-        from agno.aws.resource.ecs.cluster import EcsCluster
+    def build_resources(self, build_context: AwsBuildContext) -> list[AwsResource]:
         from agno.aws.resource.ecs.container import EcsContainer
-        from agno.aws.resource.ecs.service import EcsService
-        from agno.aws.resource.ecs.task_definition import EcsTaskDefinition
         from agno.aws.resource.ecs.volume import EcsVolume
-        from agno.aws.resource.elb.listener import Listener
-        from agno.aws.resource.elb.load_balancer import LoadBalancer
-        from agno.aws.resource.elb.target_group import TargetGroup
         from agno.docker.resource.image import DockerImage
         from agno.utils.defaults import get_default_volume_name
 
         logger.debug(f"------------ Building {self.get_app_name()} ------------")
         # -*- Get Container Context
-        container_context: Optional[ContainerContext] = self.get_container_context()
+        container_context: ContainerContext | None = self.get_container_context()
         if container_context is None:
             raise Exception("Could not build ContainerContext")
         logger.debug(f"ContainerContext: {container_context.model_dump_json(indent=2)}")
 
         # -*- Get Security Groups
-        security_groups: Optional[List[SecurityGroup]] = self.get_all_security_groups()
+        security_groups: list[SecurityGroup] | None = self.get_all_security_groups()
 
         # -*- Get ECS cluster
         ecs_cluster: EcsCluster = self.get_ecs_cluster()
 
         # -*- Get Load Balancer
-        load_balancer: Optional[LoadBalancer] = self.get_load_balancer()
+        load_balancer: LoadBalancer | None = self.get_load_balancer()
 
         # -*- Get Target Group
-        target_group: Optional[TargetGroup] = self.get_target_group()
+        target_group: TargetGroup | None = self.get_target_group()
         # Point the target group to the nginx container port if:
         # - nginx is enabled
         # - user provided target_group is None
@@ -632,15 +625,15 @@ class AwsApp(InfraApp):
                 target_group.port = self.nginx_container_port
 
         # -*- Get Listener
-        listeners: Optional[List[Listener]] = self.get_listeners(load_balancer=load_balancer, target_group=target_group)
+        listeners: list[Listener] | None = self.get_listeners(load_balancer=load_balancer, target_group=target_group)
 
         # -*- Get ECSContainer
         ecs_container: EcsContainer = self.get_ecs_container(
             container_context=container_context, build_context=build_context
         )
         # -*- Add nginx container if nginx is enabled
-        nginx_container: Optional[EcsContainer] = None
-        nginx_shared_volume: Optional[EcsVolume] = None
+        nginx_container: EcsContainer | None = None
+        nginx_shared_volume: EcsVolume | None = None
         if self.enable_nginx and ecs_container is not None:
             nginx_container_name = f"{self.get_app_name()}-nginx"
             nginx_shared_volume = EcsVolume(name=get_default_volume_name(self.get_app_name()))
@@ -686,36 +679,34 @@ class AwsApp(InfraApp):
         # -*- Get ECS Task Definition
         ecs_task_definition: EcsTaskDefinition = self.get_ecs_task_definition(ecs_container=ecs_container)
         # -*- Add nginx container to ecs_task_definition if nginx is enabled
-        if self.enable_nginx:
-            if ecs_task_definition is not None:
-                if nginx_container is not None:
-                    if ecs_task_definition.containers:
-                        ecs_task_definition.containers.append(nginx_container)
-                    else:
-                        logger.error("While adding Nginx container, found TaskDefinition.containers to be None")
+        if self.enable_nginx and ecs_task_definition is not None:
+            if nginx_container is not None:
+                if ecs_task_definition.containers:
+                    ecs_task_definition.containers.append(nginx_container)
                 else:
-                    logger.error("While adding Nginx container, found nginx_container to be None")
-                if nginx_shared_volume:
-                    ecs_task_definition.volumes = [nginx_shared_volume]
+                    logger.error("While adding Nginx container, found TaskDefinition.containers to be None")
+            else:
+                logger.error("While adding Nginx container, found nginx_container to be None")
+            if nginx_shared_volume:
+                ecs_task_definition.volumes = [nginx_shared_volume]
 
         # -*- Get ECS Service
-        ecs_service: Optional[EcsService] = self.get_ecs_service(
+        ecs_service: EcsService | None = self.get_ecs_service(
             ecs_cluster=ecs_cluster,
             ecs_task_definition=ecs_task_definition,
             target_group=target_group,
             ecs_container=ecs_container,
         )
         # -*- Add nginx container as target_container if nginx is enabled
-        if self.enable_nginx:
-            if ecs_service is not None:
-                if nginx_container is not None:
-                    ecs_service.target_container_name = nginx_container.name
-                    ecs_service.target_container_port = self.nginx_container_port
-                else:
-                    logger.error("While adding Nginx container as target_container, found nginx_container to be None")
+        if self.enable_nginx and ecs_service is not None:
+            if nginx_container is not None:
+                ecs_service.target_container_name = nginx_container.name
+                ecs_service.target_container_port = self.nginx_container_port
+            else:
+                logger.error("While adding Nginx container as target_container, found nginx_container to be None")
 
         # -*- List of AwsResources created by this App
-        app_resources: List[AwsResource] = []
+        app_resources: list[AwsResource] = []
         if security_groups:
             app_resources.extend(security_groups)
         if load_balancer:

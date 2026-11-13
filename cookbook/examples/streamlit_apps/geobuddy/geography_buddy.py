@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import os
 from pathlib import Path
-from typing import Optional
 
 from agno.agent import Agent
 from agno.media import Image
@@ -40,7 +41,7 @@ geo_agent = Agent(
 
 
 # Function to analyze the image and return location information
-def analyze_image(image_path: Path) -> Optional[str]:
+def analyze_image(image_path: Path) -> str | None:
     try:
         response = geo_agent.run(geo_query, images=[Image(filepath=image_path)])
         return response.content

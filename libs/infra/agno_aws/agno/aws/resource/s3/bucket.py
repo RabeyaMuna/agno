@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from typing_extensions import Literal
 
@@ -21,14 +23,14 @@ class S3Bucket(AwsResource):
     # Name of the bucket
     name: str
     # The canned ACL to apply to the bucket.
-    acl: Optional[Literal["private", "public-read", "public-read-write", "authenticated-read"]] = None
-    grant_full_control: Optional[str] = None
-    grant_read: Optional[str] = None
-    grant_read_ACP: Optional[str] = None
-    grant_write: Optional[str] = None
-    grant_write_ACP: Optional[str] = None
-    object_lock_enabled_for_bucket: Optional[bool] = None
-    object_ownership: Optional[Literal["BucketOwnerPreferred", "ObjectWriter", "BucketOwnerEnforced"]] = None
+    acl: Literal["private", "public-read", "public-read-write", "authenticated-read"] | None = None
+    grant_full_control: str | None = None
+    grant_read: str | None = None
+    grant_read_ACP: str | None = None
+    grant_write: str | None = None
+    grant_write_ACP: str | None = None
+    object_lock_enabled_for_bucket: bool | None = None
+    object_ownership: Literal["BucketOwnerPreferred", "ObjectWriter", "BucketOwnerEnforced"] | None = None
 
     @property
     def uri(self) -> str:
@@ -39,7 +41,7 @@ class S3Bucket(AwsResource):
         """
         return f"s3://{self.name}"
 
-    def get_resource(self, aws_client: Optional[AwsApiClient] = None) -> Optional[Any]:
+    def get_resource(self, aws_client: AwsApiClient | None = None) -> Any | None:
         """Returns the s3.Bucket
 
         Args:
@@ -68,7 +70,7 @@ class S3Bucket(AwsResource):
             bucket_configuration = {"LocationConstraint": aws_client.aws_region}
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if bucket_configuration:
             not_null_args["CreateBucketConfiguration"] = bucket_configuration
         if self.acl:
@@ -124,7 +126,7 @@ class S3Bucket(AwsResource):
                 logger.error(e)
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the s3.Bucket
 
         Args:
@@ -173,7 +175,7 @@ class S3Bucket(AwsResource):
             logger.error(e)
         return False
 
-    def get_objects(self, aws_client: Optional[AwsApiClient] = None, prefix: Optional[str] = None) -> List[Any]:
+    def get_objects(self, aws_client: AwsApiClient | None = None, prefix: str | None = None) -> list[Any]:
         """Returns a list of s3.Object objects for the s3.Bucket
 
         Args:
@@ -188,7 +190,7 @@ class S3Bucket(AwsResource):
         logger.debug(f"Getting objects for bucket: {bucket.name}")
         # Get all objects in bucket
         object_summaries = bucket.objects.all()
-        all_objects: List[S3Object] = []
+        all_objects: list[S3Object] = []
         for object_summary in object_summaries:
             if prefix is not None and not object_summary.key.startswith(prefix):
                 continue

@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from __future__ import annotations
 
 from agno.docker.app.base import ContainerContext, DockerApp  # noqa: F401
 
@@ -10,7 +10,7 @@ class CeleryWorker(DockerApp):
     # -*- Image Configuration
     image_name: str = "agnohq/celery-worker"
     image_tag: str = "latest"
-    command: Optional[Union[str, List[str]]] = "celery -A tasks.celery worker --loglevel=info"
+    command: str | list[str] | None = "celery -A tasks.celery worker --loglevel=info"
 
     # -*- Workspace Configuration
     # Path to the workspace directory inside the container

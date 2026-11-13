@@ -3,8 +3,6 @@
 This example shows how to use the `requires_user_input` parameter to allow users to provide input externally.
 """
 
-from typing import List
-
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.tools import tool
@@ -37,7 +35,7 @@ for run_response in agent.run(
 ):
     if run_response.is_paused:  # Or agent.run_response.is_paused
         for tool in run_response.tools_requiring_user_input:
-            input_schema: List[UserInputField] = tool.user_input_schema
+            input_schema: list[UserInputField] = tool.user_input_schema
 
             for field in input_schema:
                 # Get user input for each field in the schema

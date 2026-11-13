@@ -12,10 +12,11 @@ Prerequisites:
 
 """
 
+from __future__ import annotations
+
 import asyncio
 import os
 from textwrap import dedent
-from typing import List, Optional
 
 from agno.agent import Agent
 from agno.models.openai.chat import OpenAIChat
@@ -30,19 +31,19 @@ from pydantic import BaseModel
 class AirbnbListing(BaseModel):
     name: str
     description: str
-    address: Optional[str] = None
-    price: Optional[str] = None
-    dates_available: Optional[List[str]] = None
-    url: Optional[str] = None
+    address: str | None = None
+    price: str | None = None
+    dates_available: list[str] | None = None
+    url: str | None = None
 
 
 class Attraction(BaseModel):
     name: str
     description: str
     location: str
-    rating: Optional[float] = None
-    visit_duration: Optional[str] = None
-    best_time_to_visit: Optional[str] = None
+    rating: float | None = None
+    visit_duration: str | None = None
+    best_time_to_visit: str | None = None
 
 
 class WeatherInfo(BaseModel):
@@ -52,10 +53,10 @@ class WeatherInfo(BaseModel):
 
 
 class TravelPlan(BaseModel):
-    airbnb_listings: List[AirbnbListing]
-    attractions: List[Attraction]
-    weather_info: Optional[WeatherInfo] = None
-    suggested_itinerary: Optional[List[str]] = None
+    airbnb_listings: list[AirbnbListing]
+    attractions: list[Attraction]
+    weather_info: WeatherInfo | None = None
+    suggested_itinerary: list[str] | None = None
 
 
 async def run_team():

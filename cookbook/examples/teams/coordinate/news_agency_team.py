@@ -34,9 +34,11 @@ writer = Agent(
         "your goal is to write a high-quality NYT-worthy article on the topic."
     ),
     instructions=[
-        "First read all urls using `read_article`."
-        "Then write a high-quality NYT-worthy article on the topic."
-        "The article should be well-structured, informative, engaging and catchy.",
+        (
+            "First read all urls using `read_article`."
+            "Then write a high-quality NYT-worthy article on the topic."
+            "The article should be well-structured, informative, engaging and catchy."
+        ),
         "Ensure the length is at least as long as a NYT cover story -- at a minimum, 15 paragraphs.",
         "Ensure you provide a nuanced and balanced opinion, quoting facts where possible.",
         "Focus on clarity, coherence, and overall quality.",
@@ -57,8 +59,10 @@ editor = Team(
         "First ask the search journalist to search for the most relevant URLs for that topic.",
         "Then ask the writer to get an engaging draft of the article.",
         "Edit, proofread, and refine the article to ensure it meets the high standards of the New York Times.",
-        "The article should be extremely articulate and well written. "
-        "Focus on clarity, coherence, and overall quality.",
+        (
+            "The article should be extremely articulate and well written. "
+            "Focus on clarity, coherence, and overall quality."
+        ),
         "Remember: you are the final gatekeeper before the article is published, so make sure the article is perfect.",
     ],
     add_datetime_to_instructions=True,

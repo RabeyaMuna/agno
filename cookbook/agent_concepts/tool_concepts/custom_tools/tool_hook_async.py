@@ -2,8 +2,9 @@
 
 import asyncio
 import json
+from collections.abc import Callable
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Dict
+from typing import Any
 
 from agno.agent import Agent
 from agno.tools.toolkit import Toolkit
@@ -48,7 +49,7 @@ class CustomerDBTools(Toolkit):
 
 
 async def validation_hook(
-    function_name: str, function_call: Callable, arguments: Dict[str, Any]
+    function_name: str, function_call: Callable, arguments: dict[str, Any]
 ):
     if function_name == "delete_customer_profile":
         cust_id = arguments.get("customer_id")

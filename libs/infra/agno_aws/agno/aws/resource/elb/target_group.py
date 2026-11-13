@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional, Union
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -13,28 +15,28 @@ class TargetGroup(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2/client/create_target_group.html
     """
 
-    resource_type: Optional[str] = "TargetGroup"
+    resource_type: str | None = "TargetGroup"
     service_name: str = "elbv2"
 
     # Name of the Target Group
     name: str
-    protocol: Optional[str] = None
-    protocol_version: Optional[str] = None
-    port: Optional[int] = None
-    vpc_id: Optional[str] = None
-    subnets: Optional[List[Union[str, Subnet]]] = None
-    health_check_protocol: Optional[str] = None
-    health_check_port: Optional[str] = None
-    health_check_enabled: Optional[bool] = None
-    health_check_path: Optional[str] = None
-    health_check_interval_seconds: Optional[int] = None
-    health_check_timeout_seconds: Optional[int] = None
-    healthy_threshold_count: Optional[int] = None
-    unhealthy_threshold_count: Optional[int] = None
-    matcher: Optional[Dict[str, str]] = None
-    target_type: Optional[str] = None
-    tags: Optional[List[Dict[str, str]]] = None
-    ip_address_type: Optional[str] = None
+    protocol: str | None = None
+    protocol_version: str | None = None
+    port: int | None = None
+    vpc_id: str | None = None
+    subnets: list[str | Subnet] | None = None
+    health_check_protocol: str | None = None
+    health_check_port: str | None = None
+    health_check_enabled: bool | None = None
+    health_check_path: str | None = None
+    health_check_interval_seconds: int | None = None
+    health_check_timeout_seconds: int | None = None
+    healthy_threshold_count: int | None = None
+    unhealthy_threshold_count: int | None = None
+    matcher: dict[str, str] | None = None
+    target_type: str | None = None
+    tags: list[dict[str, str]] | None = None
+    ip_address_type: str | None = None
 
     def _create(self, aws_client: AwsApiClient) -> bool:
         """Creates the Target Group
@@ -45,7 +47,7 @@ class TargetGroup(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
 
         # Get vpc_id
         vpc_id = self.vpc_id
@@ -112,7 +114,7 @@ class TargetGroup(AwsResource):
             logger.error(e)
         return False
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the TargetGroup
 
         Args:
@@ -173,7 +175,7 @@ class TargetGroup(AwsResource):
             return True
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if self.health_check_protocol is not None:
             not_null_args["HealthCheckProtocol"] = self.health_check_protocol
         if self.health_check_port is not None:
@@ -212,7 +214,7 @@ class TargetGroup(AwsResource):
             logger.error(e)
         return False
 
-    def get_arn(self, aws_client: AwsApiClient) -> Optional[str]:
+    def get_arn(self, aws_client: AwsApiClient) -> str | None:
         tg = self._read(aws_client)
         if tg is None:
             return None

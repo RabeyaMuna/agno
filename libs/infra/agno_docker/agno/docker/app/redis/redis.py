@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from agno.docker.app.base import ContainerContext, DockerApp  # noqa: F401
 from agno.infra.db_app import DbApp
@@ -25,28 +25,28 @@ class Redis(DockerApp, DbApp):
 
     # -*- Redis Configuration
     # Provide REDIS_PASSWORD as redis_password or REDIS_PASSWORD in secrets_file
-    redis_password: Optional[str] = None
+    redis_password: str | None = None
     # Provide REDIS_SCHEMA as redis_schema or REDIS_SCHEMA in secrets_file
-    redis_schema: Optional[str] = None
+    redis_schema: str | None = None
     redis_driver: str = "redis"
     logging_level: str = "debug"
 
-    def get_db_password(self) -> Optional[str]:
+    def get_db_password(self) -> str | None:
         return self.db_password or self.get_secret_from_file("REDIS_PASSWORD")
 
-    def get_db_database(self) -> Optional[str]:
+    def get_db_database(self) -> str | None:
         return self.redis_schema or self.get_secret_from_file("REDIS_SCHEMA")
 
-    def get_db_driver(self) -> Optional[str]:
+    def get_db_driver(self) -> str | None:
         return self.redis_driver
 
-    def get_db_host(self) -> Optional[str]:
+    def get_db_host(self) -> str | None:
         return self.get_container_name()
 
-    def get_db_port(self) -> Optional[int]:
+    def get_db_port(self) -> int | None:
         return self.container_port
 
-    def get_db_connection(self) -> Optional[str]:
+    def get_db_connection(self) -> str | None:
         password = self.get_db_password()
         password_str = f"{password}@" if password else ""
         schema = self.get_db_database()
@@ -55,7 +55,7 @@ class Redis(DockerApp, DbApp):
         port = self.get_db_port()
         return f"{driver}://{password_str}{host}:{port}/{schema}"
 
-    def get_db_connection_local(self) -> Optional[str]:
+    def get_db_connection_local(self) -> str | None:
         password = self.get_db_password()
         password_str = f"{password}@" if password else ""
         schema = self.get_db_database()

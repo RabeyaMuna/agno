@@ -12,7 +12,6 @@ The game integrates:
 import sys
 from pathlib import Path
 from textwrap import dedent
-from typing import Tuple
 
 from agno.agent import Agent
 from agno.models.anthropic import Claude
@@ -72,7 +71,7 @@ def get_tic_tac_toe_players(
     model_x: str = "openai:gpt-4o",
     model_o: str = "openai:o3-mini",
     debug_mode: bool = True,
-) -> Tuple[Agent, Agent]:
+) -> tuple[Agent, Agent]:
     """
     Returns an instance of the Tic Tac Toe Referee Agent that coordinates the game.
 

@@ -1,5 +1,5 @@
 from agno.agent import Agent, RunResponse  # noqa
-from agno.models.deepinfra import DeepInfra  # noqa
+from agno.models.deepinfra import DeepInfra
 
 
 agent = Agent(

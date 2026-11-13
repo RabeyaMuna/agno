@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from collections import OrderedDict
-from typing import Dict, List, Type, Union
+from typing import Union
 
 from agno.docker.resource.base import DockerResource
 from agno.docker.resource.container import DockerContainer
@@ -17,7 +19,7 @@ DockerResourceType = Union[
 
 # Use this as an ordered list to iterate over all DockerResource Classes
 # This list is the order in which resources are installed as well.
-DockerResourceTypeList: List[Type[DockerResource]] = [
+DockerResourceTypeList: list[type[DockerResource]] = [
     DockerNetwork,
     DockerImage,
     DockerVolume,
@@ -27,6 +29,6 @@ DockerResourceTypeList: List[Type[DockerResource]] = [
 # Maps each DockerResource to an Install weight
 # lower weight DockerResource(s) get installed first
 # i.e. Networks are installed first, Images, then Volumes ... and so on
-DockerResourceInstallOrder: Dict[str, int] = OrderedDict(
+DockerResourceInstallOrder: dict[str, int] = OrderedDict(
     {resource_type.__name__: idx for idx, resource_type in enumerate(DockerResourceTypeList, start=1)}
 )

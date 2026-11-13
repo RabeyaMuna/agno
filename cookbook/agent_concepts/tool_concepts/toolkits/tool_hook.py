@@ -1,6 +1,7 @@
 """Show how to use a tool execution hook, to run logic before and after a tool is called."""
 
-from typing import Any, Callable, Dict
+from collections.abc import Callable
+from typing import Any
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -8,7 +9,7 @@ from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.utils.log import logger
 
 
-def logger_hook(function_name: str, function_call: Callable, arguments: Dict[str, Any]):
+def logger_hook(function_name: str, function_call: Callable, arguments: dict[str, Any]):
     # Pre-hook logic: this runs before the tool is called
     logger.info(f"Running {function_name} with arguments {arguments}")
 

@@ -1,5 +1,3 @@
-from typing import List
-
 from agno.agent import Agent
 from agno.media import Image
 from agno.models.openai import OpenAIChat
@@ -12,7 +10,7 @@ class MovieScript(BaseModel):
     setting: str = Field(
         ..., description="Provide a nice setting for a blockbuster movie."
     )
-    characters: List[str] = Field(..., description="Name of characters for this movie.")
+    characters: list[str] = Field(..., description="Name of characters for this movie.")
     storyline: str = Field(
         ..., description="3 sentence storyline for the movie. Make it exciting!"
     )

@@ -1,7 +1,8 @@
 """This example shows how to run a Reliability evaluation asynchronously."""
 
+from __future__ import annotations
+
 import asyncio
-from typing import Optional
 
 from agno.agent import Agent
 from agno.eval.reliability import ReliabilityEval, ReliabilityResult
@@ -22,9 +23,7 @@ def factorial():
     )
 
     # Run the evaluation calling the arun method.
-    result: Optional[ReliabilityResult] = asyncio.run(
-        evaluation.arun(print_results=True)
-    )
+    result: ReliabilityResult | None = asyncio.run(evaluation.arun(print_results=True))
     result.assert_passed()
 
 

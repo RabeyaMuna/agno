@@ -1,4 +1,6 @@
-from typing import Any, Dict, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from typing_extensions import Literal
 
@@ -15,7 +17,7 @@ class EbsVolume(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#EC2.Client.create_volume
     """
 
-    resource_type: Optional[str] = "EbsVolume"
+    resource_type: str | None = "EbsVolume"
     service_name: str = "ec2"
 
     # The unique name to give to your volume.
@@ -36,7 +38,7 @@ class EbsVolume(AwsResource):
     # true depends on the volume origin (new or from a snapshot), starting encryption state, ownership,
     # and whether encryption by default is enabled.
     # Encrypted Amazon EBS volumes must be attached to instances that support Amazon EBS encryption.
-    encrypted: Optional[bool] = None
+    encrypted: bool | None = None
     # The number of I/O operations per second (IOPS). For gp3 , io1 , and io2 volumes, this represents the
     # number of IOPS that are provisioned for the volume. For gp2 volumes, this represents the baseline
     # performance of the volume and the rate at which the volume accumulates I/O credits for bursting.
@@ -49,15 +51,15 @@ class EbsVolume(AwsResource):
     # This parameter is required for io1 and io2 volumes.
     # The default for gp3 volumes is 3,000 IOPS.
     # This parameter is not supported for gp2 , st1 , sc1 , or standard volumes.
-    iops: Optional[int] = None
+    iops: int | None = None
     # The identifier of the Key Management Service (KMS) KMS key to use for Amazon EBS encryption.
     # If this parameter is not specified, your KMS key for Amazon EBS is used. If KmsKeyId is specified,
     # the encrypted state must be true .
-    kms_key_id: Optional[str] = None
+    kms_key_id: str | None = None
     # The Amazon Resource Name (ARN) of the Outpost.
-    outpost_arn: Optional[str] = None
+    outpost_arn: str | None = None
     # The snapshot from which to create the volume. You must specify either a snapshot ID or a volume size.
-    snapshot_id: Optional[str] = None
+    snapshot_id: str | None = None
     # The volume type. This parameter can be one of the following values:
     #
     # General Purpose SSD: gp2 | gp3
@@ -67,30 +69,30 @@ class EbsVolume(AwsResource):
     # Magnetic: standard
     #
     # Default: gp2
-    volume_type: Optional[Literal["standard", "io_1", "io_2", "gp_2", "sc_1", "st_1", "gp_3"]] = None
+    volume_type: Literal["standard", "io_1", "io_2", "gp_2", "sc_1", "st_1", "gp_3"] | None = None
     # Checks whether you have the required permissions for the action, without actually making the request,
     # and provides an error response. If you have the required permissions, the error response is DryRunOperation.
     # Otherwise, it is UnauthorizedOperation .
-    dry_run: Optional[bool] = None
+    dry_run: bool | None = None
     # The tags to apply to the volume during creation.
-    tags: Optional[Dict[str, str]] = None
+    tags: dict[str, str] | None = None
     # The tag to use for volume name
     name_tag: str = "Name"
     # Indicates whether to enable Amazon EBS Multi-Attach. If you enable Multi-Attach, you can attach the volume to
     # up to 16 Instances built on the Nitro System in the same Availability Zone. This parameter is supported with
     # io1 and io2 volumes only.
-    multi_attach_enabled: Optional[bool] = None
+    multi_attach_enabled: bool | None = None
     # The throughput to provision for a volume, with a maximum of 1,000 MiB/s.
     # This parameter is valid only for gp3 volumes.
     # Valid Range: Minimum value of 125. Maximum value of 1000.
-    throughput: Optional[int] = None
+    throughput: int | None = None
     # Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.
     # This field is autopopulated if not provided.
-    client_token: Optional[str] = None
+    client_token: str | None = None
 
     wait_for_create: bool = False
 
-    volume_id: Optional[str] = None
+    volume_id: str | None = None
 
     def _create(self, aws_client: AwsApiClient) -> bool:
         """Creates the EbsVolume
@@ -107,7 +109,7 @@ class EbsVolume(AwsResource):
             tags.update(self.tags)
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if self.encrypted:
             not_null_args["Encrypted"] = self.encrypted
         if self.iops:
@@ -181,7 +183,7 @@ class EbsVolume(AwsResource):
                 logger.error(e)
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the EbsVolume
 
         Args:
@@ -279,7 +281,7 @@ class EbsVolume(AwsResource):
             tags.update(self.tags)
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if self.iops:
             not_null_args["Iops"] = self.iops
         if self.volume_type:
@@ -326,7 +328,7 @@ class EbsVolume(AwsResource):
             logger.error(e)
         return False
 
-    def get_volume_id(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_volume_id(self, aws_client: AwsApiClient | None = None) -> str | None:
         """Returns the volume_id of the EbsVolume"""
 
         client = aws_client or self.get_aws_client()

@@ -1,5 +1,3 @@
-from typing import List
-
 from agno.agent import Agent, RunResponse  # noqa
 from agno.models.ollama import Ollama
 from pydantic import BaseModel, Field
@@ -19,7 +17,7 @@ class MovieScript(BaseModel):
         ...,
         description="Genre of the movie. If not available, select action, thriller or romantic comedy.",
     )
-    characters: List[str] = Field(..., description="Name of characters for this movie.")
+    characters: list[str] = Field(..., description="Name of characters for this movie.")
     storyline: str = Field(
         ..., description="3 sentence storyline for the movie. Make it exciting!"
     )

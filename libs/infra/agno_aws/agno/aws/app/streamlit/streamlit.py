@@ -1,6 +1,6 @@
-from typing import Dict, List, Optional, Union
+from __future__ import annotations
 
-from agno.aws.app.base import AwsApp, AwsBuildContext, ContainerContext  # noqa: F401
+from agno.aws.app.base import AwsApp, AwsBuildContext, ContainerContext
 
 
 class Streamlit(AwsApp):
@@ -10,7 +10,7 @@ class Streamlit(AwsApp):
     # -*- Image Configuration
     image_name: str = "agnohq/streamlit"
     image_tag: str = "1.27"
-    command: Optional[Union[str, List[str]]] = "streamlit hello"
+    command: str | list[str] | None = "streamlit hello"
 
     # -*- App Ports
     # Open a container port if open_port=True
@@ -25,22 +25,22 @@ class Streamlit(AwsApp):
     ecs_task_cpu: str = "1024"
     ecs_task_memory: str = "2048"
     ecs_service_count: int = 1
-    assign_public_ip: Optional[bool] = True
+    assign_public_ip: bool | None = True
 
     # -*- Streamlit Configuration
     # Server settings
     # Defaults to the port_number
-    streamlit_server_port: Optional[int] = None
+    streamlit_server_port: int | None = None
     streamlit_server_headless: bool = True
-    streamlit_server_run_on_save: Optional[bool] = None
-    streamlit_server_max_upload_size: Optional[int] = None
+    streamlit_server_run_on_save: bool | None = None
+    streamlit_server_max_upload_size: int | None = None
     streamlit_browser_gather_usage_stats: bool = False
     # Browser settings
-    streamlit_browser_server_port: Optional[str] = None
-    streamlit_browser_server_address: Optional[str] = None
+    streamlit_browser_server_port: str | None = None
+    streamlit_browser_server_address: str | None = None
 
-    def get_container_env(self, container_context: ContainerContext, build_context: AwsBuildContext) -> Dict[str, str]:
-        container_env: Dict[str, str] = super().get_container_env(
+    def get_container_env(self, container_context: ContainerContext, build_context: AwsBuildContext) -> dict[str, str]:
+        container_env: dict[str, str] = super().get_container_env(
             container_context=container_context, build_context=build_context
         )
 

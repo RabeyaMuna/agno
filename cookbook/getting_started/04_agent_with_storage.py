@@ -15,8 +15,9 @@ Example prompts to try:
 Run `pip install openai lancedb tantivy pypdf duckduckgo-search sqlalchemy agno` to install dependencies.
 """
 
+from __future__ import annotations
+
 from textwrap import dedent
-from typing import List, Optional
 
 import typer
 from agno.agent import Agent
@@ -45,13 +46,13 @@ agent_storage = SqliteStorage(table_name="recipe_agent", db_file="tmp/agents.db"
 
 
 def recipe_agent(user: str = "user"):
-    session_id: Optional[str] = None
+    session_id: str | None = None
 
     # Ask the user if they want to start a new session or continue an existing one
     new = typer.confirm("Do you want to start a new session?")
 
     if not new:
-        existing_sessions: List[str] = agent_storage.get_all_session_ids(user)
+        existing_sessions: list[str] = agent_storage.get_all_session_ids(user)
         if len(existing_sessions) > 0:
             session_id = existing_sessions[0]
 

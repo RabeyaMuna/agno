@@ -1,11 +1,8 @@
-import os
-from typing import List
-
-from agno.agent import Agent, RunResponse  # noqa
+from agno.agent import Agent, RunResponse
 from agno.models.mistral import MistralChat
 from agno.tools.duckduckgo import DuckDuckGoTools
 from pydantic import BaseModel, Field
-from rich.pretty import pprint  # noqa
+from rich.pretty import pprint
 
 
 class MovieScript(BaseModel):
@@ -21,7 +18,7 @@ class MovieScript(BaseModel):
         description="Genre of the movie. If not available, select action, thriller or romantic comedy.",
     )
     name: str = Field(..., description="Give a name to this movie")
-    characters: List[str] = Field(..., description="Name of characters for this movie.")
+    characters: list[str] = Field(..., description="Name of characters for this movie.")
     storyline: str = Field(
         ..., description="3 sentence storyline for the movie. Make it exciting!"
     )

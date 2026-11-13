@@ -1,6 +1,6 @@
-from typing import Dict, List, Optional, Union
+from __future__ import annotations
 
-from agno.docker.app.base import ContainerContext, DockerApp  # noqa: F401
+from agno.docker.app.base import ContainerContext, DockerApp
 
 
 class Streamlit(DockerApp):
@@ -10,7 +10,7 @@ class Streamlit(DockerApp):
     # -*- Image Configuration
     image_name: str = "agnohq/streamlit"
     image_tag: str = "1.27"
-    command: Optional[Union[str, List[str]]] = "streamlit hello"
+    command: str | list[str] | None = "streamlit hello"
 
     # -*- App Ports
     # Open a container port if open_port=True
@@ -26,17 +26,17 @@ class Streamlit(DockerApp):
     # -*- Streamlit Configuration
     # Server settings
     # Defaults to the port_number
-    streamlit_server_port: Optional[int] = None
+    streamlit_server_port: int | None = None
     streamlit_server_headless: bool = True
-    streamlit_server_run_on_save: Optional[bool] = None
-    streamlit_server_max_upload_size: Optional[int] = None
+    streamlit_server_run_on_save: bool | None = None
+    streamlit_server_max_upload_size: int | None = None
     streamlit_browser_gather_usage_stats: bool = False
     # Browser settings
-    streamlit_browser_server_port: Optional[str] = None
-    streamlit_browser_server_address: Optional[str] = None
+    streamlit_browser_server_port: str | None = None
+    streamlit_browser_server_address: str | None = None
 
-    def get_container_env(self, container_context: ContainerContext) -> Dict[str, str]:
-        container_env: Dict[str, str] = super().get_container_env(container_context=container_context)
+    def get_container_env(self, container_context: ContainerContext) -> dict[str, str]:
+        container_env: dict[str, str] = super().get_container_env(container_context=container_context)
 
         streamlit_server_port = self.streamlit_server_port
         if streamlit_server_port is None:

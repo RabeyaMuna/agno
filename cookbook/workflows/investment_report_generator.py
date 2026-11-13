@@ -26,10 +26,10 @@ Example companies to analyze:
 Run `pip install openai yfinance agno` to install dependencies.
 """
 
+from collections.abc import Iterator
 from pathlib import Path
 from shutil import rmtree
 from textwrap import dedent
-from typing import Iterator
 
 from agno.agent import Agent, RunResponse
 from agno.storage.sqlite import SqliteStorage

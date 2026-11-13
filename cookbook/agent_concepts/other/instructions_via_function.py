@@ -1,9 +1,7 @@
-from typing import List
-
 from agno.agent import Agent
 
 
-def get_instructions(agent: Agent) -> List[str]:
+def get_instructions(agent: Agent) -> list[str]:
     return [
         f"Your name is {agent.name}!",
         "Talk in haiku's!",

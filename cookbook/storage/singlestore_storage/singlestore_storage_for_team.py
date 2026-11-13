@@ -5,7 +5,6 @@
 
 import os
 from os import getenv
-from typing import List
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -50,7 +49,7 @@ db_engine = create_engine(db_url)
 class Article(BaseModel):
     title: str
     summary: str
-    reference_links: List[str]
+    reference_links: list[str]
 
 
 hn_researcher = Agent(

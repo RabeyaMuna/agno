@@ -2,7 +2,7 @@ import asyncio
 from typing import Iterator  # noqa
 
 from agno.agent import Agent, RunResponseEvent  # noqa
-from agno.models.deepinfra import DeepInfra  # noqa
+from agno.models.deepinfra import DeepInfra
 
 agent = Agent(
     model=DeepInfra(id="meta-llama/Llama-2-70b-chat-hf"),

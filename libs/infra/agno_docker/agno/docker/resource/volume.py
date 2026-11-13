@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.docker.api_client import DockerApiClient
 from agno.docker.resource.base import DockerResource
@@ -9,11 +11,11 @@ class DockerVolume(DockerResource):
     resource_type: str = "Volume"
 
     # driver (str) – Name of the driver used to create the volume
-    driver: Optional[str] = None
+    driver: str | None = None
     # driver_opts (dict) – Driver options as a key-value dictionary
-    driver_opts: Optional[Dict[str, Any]] = None
+    driver_opts: dict[str, Any] | None = None
     # labels (dict) – Labels to set on the volume
-    labels: Optional[Dict[str, Any]] = None
+    labels: dict[str, Any] | None = None
 
     def _create(self, docker_client: DockerApiClient) -> bool:
         """Creates the Volume on docker
@@ -24,9 +26,9 @@ class DockerVolume(DockerResource):
         from docker import DockerClient
         from docker.models.volumes import Volume
 
-        logger.debug("Creating: {}".format(self.get_resource_name()))
-        volume_name: Optional[str] = self.name
-        volume_object: Optional[Volume] = None
+        logger.debug(f"Creating: {self.get_resource_name()}")
+        volume_name: str | None = self.name
+        volume_object: Volume | None = None
 
         try:
             _api_client: DockerClient = docker_client.api_client
@@ -37,7 +39,7 @@ class DockerVolume(DockerResource):
                 labels=self.labels,
             )
             if volume_object is not None:
-                logger.debug("Volume Created: {}".format(volume_object.name))
+                logger.debug(f"Volume Created: {volume_object.name}")
             else:
                 logger.debug("Volume could not be created")
             # logger.debug("Volume {}".format(volume_object.attrs))
@@ -53,15 +55,15 @@ class DockerVolume(DockerResource):
             _name: str = volume_object.name
             _attrs: str = volume_object.attrs
             if _id:
-                logger.debug("_id: {}".format(_id))
+                logger.debug(f"_id: {_id}")
                 self.id = _id
             if _short_id:
-                logger.debug("_short_id: {}".format(_short_id))
+                logger.debug(f"_short_id: {_short_id}")
                 self.short_id = _short_id
             if _name:
-                logger.debug("_name: {}".format(_name))
+                logger.debug(f"_name: {_name}")
             if _attrs:
-                logger.debug("_attrs: {}".format(_attrs))
+                logger.debug(f"_attrs: {_attrs}")
                 # TODO: use json_to_dict(_attrs)
                 self.attrs = _attrs  # type: ignore
 
@@ -75,12 +77,12 @@ class DockerVolume(DockerResource):
         from docker import DockerClient
         from docker.models.volumes import Volume
 
-        logger.debug("Reading: {}".format(self.get_resource_name()))
-        volume_name: Optional[str] = self.name
+        logger.debug(f"Reading: {self.get_resource_name()}")
+        volume_name: str | None = self.name
 
         try:
             _api_client: DockerClient = docker_client.api_client
-            volume_list: Optional[List[Volume]] = _api_client.volumes.list()
+            volume_list: list[Volume] | None = _api_client.volumes.list()
             # logger.debug("volume_list: {}".format(volume_list))
             if volume_list is not None:
                 for volume in volume_list:
@@ -103,8 +105,8 @@ class DockerVolume(DockerResource):
         from docker.errors import NotFound
         from docker.models.volumes import Volume
 
-        logger.debug("Deleting: {}".format(self.get_resource_name()))
-        volume_object: Optional[Volume] = self._read(docker_client)
+        logger.debug(f"Deleting: {self.get_resource_name()}")
+        volume_object: Volume | None = self._read(docker_client)
         # Return True if there is no Volume to delete
         if volume_object is None:
             return True
@@ -114,12 +116,12 @@ class DockerVolume(DockerResource):
             self.active_resource = None
             volume_object.remove(force=True)
         except Exception as e:
-            logger.exception("Error while deleting volume: {}".format(e))
+            logger.exception(f"Error while deleting volume: {e}")
 
         # Validate that the volume is deleted
         logger.debug("Validating volume is deleted")
         try:
-            logger.debug("Reloading volume_object: {}".format(volume_object))
+            logger.debug(f"Reloading volume_object: {volume_object}")
             volume_object.reload()
         except NotFound:
             logger.debug("Got NotFound Exception, Volume is deleted")

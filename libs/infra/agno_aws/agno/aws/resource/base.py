@@ -1,4 +1,6 @@
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.cli.console import print_info
@@ -10,15 +12,15 @@ class AwsResource(InfraResource):
     """Base class for AWS Resources."""
 
     service_name: str
-    service_client: Optional[Any] = None
-    service_resource: Optional[Any] = None
+    service_client: Any | None = None
+    service_resource: Any | None = None
 
-    aws_region: Optional[str] = None
-    aws_profile: Optional[str] = None
+    aws_region: str | None = None
+    aws_profile: str | None = None
 
-    aws_client: Optional[AwsApiClient] = None
+    aws_client: AwsApiClient | None = None
 
-    def get_aws_region(self) -> Optional[str]:
+    def get_aws_region(self) -> str | None:
         # Priority 1: Use aws_region from resource
         if self.aws_region:
             return self.aws_region
@@ -39,7 +41,7 @@ class AwsResource(InfraResource):
             self.aws_region = aws_region_env
         return self.aws_region
 
-    def get_aws_profile(self) -> Optional[str]:
+    def get_aws_profile(self) -> str | None:
         # Priority 1: Use aws_region from resource
         if self.aws_profile:
             return self.aws_profile
@@ -86,7 +88,7 @@ class AwsResource(InfraResource):
         logger.warning(f"@_read method not defined for {self.get_resource_name()}")
         return True
 
-    def read(self, aws_client: Optional[AwsApiClient] = None) -> Any:
+    def read(self, aws_client: AwsApiClient | None = None) -> Any:
         """Reads the resource from Aws"""
         # Step 1: Use cached value if available
         if self.use_cache and self.active_resource is not None:
@@ -104,13 +106,13 @@ class AwsResource(InfraResource):
     def is_active(self, aws_client: AwsApiClient) -> bool:
         """Returns True if the resource is active on Aws"""
         _resource = self.read(aws_client=aws_client)
-        return True if _resource is not None else False
+        return _resource is not None
 
     def _create(self, aws_client: AwsApiClient) -> bool:
         logger.warning(f"@_create method not defined for {self.get_resource_name()}")
         return True
 
-    def create(self, aws_client: Optional[AwsApiClient] = None) -> bool:
+    def create(self, aws_client: AwsApiClient | None = None) -> bool:
         """Creates the resource on Aws"""
 
         # Step 1: Skip resource creation if skip_create = True
@@ -145,7 +147,7 @@ class AwsResource(InfraResource):
         logger.warning(f"@_update method not defined for {self.get_resource_name()}")
         return True
 
-    def update(self, aws_client: Optional[AwsApiClient] = None) -> bool:
+    def update(self, aws_client: AwsApiClient | None = None) -> bool:
         """Updates the resource on Aws"""
 
         # Step 1: Skip resource update if skip_update = True
@@ -178,7 +180,7 @@ class AwsResource(InfraResource):
         logger.warning(f"@_delete method not defined for {self.get_resource_name()}")
         return True
 
-    def delete(self, aws_client: Optional[AwsApiClient] = None) -> bool:
+    def delete(self, aws_client: AwsApiClient | None = None) -> bool:
         """Deletes the resource from Aws"""
 
         # Step 1: Skip resource deletion if skip_delete = True

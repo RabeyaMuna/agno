@@ -1,10 +1,8 @@
-from typing import List
-
 from agno.agent import Agent
 from agno.models.lmstudio import LMStudio
 from agno.run.response import RunResponse
 from pydantic import BaseModel, Field
-from rich.pretty import pprint  # noqa
+from rich.pretty import pprint
 
 
 class MovieScript(BaseModel):
@@ -20,7 +18,7 @@ class MovieScript(BaseModel):
         ...,
         description="Genre of the movie. If not available, select action, thriller or romantic comedy.",
     )
-    characters: List[str] = Field(..., description="Name of characters for this movie.")
+    characters: list[str] = Field(..., description="Name of characters for this movie.")
     storyline: str = Field(
         ..., description="3 sentence storyline for the movie. Make it exciting!"
     )

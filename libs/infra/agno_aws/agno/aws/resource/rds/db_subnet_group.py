@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional, Union
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -17,7 +19,7 @@ class DbSubnetGroup(AwsResource):
     two AZs in the Amazon Web Services Region.
     """
 
-    resource_type: Optional[str] = "DbSubnetGroup"
+    resource_type: str | None = "DbSubnetGroup"
     service_name: str = "rds"
 
     # The name for the DB subnet group. This value is stored as a lowercase string.
@@ -28,22 +30,22 @@ class DbSubnetGroup(AwsResource):
     #   Example: mydbsubnetgroup
     name: str
     # The description for the DB subnet group.
-    description: Optional[str] = None
+    description: str | None = None
     # The EC2 Subnet IDs for the DB subnet group.
-    subnet_ids: Optional[Union[List[str], AwsReference]] = None
+    subnet_ids: list[str] | AwsReference | None = None
     # Get Subnet IDs from a VPC CloudFormationStack
     # First gets private subnets from the vpc stack, then public subnets
-    vpc_stack: Optional[CloudFormationStack] = None
+    vpc_stack: CloudFormationStack | None = None
     # Tags to assign to the DB subnet group.
-    tags: Optional[List[Dict[str, str]]] = None
+    tags: list[dict[str, str]] | None = None
 
-    def get_subnet_ids(self, aws_client: AwsApiClient) -> List[str]:
+    def get_subnet_ids(self, aws_client: AwsApiClient) -> list[str]:
         """Returns the subnet_ids for the DbSubnetGroup
 
         Args:
             aws_client: The AwsApiClient for the current cluster
         """
-        subnet_ids: List[Any] = []
+        subnet_ids: list[Any] = []
         if self.subnet_ids is not None:
             if isinstance(self.subnet_ids, list):
                 logger.debug("Getting subnet_ids from list")
@@ -76,7 +78,7 @@ class DbSubnetGroup(AwsResource):
             subnet_ids = self.get_subnet_ids(aws_client=aws_client)
 
             # create a dict of args which are not null, otherwise aws type validation fails
-            not_null_args: Dict[str, Any] = {}
+            not_null_args: dict[str, Any] = {}
             if self.tags:
                 not_null_args["Tags"] = self.tags
 
@@ -101,7 +103,7 @@ class DbSubnetGroup(AwsResource):
             logger.error(e)
         return False
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the DbSubnetGroup
 
         Args:

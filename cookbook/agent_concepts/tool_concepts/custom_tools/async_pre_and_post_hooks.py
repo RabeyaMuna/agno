@@ -1,6 +1,6 @@
 import asyncio
 import json
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
 
 import httpx
 from agno.agent import Agent

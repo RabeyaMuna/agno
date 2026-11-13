@@ -5,11 +5,12 @@ Llama tutor integrates:
   - FileTools for saving the output upon user confirmation.
 """
 
+from __future__ import annotations
+
 import os
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from dotenv import load_dotenv
 
@@ -27,7 +28,7 @@ from agno.tools.exa import ExaTools
 from agno.tools.file import FileTools
 
 # Import the Agent template
-from prompts import AGENT_DESCRIPTION, AGENT_INSTRUCTIONS, EXPECTED_OUTPUT_TEMPLATE
+from prompts import EXPECTED_OUTPUT_TEMPLATE
 
 # ************* Setup Paths *************
 # Define the current working directory and output directory for saving files
@@ -50,9 +51,9 @@ agent_storage = SqliteAgentStorage(
 
 
 def tutor_agent(
-    user_id: Optional[str] = None,
+    user_id: str | None = None,
     model_id: str = "groq:llama-3.3-70b-versatile",
-    session_id: Optional[str] = None,
+    session_id: str | None = None,
     num_history_responses: int = 5,
     debug_mode: bool = True,
     education_level: str = "High School",
@@ -86,7 +87,7 @@ def tutor_agent(
     """
 
     # Parse model provider and name
-    provider, model_name = model_id.split(":")
+    _provider, model_name = model_id.split(":")
 
     # Always use Groq with Llama model
     groq_api_key = os.environ.get("GROQ_API_KEY")

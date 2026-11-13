@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from agno.agent import Agent
 from agno.knowledge.text import TextKnowledgeBase
 from agno.utils.media import (

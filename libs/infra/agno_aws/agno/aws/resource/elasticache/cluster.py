@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from typing_extensions import Literal
 
@@ -17,7 +19,7 @@ class CacheCluster(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elasticache.html
     """
 
-    resource_type: Optional[str] = "CacheCluster"
+    resource_type: str | None = "CacheCluster"
     service_name: str = "elasticache"
 
     # Name of the cluster.
@@ -28,7 +30,7 @@ class CacheCluster(AwsResource):
     #   A name must contain from 1 to 50 alphanumeric characters or hyphens.
     #   The first character must be a letter.
     #   A name cannot end with a hyphen or contain two consecutive hyphens.
-    cache_cluster_id: Optional[str] = None
+    cache_cluster_id: str | None = None
     # The name of the cache engine to be used for this cluster.
     engine: Literal["memcached", "redis"]
 
@@ -42,49 +44,49 @@ class CacheCluster(AwsResource):
     # The ID of the replication group to which this cluster should belong.
     # If this parameter is specified, the cluster is added to the specified replication group as a read replica;
     # otherwise, the cluster is a standalone primary that is not part of any replication group.
-    replication_group_id: Optional[str] = None
+    replication_group_id: str | None = None
     # Specifies whether the nodes in this Memcached cluster are created in a single Availability Zone or
     # created across multiple Availability Zones in the cluster's region.
     # This parameter is only supported for Memcached clusters.
-    az_mode: Optional[Literal["single-az", "cross-az"]] = None
+    az_mode: Literal["single-az", "cross-az"] | None = None
     # The EC2 Availability Zone in which the cluster is created.
     # All nodes belonging to this cluster are placed in the preferred Availability Zone. If you want to create your
     # nodes across multiple Availability Zones, use PreferredAvailabilityZones .
     # Default: System chosen Availability Zone.
-    preferred_availability_zone: Optional[str] = None
+    preferred_availability_zone: str | None = None
     # A list of the Availability Zones in which cache nodes are created. The order of the zones is not important.
     # This option is only supported on Memcached.
-    preferred_availability_zones: Optional[List[str]] = None
+    preferred_availability_zones: list[str] | None = None
     # The version number of the cache engine to be used for this cluster.
-    engine_version: Optional[str] = None
-    cache_parameter_group_name: Optional[str] = None
+    engine_version: str | None = None
+    cache_parameter_group_name: str | None = None
 
     # The name of the subnet group to be used for the cluster.
-    cache_subnet_group_name: Optional[str] = None
+    cache_subnet_group_name: str | None = None
     # If cache_subnet_group_name is None,
     # Read the cache_subnet_group_name from cache_subnet_group
-    cache_subnet_group: Optional[CacheSubnetGroup] = None
+    cache_subnet_group: CacheSubnetGroup | None = None
 
     # A list of security group names to associate with this cluster.
     # Use this parameter only when you are creating a cluster outside of an Amazon Virtual Private Cloud (Amazon VPC).
-    cache_security_group_names: Optional[List[str]] = None
+    cache_security_group_names: list[str] | None = None
     # One or more VPC security groups associated with the cluster.
     # Use this parameter only when you are creating a cluster in an Amazon Virtual Private Cloud (Amazon VPC).
-    cache_security_group_ids: Optional[List[str]] = None
+    cache_security_group_ids: list[str] | None = None
     # If cache_security_group_ids is None
     # Read the security_group_id from cache_security_groups
-    cache_security_groups: Optional[List[SecurityGroup]] = None
+    cache_security_groups: list[SecurityGroup] | None = None
 
-    tags: Optional[List[Dict[str, str]]] = None
-    snapshot_arns: Optional[List[str]] = None
-    snapshot_name: Optional[str] = None
-    preferred_maintenance_window: Optional[str] = None
+    tags: list[dict[str, str]] | None = None
+    snapshot_arns: list[str] | None = None
+    snapshot_name: str | None = None
+    preferred_maintenance_window: str | None = None
     # The version number of the cache engine to be used for this cluster.
-    port: Optional[int] = None
-    notification_topic_arn: Optional[str] = None
-    auto_minor_version_upgrade: Optional[bool] = None
-    snapshot_retention_limit: Optional[int] = None
-    snapshot_window: Optional[str] = None
+    port: int | None = None
+    notification_topic_arn: str | None = None
+    auto_minor_version_upgrade: bool | None = None
+    snapshot_retention_limit: int | None = None
+    snapshot_window: str | None = None
     # The password used to access a password protected server.
     # Password constraints:
     # - Must be only printable ASCII characters.
@@ -93,33 +95,33 @@ class CacheCluster(AwsResource):
     # Other printable special characters cannot be used in the AUTH token.
     # - For more information, see AUTH password at http://redis.io/commands/AUTH.
     # Provide AUTH_TOKEN here or as AUTH_TOKEN in secrets_file
-    auth_token: Optional[str] = None
-    outpost_mode: Optional[Literal["single-outpost", "cross-outpost"]] = None
-    preferred_outpost_arn: Optional[str] = None
-    preferred_outpost_arns: Optional[List[str]] = None
-    log_delivery_configurations: Optional[List[Dict[str, Any]]] = None
-    transit_encryption_enabled: Optional[bool] = None
-    network_type: Optional[Literal["ipv4", "ipv6", "dual_stack"]] = None
-    ip_discovery: Optional[Literal["ipv4", "ipv6"]] = None
+    auth_token: str | None = None
+    outpost_mode: Literal["single-outpost", "cross-outpost"] | None = None
+    preferred_outpost_arn: str | None = None
+    preferred_outpost_arns: list[str] | None = None
+    log_delivery_configurations: list[dict[str, Any]] | None = None
+    transit_encryption_enabled: bool | None = None
+    network_type: Literal["ipv4", "ipv6", "dual_stack"] | None = None
+    ip_discovery: Literal["ipv4", "ipv6"] | None = None
 
     # The user-supplied name of a final cluster snapshot
-    final_snapshot_identifier: Optional[str] = None
+    final_snapshot_identifier: str | None = None
 
     # Read secrets from a file in yaml format
-    secrets_file: Optional[Path] = None
+    secrets_file: Path | None = None
 
     # The following attributes are used for update function
-    cache_node_ids_to_remove: Optional[List[str]] = None
-    new_availability_zone: Optional[List[str]] = None
-    security_group_ids: Optional[List[str]] = None
-    notification_topic_status: Optional[str] = None
-    apply_immediately: Optional[bool] = None
-    auth_token_update_strategy: Optional[Literal["SET", "ROTATE", "DELETE"]] = None
+    cache_node_ids_to_remove: list[str] | None = None
+    new_availability_zone: list[str] | None = None
+    security_group_ids: list[str] | None = None
+    notification_topic_status: str | None = None
+    apply_immediately: bool | None = None
+    auth_token_update_strategy: Literal["SET", "ROTATE", "DELETE"] | None = None
 
     def get_cache_cluster_id(self):
         return self.cache_cluster_id or self.name
 
-    def get_auth_token(self) -> Optional[str]:
+    def get_auth_token(self) -> str | None:
         auth_token = self.auth_token
         if auth_token is None and self.secrets_file is not None:
             # read from secrets_file
@@ -137,7 +139,7 @@ class CacheCluster(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
 
         # Get the CacheSubnetGroupName
         cache_subnet_group_name = self.cache_subnet_group_name
@@ -253,7 +255,7 @@ class CacheCluster(AwsResource):
                 logger.error(e)
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the CacheCluster
 
         Args:
@@ -297,7 +299,7 @@ class CacheCluster(AwsResource):
             return False
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if self.num_cache_nodes is not None:
             not_null_args["NumCacheNodes"] = self.num_cache_nodes
         if self.cache_node_ids_to_remove is not None:
@@ -365,7 +367,7 @@ class CacheCluster(AwsResource):
         print_info(f"Deleting {self.get_resource_type()}: {self.get_resource_name()}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
         if self.final_snapshot_identifier:
             not_null_args["FinalSnapshotIdentifier"] = self.final_snapshot_identifier
 
@@ -402,7 +404,7 @@ class CacheCluster(AwsResource):
                 logger.error(e)
         return True
 
-    def get_cache_endpoint(self, aws_client: Optional[AwsApiClient] = None) -> Optional[str]:
+    def get_cache_endpoint(self, aws_client: AwsApiClient | None = None) -> str | None:
         """Returns the CacheCluster endpoint
 
         Args:
@@ -432,7 +434,7 @@ class CacheCluster(AwsResource):
             logger.error(e)
         return cache_endpoint
 
-    def get_cache_port(self, aws_client: Optional[AwsApiClient] = None) -> Optional[int]:
+    def get_cache_port(self, aws_client: AwsApiClient | None = None) -> int | None:
         """Returns the CacheCluster port
 
         Args:

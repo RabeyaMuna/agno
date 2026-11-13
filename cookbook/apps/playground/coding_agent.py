@@ -2,7 +2,7 @@
 
 from agno.agent import Agent
 from agno.models.ollama import Ollama
-from agno.playground import Playground, serve_playground_app
+from agno.playground import Playground
 from agno.storage.sqlite import SqliteStorage
 
 local_agent_storage_file: str = "tmp/local_agents.db"

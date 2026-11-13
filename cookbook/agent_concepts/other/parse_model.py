@@ -1,11 +1,10 @@
 import random
-from typing import List
 
-from agno.agent import Agent, RunResponse  # noqa
+from agno.agent import Agent, RunResponse
 from agno.models.anthropic import Claude
 from agno.models.openai import OpenAIChat
 from pydantic import BaseModel, Field
-from rich.pretty import pprint  # noqa
+from rich.pretty import pprint
 
 
 class NationalParkAdventure(BaseModel):
@@ -14,28 +13,28 @@ class NationalParkAdventure(BaseModel):
         ...,
         description="Optimal time of year to visit this park (e.g., 'Late spring to early fall')",
     )
-    signature_attractions: List[str] = Field(
+    signature_attractions: list[str] = Field(
         ...,
         description="Must-see landmarks, viewpoints, or natural features in the park",
     )
-    recommended_trails: List[str] = Field(
+    recommended_trails: list[str] = Field(
         ...,
         description="Top hiking trails with difficulty levels (e.g., 'Angel's Landing - Strenuous')",
     )
-    wildlife_encounters: List[str] = Field(
+    wildlife_encounters: list[str] = Field(
         ..., description="Animals visitors are likely to spot, with viewing tips"
     )
-    photography_spots: List[str] = Field(
+    photography_spots: list[str] = Field(
         ...,
         description="Best locations for capturing stunning photos, including sunrise/sunset spots",
     )
-    camping_options: List[str] = Field(
+    camping_options: list[str] = Field(
         ..., description="Available camping areas, from primitive to RV-friendly sites"
     )
-    safety_warnings: List[str] = Field(
+    safety_warnings: list[str] = Field(
         ..., description="Important safety considerations specific to this park"
     )
-    hidden_gems: List[str] = Field(
+    hidden_gems: list[str] = Field(
         ..., description="Lesser-known spots or experiences that most visitors miss"
     )
     difficulty_rating: int = Field(
@@ -50,7 +49,7 @@ class NationalParkAdventure(BaseModel):
         le=14,
         description="Recommended number of days to properly explore the park",
     )
-    special_permits_needed: List[str] = Field(
+    special_permits_needed: list[str] = Field(
         default=[],
         description="Any special permits or reservations required for certain activities",
     )

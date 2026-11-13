@@ -2,13 +2,12 @@
 
 from datetime import datetime
 from textwrap import dedent
-from typing import List
 
 from agno.agent import Agent
 from agno.memory.v2 import Memory
 from agno.memory.v2.db.sqlite import SqliteMemoryDb
 from agno.models.openai import OpenAIChat
-from agno.playground import Playground, serve_playground_app
+from agno.playground import Playground
 from agno.storage.sqlite import SqliteStorage
 from agno.tools.dalle import DalleTools
 from agno.tools.duckduckgo import DuckDuckGoTools
@@ -203,7 +202,7 @@ class MovieScript(BaseModel):
         description="Genre of the movie. If not available, select action, thriller or romantic comedy.",
     )
     name: str = Field(..., description="Give a name to this movie")
-    characters: List[str] = Field(..., description="Name of characters for this movie.")
+    characters: list[str] = Field(..., description="Name of characters for this movie.")
     storyline: str = Field(
         ..., description="3 sentence storyline for the movie. Make it exciting!"
     )

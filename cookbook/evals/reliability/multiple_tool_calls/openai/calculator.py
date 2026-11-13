@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from agno.agent import Agent
 from agno.eval.reliability import ReliabilityEval, ReliabilityResult
@@ -20,7 +20,7 @@ def multiply_and_exponentiate():
         agent_response=response,
         expected_tool_calls=["multiply", "exponentiate"],
     )
-    result: Optional[ReliabilityResult] = evaluation.run(print_results=True)
+    result: ReliabilityResult | None = evaluation.run(print_results=True)
     result.assert_passed()
 
 

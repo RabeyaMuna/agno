@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 import streamlit as st
 from agentic_rag import get_agentic_rag_agent
@@ -7,7 +9,7 @@ from agno.utils.log import logger
 
 
 def add_message(
-    role: str, content: str, tool_calls: Optional[List[Dict[str, Any]]] = None
+    role: str, content: str, tool_calls: list[dict[str, Any]] | None = None
 ) -> None:
     """Safely add a message to the session state"""
     if "messages" not in st.session_state or not isinstance(
@@ -107,7 +109,7 @@ def display_tool_calls(tool_calls_container, tools):
 def rename_session_widget(agent: Agent) -> None:
     """Rename the current session of the agent and save to storage"""
 
-    container = st.sidebar.container()
+    st.sidebar.container()
 
     # Initialize session_edit_mode if needed
     if "session_edit_mode" not in st.session_state:
@@ -123,11 +125,10 @@ def rename_session_widget(agent: Agent) -> None:
             value=agent.session_name,
             key="session_name_input",
         )
-        if st.sidebar.button("Save", type="primary"):
-            if new_session_name:
-                agent.rename_session(new_session_name)
-                st.session_state.session_edit_mode = False
-                st.rerun()
+        if st.sidebar.button("Save", type="primary") and new_session_name:
+            agent.rename_session(new_session_name)
+            st.session_state.session_edit_mode = False
+            st.rerun()
 
 
 def session_selector_widget(agent: Agent, model_id: str) -> None:
@@ -237,7 +238,7 @@ def session_selector_widget(agent: Agent, model_id: str) -> None:
                                     seen_messages.add(msg_id)
                                     add_message("user", user_msg)
 
-                                if "content" in run and run["content"]:
+                                if run.get("content"):
                                     asst_msg = run["content"]
                                     msg_id = f"assistant:{asst_msg}"
 
@@ -249,8 +250,8 @@ def session_selector_widget(agent: Agent, model_id: str) -> None:
 
                     st.rerun()
                 except Exception as e:
-                    logger.error(f"Error switching sessions: {str(e)}")
-                    st.sidebar.error(f"Error loading session: {str(e)}")
+                    logger.error(f"Error switching sessions: {e!s}")
+                    st.sidebar.error(f"Error loading session: {e!s}")
         else:
             st.sidebar.info("No saved sessions available.")
 

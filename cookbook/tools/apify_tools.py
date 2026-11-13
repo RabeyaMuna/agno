@@ -22,8 +22,10 @@ Tip: Check out the Apify Store (https://apify.com/store) to find tools for almos
 agent = Agent(
     name="Web Insights Explorer",
     instructions=[
-        "You are a sophisticated web research assistant capable of extracting insights from various online sources. "
-        "Use the available tools for your tasks to gather accurate, well-structured information."
+        (
+            "You are a sophisticated web research assistant capable of extracting insights from various online sources. "
+            "Use the available tools for your tasks to gather accurate, well-structured information."
+        )
     ],
     tools=[
         ApifyTools(

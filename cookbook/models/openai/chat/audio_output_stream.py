@@ -1,6 +1,6 @@
 import base64
 import wave
-from typing import Iterator
+from collections.abc import Iterator
 
 from agno.agent import Agent, RunResponseEvent  # noqa
 from agno.models.openai import OpenAIChat

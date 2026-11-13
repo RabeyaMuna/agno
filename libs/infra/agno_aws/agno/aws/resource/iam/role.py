@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.aws.api_client import AwsApiClient
 from agno.aws.resource.base import AwsResource
@@ -13,7 +15,7 @@ class IamRole(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/iam.html#service-resource
     """
 
-    resource_type: Optional[str] = "IamRole"
+    resource_type: str | None = "IamRole"
     service_name: str = "iam"
 
     # RoleName: The name of the role to create.
@@ -21,28 +23,28 @@ class IamRole(AwsResource):
     # The trust relationship policy document that grants an entity permission to assume the role.
     assume_role_policy_document: str
     # The path to the role. This parameter is optional. If it is not included, it defaults to a slash (/).
-    path: Optional[str] = None
+    path: str | None = None
     # A description of the role.
-    description: Optional[str] = None
+    description: str | None = None
     # The maximum session duration (in seconds) that you want to set for the specified role.
     # If you do not specify a value for this setting, the default maximum of one hour is applied.
     # This setting can have a value from 1 hour to 12 hours.
-    max_session_duration: Optional[int] = None
+    max_session_duration: int | None = None
     # The ARN of the policy that is used to set the permissions boundary for the role.
-    permissions_boundary: Optional[str] = None
+    permissions_boundary: str | None = None
     # A list of tags that you want to attach to the new role. Each tag consists of a key name and an associated value.
-    tags: Optional[List[Dict[str, str]]] = None
+    tags: list[dict[str, str]] | None = None
 
     # List of IAM policies to
     # attach to the role after it is created
-    policies: Optional[List[IamPolicy]] = None
+    policies: list[IamPolicy] | None = None
     # List of IAM policy ARNs (Amazon Resource Name) to
     # attach to the role after it is created
-    policy_arns: Optional[List[str]] = None
+    policy_arns: list[str] | None = None
 
     # The Amazon Resource Name (ARN) specifying the role.
     # To get the arn, use get_arn() function
-    arn: Optional[str] = None
+    arn: str | None = None
 
     def _create(self, aws_client: AwsApiClient) -> bool:
         """Creates the IamRole
@@ -54,7 +56,7 @@ class IamRole(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
         try:
             # create a dict of args which are not null, otherwise aws type validation fails
-            not_null_args: Dict[str, Any] = {}
+            not_null_args: dict[str, Any] = {}
             if self.path:
                 not_null_args["Path"] = self.path
             if self.description:
@@ -120,7 +122,7 @@ class IamRole(AwsResource):
         # logger.info(f"attach_policy_success: {attach_policy_success}")
         return attach_policy_success
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Returns the IamRole
 
         Args:
@@ -240,7 +242,7 @@ class IamRole(AwsResource):
             logger.error(e)
         return False
 
-    def get_arn(self, aws_client: AwsApiClient) -> Optional[str]:
+    def get_arn(self, aws_client: AwsApiClient) -> str | None:
         role = self._read(aws_client)
         if role is None:
             return None

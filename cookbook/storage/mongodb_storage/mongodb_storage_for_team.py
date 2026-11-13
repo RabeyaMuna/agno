@@ -3,8 +3,6 @@
 2. Run: `python cookbook/storage/mongodb_storage/mongodb_storage_for_team.py` to run the agent
 """
 
-from typing import List
-
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.storage.mongodb import MongoDbStorage
@@ -20,7 +18,7 @@ db_url = "mongodb://localhost:27017"
 class Article(BaseModel):
     title: str
     summary: str
-    reference_links: List[str]
+    reference_links: list[str]
 
 
 hn_researcher = Agent(

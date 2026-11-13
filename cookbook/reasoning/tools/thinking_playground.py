@@ -1,6 +1,6 @@
 from agno.agent import Agent
 from agno.models.anthropic import Claude
-from agno.playground import Playground, serve_playground_app
+from agno.playground import Playground
 from agno.storage.agent.sqlite import SqliteAgentStorage
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.thinking import ThinkingTools

@@ -93,26 +93,24 @@ def main():
                     st.rerun()
             else:
                 game_over, _ = st.session_state.game_board.get_game_state()
-                if not game_over:
-                    if st.button(
-                        "⏸️ Pause" if not st.session_state.game_paused else "▶️ Resume"
-                    ):
-                        st.session_state.game_paused = not st.session_state.game_paused
-                        st.rerun()
-        with col2:
-            if st.session_state.game_started:
-                if st.button("🔄 New Game"):
-                    st.session_state.player_x, st.session_state.player_o = (
-                        get_tic_tac_toe_players(
-                            model_x=model_options[selected_p_x],
-                            model_o=model_options[selected_p_o],
-                            debug_mode=True,
-                        )
-                    )
-                    st.session_state.game_board = TicTacToeBoard()
-                    st.session_state.game_paused = False
-                    st.session_state.move_history = []
+                if not game_over and st.button(
+                    "⏸️ Pause" if not st.session_state.game_paused else "▶️ Resume"
+                ):
+                    st.session_state.game_paused = not st.session_state.game_paused
                     st.rerun()
+        with col2:
+            if st.session_state.game_started and st.button("🔄 New Game"):
+                st.session_state.player_x, st.session_state.player_o = (
+                    get_tic_tac_toe_players(
+                        model_x=model_options[selected_p_x],
+                        model_o=model_options[selected_p_o],
+                        debug_mode=True,
+                    )
+                )
+                st.session_state.game_board = TicTacToeBoard()
+                st.session_state.game_paused = False
+                st.session_state.move_history = []
+                st.rerun()
 
     ####################################################################
     # Header showing current models
@@ -232,8 +230,8 @@ Respond with ONLY two numbers for row and column, e.g. "1 2".""",
                     st.rerun()
 
             except Exception as e:
-                logger.error(f"Error processing move: {str(e)}")
-                st.error(f"Error processing move: {str(e)}")
+                logger.error(f"Error processing move: {e!s}")
+                st.error(f"Error processing move: {e!s}")
                 st.rerun()
     else:
         st.info("👈 Press 'Start Game' to begin!")

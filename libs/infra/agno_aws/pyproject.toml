@@ -56,3 +56,13 @@ module = [
   "botocore.*",
 ]
 ignore_missing_imports = true
+
+[tool.ruff.lint]
+ignore = [
+    "BLE001",   # Do not catch blind exception: Exception
+    "TRY002",   # Create your own exception
+    "SIM102",   # Combine nested `if` statements
+    "RUF012",   # Mutable class defaults
+    "TRY004",   # Prefer `TypeError` over `Exception`
+    "S110",     # Try, except, pass detected
+]

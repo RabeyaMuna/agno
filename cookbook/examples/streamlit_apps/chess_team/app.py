@@ -1,5 +1,4 @@
 import logging
-from typing import Dict, List
 
 import chess
 import nest_asyncio
@@ -35,7 +34,7 @@ st.set_page_config(
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 
-def get_legal_moves_with_descriptions(board: ChessBoard) -> List[Dict]:
+def get_legal_moves_with_descriptions(board: ChessBoard) -> list[dict]:
     """
     Get all legal moves with descriptions for the current player.
 
@@ -182,25 +181,23 @@ def main():
                     st.rerun()
             else:
                 game_over, _ = st.session_state.game_board.get_game_state()
-                if not game_over:
-                    if st.button(
-                        "⏸️ Pause" if not st.session_state.game_paused else "▶️ Resume"
-                    ):
-                        st.session_state.game_paused = not st.session_state.game_paused
-                        st.rerun()
-        with col2:
-            if st.session_state.game_started:
-                if st.button("🔄 New Game"):
-                    st.session_state.team = get_chess_team(
-                        white_model=model_options[selected_white],
-                        black_model=model_options[selected_black],
-                        master_model=model_options[selected_master],
-                        debug_mode=True,
-                    )
-                    st.session_state.game_board = ChessBoard()
-                    st.session_state.game_paused = False
-                    st.session_state.move_history = []
+                if not game_over and st.button(
+                    "⏸️ Pause" if not st.session_state.game_paused else "▶️ Resume"
+                ):
+                    st.session_state.game_paused = not st.session_state.game_paused
                     st.rerun()
+        with col2:
+            if st.session_state.game_started and st.button("🔄 New Game"):
+                st.session_state.team = get_chess_team(
+                    white_model=model_options[selected_white],
+                    black_model=model_options[selected_black],
+                    master_model=model_options[selected_master],
+                    debug_mode=True,
+                )
+                st.session_state.game_board = ChessBoard()
+                st.session_state.game_paused = False
+                st.session_state.move_history = []
+                st.rerun()
 
     ####################################################################
     # Header showing current models
@@ -425,7 +422,7 @@ Do not include any other text in your response.""",
                     st.rerun()
 
             except Exception as e:
-                logger.error(f"Error processing move: {str(e)}")
+                logger.error(f"Error processing move: {e!s}")
                 st.rerun()
     else:
         st.info("👈 Press 'Start Game' to begin!")

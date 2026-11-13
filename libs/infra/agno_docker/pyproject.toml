@@ -55,3 +55,13 @@ module = [
   "docker.*",
 ]
 ignore_missing_imports = true
+
+[tool.ruff.lint]
+ignore = [
+    "BLE001",   # Do not catch blind exception: Exception
+    "TRY002",   # Create your own exception
+    "SIM102",   # Combine nested `if` statements
+    "TRY203",   # Catching an exception with `Exception` while also catching `BaseException`
+    "S110",     # Try, except, pass detected
+    "PLW1510",  # `subprocess.run` without explicit `check` argument
+]

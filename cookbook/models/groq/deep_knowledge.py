@@ -13,8 +13,9 @@ Key Features:
 Run `pip install openai lancedb tantivy inquirer agno groq` to install dependencies.
 """
 
+from __future__ import annotations
+
 from textwrap import dedent
-from typing import List, Optional
 
 import inquirer
 import typer
@@ -50,7 +51,7 @@ def get_agent_storage():
     return SqliteStorage(table_name="deep_knowledge_sessions", db_file="tmp/agents.db")
 
 
-def create_agent(session_id: Optional[str] = None) -> Agent:
+def create_agent(session_id: str | None = None) -> Agent:
     """Create and return a configured DeepKnowledge agent."""
     agent_knowledge = initialize_knowledge_base()
     agent_storage = get_agent_storage()
@@ -113,7 +114,7 @@ def create_agent(session_id: Optional[str] = None) -> Agent:
     )
 
 
-def get_example_topics() -> List[str]:
+def get_example_topics() -> list[str]:
     """Return a list of example topics for the agent."""
     return [
         "What are AI agents and how do they work in Agno?",
@@ -124,7 +125,7 @@ def get_example_topics() -> List[str]:
     ]
 
 
-def handle_session_selection() -> Optional[str]:
+def handle_session_selection() -> str | None:
     """Handle session selection and return the selected session ID."""
     agent_storage = get_agent_storage()
 
@@ -132,7 +133,7 @@ def handle_session_selection() -> Optional[str]:
     if new:
         return None
 
-    existing_sessions: List[str] = agent_storage.get_all_session_ids()
+    existing_sessions: list[str] = agent_storage.get_all_session_ids()
     if not existing_sessions:
         print("No existing sessions found. Starting a new session.")
         return None

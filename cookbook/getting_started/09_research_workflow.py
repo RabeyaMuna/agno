@@ -20,9 +20,11 @@ Example research topics to try:
 Run `pip install openai duckduckgo-search newspaper4k lxml_html_clean sqlalchemy agno` to install dependencies.
 """
 
+from __future__ import annotations
+
 import json
+from collections.abc import Iterator
 from textwrap import dedent
-from typing import Dict, Iterator, Optional
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -39,9 +41,7 @@ from pydantic import BaseModel, Field
 class Article(BaseModel):
     title: str = Field(..., description="Title of the article.")
     url: str = Field(..., description="Link to the article.")
-    summary: Optional[str] = Field(
-        ..., description="Summary of the article if available."
-    )
+    summary: str | None = Field(..., description="Summary of the article if available.")
 
 
 class SearchResults(BaseModel):
@@ -51,10 +51,8 @@ class SearchResults(BaseModel):
 class ScrapedArticle(BaseModel):
     title: str = Field(..., description="Title of the article.")
     url: str = Field(..., description="Link to the article.")
-    summary: Optional[str] = Field(
-        ..., description="Summary of the article if available."
-    )
-    content: Optional[str] = Field(
+    summary: str | None = Field(..., description="Summary of the article if available.")
+    content: str | None = Field(
         ...,
         description="Content of the in markdown format if available. Return None if the content is not available or does not make sense.",
     )
@@ -218,7 +216,7 @@ class ResearchReportGenerator(Workflow):
                 return
 
         # Search the web for articles on the topic
-        search_results: Optional[SearchResults] = self.get_search_results(
+        search_results: SearchResults | None = self.get_search_results(
             topic, use_search_cache
         )
         # If no search_results are found for the topic, end the workflow
@@ -229,14 +227,14 @@ class ResearchReportGenerator(Workflow):
             return
 
         # Scrape the search results
-        scraped_articles: Dict[str, ScrapedArticle] = self.scrape_articles(
+        scraped_articles: dict[str, ScrapedArticle] = self.scrape_articles(
             search_results, use_scrape_cache
         )
 
         # Write a research report
         yield from self.write_research_report(topic, scraped_articles)
 
-    def get_cached_report(self, topic: str) -> Optional[str]:
+    def get_cached_report(self, topic: str) -> str | None:
         logger.info("Checking if cached report exists")
         return self.session_state.get("reports", {}).get(topic)
 
@@ -247,7 +245,7 @@ class ResearchReportGenerator(Workflow):
         # Save the report to the storage
         self.write_to_storage()
 
-    def get_cached_search_results(self, topic: str) -> Optional[SearchResults]:
+    def get_cached_search_results(self, topic: str) -> SearchResults | None:
         logger.info("Checking if cached search results exist")
         return self.session_state.get("search_results", {}).get(topic)
 
@@ -260,12 +258,12 @@ class ResearchReportGenerator(Workflow):
 
     def get_cached_scraped_articles(
         self, topic: str
-    ) -> Optional[Dict[str, ScrapedArticle]]:
+    ) -> dict[str, ScrapedArticle] | None:
         logger.info("Checking if cached scraped articles exist")
         return self.session_state.get("scraped_articles", {}).get(topic)
 
     def add_scraped_articles_to_cache(
-        self, topic: str, scraped_articles: Dict[str, ScrapedArticle]
+        self, topic: str, scraped_articles: dict[str, ScrapedArticle]
     ):
         logger.info(f"Saving scraped articles for topic: {topic}")
         self.session_state.setdefault("scraped_articles", {})
@@ -275,7 +273,7 @@ class ResearchReportGenerator(Workflow):
 
     def get_search_results(
         self, topic: str, use_search_cache: bool, num_attempts: int = 3
-    ) -> Optional[SearchResults]:
+    ) -> SearchResults | None:
         # Get cached search_results from the session state if use_search_cache is True
         if use_search_cache:
             try:
@@ -312,15 +310,15 @@ class ResearchReportGenerator(Workflow):
                         f"Attempt {attempt + 1}/{num_attempts} failed: Invalid response type"
                     )
             except Exception as e:
-                logger.warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
+                logger.warning(f"Attempt {attempt + 1}/{num_attempts} failed: {e!s}")
 
         logger.error(f"Failed to get search results after {num_attempts} attempts")
         return None
 
     def scrape_articles(
         self, search_results: SearchResults, use_scrape_cache: bool
-    ) -> Dict[str, ScrapedArticle]:
-        scraped_articles: Dict[str, ScrapedArticle] = {}
+    ) -> dict[str, ScrapedArticle]:
+        scraped_articles: dict[str, ScrapedArticle] = {}
 
         # Get cached scraped_articles from the session state if use_scrape_cache is True
         if use_scrape_cache:
@@ -359,7 +357,7 @@ class ResearchReportGenerator(Workflow):
         return scraped_articles
 
     def write_research_report(
-        self, topic: str, scraped_articles: Dict[str, ScrapedArticle]
+        self, topic: str, scraped_articles: dict[str, ScrapedArticle]
     ) -> Iterator[RunResponse]:
         logger.info("Writing research report")
         # Prepare the input for the writer

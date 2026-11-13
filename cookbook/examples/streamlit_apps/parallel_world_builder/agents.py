@@ -15,7 +15,6 @@ View the README for instructions on how to run the application.
 """
 
 from textwrap import dedent
-from typing import List
 
 from agno.agent import Agent
 from agno.models.anthropic.claude import Claude
@@ -34,7 +33,7 @@ class World(BaseModel):
             "Avoid using simple names like Futura, Earth, or other common names."
         ),
     )
-    characteristics: List[str] = Field(
+    characteristics: list[str] = Field(
         ...,
         description=(
             "Key attributes of the world. Examples: Ethereal, Arcane, Quantum-Fueled, "
@@ -48,7 +47,7 @@ class World(BaseModel):
             "Consider unusual or symbolic currencies (e.g., Memory Crystals, Void Shards)."
         ),
     )
-    languages: List[str] = Field(
+    languages: list[str] = Field(
         ...,
         description=(
             "The languages spoken in the world. Invent languages with unique phonetics, "
@@ -63,14 +62,14 @@ class World(BaseModel):
             "Make it immersive and richly detailed."
         ),
     )
-    wars: List[str] = Field(
+    wars: list[str] = Field(
         ...,
         description=(
             "List of major wars or conflicts that shaped the world. Each should have unique "
             "motivations, participants, and consequences."
         ),
     )
-    drugs: List[str] = Field(
+    drugs: list[str] = Field(
         ...,
         description=(
             "Substances used in the world, either recreationally, medically, or spiritually. "

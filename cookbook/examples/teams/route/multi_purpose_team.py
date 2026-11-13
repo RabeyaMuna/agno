@@ -1,7 +1,4 @@
-from pathlib import Path
-
 from agno.agent import Agent
-from agno.media import Audio, File, Image  # type: ignore
 from agno.models.anthropic import Claude
 from agno.models.deepseek import DeepSeek
 from agno.models.google.gemini import Gemini
@@ -11,9 +8,7 @@ from agno.tools.calculator import CalculatorTools
 from agno.tools.dalle import DalleTools
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.e2b import E2BTools
-from agno.tools.reasoning import ReasoningTools
 from agno.tools.yfinance import YFinanceTools
-from agno.utils.media import download_file
 
 web_agent = Agent(
     name="Web Agent",
@@ -106,8 +101,10 @@ calculator_writer_team = Team(
     instructions=[
         "You are a team of two agents. The calculator agent and the writer agent.",
         "The calculator agent is responsible for calculating the result of the mathematical expression.",
-        "The writer agent is responsible for writing the result of the mathematical expression in a clear and engaging manner."
-        "You need to coordinate the work between the two agents and give the final response to the user.",
+        (
+            "The writer agent is responsible for writing the result of the mathematical expression in a clear and engaging manner."
+            "You need to coordinate the work between the two agents and give the final response to the user."
+        ),
         "You need to give the final response to the user in the requested format and style.",
     ],
     show_tool_calls=True,

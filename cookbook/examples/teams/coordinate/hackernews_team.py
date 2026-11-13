@@ -3,11 +3,8 @@
 2. Run: `python cookbook/teams/coordinate/hackernews_team.py` to run the agent
 """
 
-from typing import List
-
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
-from agno.run.team import TeamRunResponse  # type: ignore
 from agno.team import Team
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.hackernews import HackerNewsTools
@@ -18,7 +15,7 @@ from pydantic import BaseModel
 class Article(BaseModel):
     title: str
     summary: str
-    reference_links: List[str]
+    reference_links: list[str]
 
 
 hn_researcher = Agent(

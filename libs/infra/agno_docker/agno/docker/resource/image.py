@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.cli.console import console, print_info
 from agno.docker.api_client import DockerApiClient
@@ -12,12 +14,12 @@ class DockerImage(DockerResource):
     # Docker image name, usually as repo/image
     name: str
     # Docker image tag
-    tag: Optional[str] = None
+    tag: str | None = None
 
     # Path to the directory containing the Dockerfile
-    path: Optional[str] = None
+    path: str | None = None
     # Path to the Dockerfile within the build context
-    dockerfile: Optional[str] = None
+    dockerfile: str | None = None
 
     # Print the build log
     print_build_log: bool = True
@@ -30,52 +32,52 @@ class DockerImage(DockerResource):
     # Remove intermediate containers.
     # The docker build command defaults to --rm=true,
     # The docker api kept the old default of False to preserve backward compatibility
-    rm: Optional[bool] = True
+    rm: bool | None = True
     # Always remove intermediate containers, even after unsuccessful builds
-    forcerm: Optional[bool] = None
+    forcerm: bool | None = None
     # HTTP timeout
-    timeout: Optional[int] = None
+    timeout: int | None = None
     # Downloads any updates to the FROM image in Dockerfiles
-    pull: Optional[bool] = None
+    pull: bool | None = None
     # Skips docker cache when set to True
     # i.e. rebuilds all layes of the image
-    skip_docker_cache: Optional[bool] = None
+    skip_docker_cache: bool | None = None
     # A dictionary of build arguments
-    buildargs: Optional[Dict[str, Any]] = None
+    buildargs: dict[str, Any] | None = None
     # A dictionary of limits applied to each container created by the build process. Valid keys:
     # memory (int): set memory limit for build
     # memswap (int): Total memory (memory + swap), -1 to disable swap
     # cpushares (int): CPU shares (relative weight)
     # cpusetcpus (str): CPUs in which to allow execution, e.g. "0-3", "0,1"
-    container_limits: Optional[Dict[str, Any]] = None
+    container_limits: dict[str, Any] | None = None
     # Size of /dev/shm in bytes. The size must be greater than 0. If omitted the system uses 64MB
-    shmsize: Optional[int] = None
+    shmsize: int | None = None
     # A dictionary of labels to set on the image
-    labels: Optional[Dict[str, Any]] = None
+    labels: dict[str, Any] | None = None
     # A list of images used for build cache resolution
-    cache_from: Optional[List[Any]] = None
+    cache_from: list[Any] | None = None
     # Name of the build-stage to build in a multi-stage Dockerfile
-    target: Optional[str] = None
+    target: str | None = None
     # networking mode for the run commands during build
-    network_mode: Optional[str] = None
+    network_mode: str | None = None
     # Squash the resulting images layers into a single layer.
-    squash: Optional[bool] = None
+    squash: bool | None = None
     # Extra hosts to add to /etc/hosts in building containers, as a mapping of hostname to IP address.
-    extra_hosts: Optional[Dict[str, Any]] = None
+    extra_hosts: dict[str, Any] | None = None
     # Platform in the format os[/arch[/variant]].
-    platform: Optional[str] = None
+    platform: str | None = None
     # List of platforms to use for build, uses buildx_image if multi-platform build is enabled.
-    platforms: Optional[List[str]] = None
+    platforms: list[str] | None = None
     # Isolation technology used during build. Default: None.
-    isolation: Optional[str] = None
+    isolation: str | None = None
     # If True, and if the docker client configuration file (~/.docker/config.json by default)
     # contains a proxy configuration, the corresponding environment variables
     # will be set in the container being built.
-    use_config_proxy: Optional[bool] = None
+    use_config_proxy: bool | None = None
 
     # Set skip_delete=True so that the image is not deleted when the `ag ws down` command is run
     skip_delete: bool = True
-    image_build_id: Optional[str] = None
+    image_build_id: str | None = None
 
     # Set use_cache to False so image is always built
     use_cache: bool = False
@@ -88,7 +90,7 @@ class DockerImage(DockerResource):
     def get_resource_name(self) -> str:
         return self.get_image_str()
 
-    def buildx(self, docker_client: Optional[DockerApiClient] = None) -> Optional[Any]:
+    def buildx(self, docker_client: DockerApiClient | None = None) -> Any | None:
         """Builds the image using buildx
 
         Args:
@@ -166,7 +168,7 @@ class DockerImage(DockerResource):
             logger.error(e)
             return None
 
-    def build_image(self, docker_client: DockerApiClient) -> Optional[Any]:
+    def build_image(self, docker_client: DockerApiClient) -> Any | None:
         if self.platforms is not None or self.use_buildx:
             logger.debug("Using buildx for multi-platform build")
             return self.buildx(docker_client=docker_client)
@@ -190,9 +192,9 @@ class DockerImage(DockerResource):
 
         last_status = None
         last_build_log = None
-        build_log_output: List[Any] = []
-        build_step_progress: List[str] = []
-        build_log_to_show_on_error: List[str] = []
+        build_log_output: list[Any] = []
+        build_step_progress: list[str] = []
+        build_log_to_show_on_error: list[str] = []
         try:
             _api_client: DockerClient = docker_client.api_client
             build_stream = _api_client.api.build(
@@ -353,19 +355,17 @@ class DockerImage(DockerResource):
         Args:
             docker_client: The DockerApiClient for the current cluster
         """
-        logger.debug("Creating: {}".format(self.get_resource_name()))
+        logger.debug(f"Creating: {self.get_resource_name()}")
         try:
             image_object = self.build_image(docker_client)
-            if image_object is not None:
-                return True
-            return False
+            return image_object is not None
             # if image_object is not None and isinstance(image_object, Image):
             #     logger.debug("Image built: {}".format(image_object))
             #     self.active_resource = image_object
             #     return True
         except Exception as e:
             logger.exception(e)
-            logger.error("Error while creating image: {}".format(e))
+            logger.error(f"Error while creating image: {e}")
             raise
 
     def _read(self, docker_client: DockerApiClient) -> Any:
@@ -378,12 +378,12 @@ class DockerImage(DockerResource):
         from docker.errors import ImageNotFound, NotFound
         from docker.models.images import Image
 
-        logger.debug("Reading: {}".format(self.get_image_str()))
+        logger.debug(f"Reading: {self.get_image_str()}")
         try:
             _api_client: DockerClient = docker_client.api_client
-            image_object: Optional[List[Image]] = _api_client.images.get(name=self.get_image_str())
+            image_object: list[Image] | None = _api_client.images.get(name=self.get_image_str())
             if image_object is not None and isinstance(image_object, Image):
-                logger.debug("Image found: {}".format(image_object))
+                logger.debug(f"Image found: {image_object}")
                 self.active_resource = image_object
                 return image_object
         except (NotFound, ImageNotFound):
@@ -397,7 +397,7 @@ class DockerImage(DockerResource):
         Args:
             docker_client: The DockerApiClient for the current cluster
         """
-        logger.debug("Updating: {}".format(self.get_resource_name()))
+        logger.debug(f"Updating: {self.get_resource_name()}")
         return self._create(docker_client=docker_client)
 
     def _delete(self, docker_client: DockerApiClient) -> bool:
@@ -409,8 +409,8 @@ class DockerImage(DockerResource):
         from docker import DockerClient
         from docker.models.images import Image
 
-        logger.debug("Deleting: {}".format(self.get_resource_name()))
-        image_object: Optional[Image] = self._read(docker_client)
+        logger.debug(f"Deleting: {self.get_resource_name()}")
+        image_object: Image | None = self._read(docker_client)
         # Return True if there is no image to delete
         if image_object is None:
             logger.debug("No image to delete")
@@ -419,12 +419,12 @@ class DockerImage(DockerResource):
         # Delete Image
         try:
             self.active_resource = None
-            logger.debug("Deleting image: {}".format(self.tag))
+            logger.debug(f"Deleting image: {self.tag}")
             _api_client: DockerClient = docker_client.api_client
             _api_client.images.remove(image=self.tag, force=True)
             return True
         except Exception as e:
-            logger.exception("Error while deleting image: {}".format(e))
+            logger.exception(f"Error while deleting image: {e}")
 
         return False
 

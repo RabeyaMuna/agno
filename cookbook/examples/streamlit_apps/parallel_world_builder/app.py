@@ -1,5 +1,3 @@
-from typing import Optional
-
 import streamlit as st
 from agents import World, get_world_builder
 from agno.agent import Agent
@@ -82,7 +80,7 @@ def main() -> None:
     for message in st.session_state["messages"]:
         if message["role"] in ["user", "assistant"]:
             with st.chat_message(message["role"]):
-                if "tool_calls" in message and message["tool_calls"]:
+                if message.get("tool_calls"):
                     display_tool_calls(st.empty(), message["tool_calls"])
                 st.markdown(message["content"])
 
@@ -97,7 +95,7 @@ def main() -> None:
         with st.chat_message("assistant"):
             # Create container for tool calls
             tool_calls_container = st.empty()
-            resp_container = st.empty()
+            st.empty()
             with st.spinner("🤔 Generating world..."):
                 try:
                     # Run the agent and get response
@@ -157,7 +155,7 @@ def main() -> None:
                     add_message("assistant", response, run_response.tools)
 
                 except Exception as e:
-                    error_message = f"Sorry, I encountered an error: {str(e)}"
+                    error_message = f"Sorry, I encountered an error: {e!s}"
                     add_message("assistant", error_message)
                     st.error(error_message)
 

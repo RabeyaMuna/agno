@@ -3,10 +3,10 @@ from agno.aws.resource.ec2.subnet import Subnet
 from agno.aws.resource.ec2.volume import EbsVolume
 
 __all__ = [
+    "EbsVolume",
     "InboundRule",
     "OutboundRule",
     "SecurityGroup",
-    "get_my_ip",
     "Subnet",
-    "EbsVolume",
+    "get_my_ip",
 ]

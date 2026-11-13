@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from agno.docker.api_client import DockerApiClient
 from agno.docker.resource.base import DockerResource
@@ -9,24 +11,24 @@ class DockerNetwork(DockerResource):
     resource_type: str = "Network"
 
     # driver (str) – Name of the driver used to create the network
-    driver: Optional[str] = None
+    driver: str | None = None
     # options (dict) – Driver options as a key-value dictionary
-    options: Optional[Dict[str, Any]] = None
+    options: dict[str, Any] | None = None
     # check_duplicate (bool) – Request daemon to check for networks with same name. Default: None.
-    auto_remove: Optional[bool] = None
+    auto_remove: bool | None = None
     # internal (bool) – Restrict external access to the network. Default False.
-    internal: Optional[bool] = None
+    internal: bool | None = None
     # labels (dict) – Map of labels to set on the network. Default None.
-    labels: Optional[Dict[str, Any]] = None
+    labels: dict[str, Any] | None = None
     # enable_ipv6 (bool) – Enable IPv6 on the network. Default False.
-    enable_ipv6: Optional[bool] = None
+    enable_ipv6: bool | None = None
     # attachable (bool) – If enabled, and the network is in the global scope
     # non-service containers on worker nodes will be able to connect to the network.
-    attachable: Optional[bool] = None
+    attachable: bool | None = None
     # scope (str) – Specify the network’s scope (local, global or swarm)
-    scope: Optional[str] = None
+    scope: str | None = None
     # ingress (bool) – If set, create an ingress network which provides the routing-mesh in swarm mode.
-    ingress: Optional[bool] = None
+    ingress: bool | None = None
 
     # Set skip_delete=True so that the network is not deleted when the `ag ws down` command is run
     skip_delete: bool = True
@@ -41,15 +43,15 @@ class DockerNetwork(DockerResource):
         from docker import DockerClient
         from docker.models.networks import Network
 
-        logger.debug("Creating: {}".format(self.get_resource_name()))
-        network_name: Optional[str] = self.name
-        network_object: Optional[Network] = None
+        logger.debug(f"Creating: {self.get_resource_name()}")
+        network_name: str | None = self.name
+        network_object: Network | None = None
 
         try:
             _api_client: DockerClient = docker_client.api_client
             network_object = _api_client.networks.create(network_name)
             if network_object is not None:
-                logger.debug("Network Created: {}".format(network_object.name))
+                logger.debug(f"Network Created: {network_object.name}")
             else:
                 logger.debug("Network could not be created")
             # logger.debug("Network {}".format(network_object.attrs))
@@ -75,12 +77,12 @@ class DockerNetwork(DockerResource):
         from docker import DockerClient
         from docker.models.networks import Network
 
-        logger.debug("Reading: {}".format(self.get_resource_name()))
+        logger.debug(f"Reading: {self.get_resource_name()}")
         # Get active networks from the docker_client
-        network_name: Optional[str] = self.name
+        network_name: str | None = self.name
         try:
             _api_client: DockerClient = docker_client.api_client
-            network_list: Optional[List[Network]] = _api_client.networks.list()
+            network_list: list[Network] | None = _api_client.networks.list()
             # logger.debug("network_list: {}".format(network_list))
             if network_list is not None:
                 for network in network_list:
@@ -102,8 +104,8 @@ class DockerNetwork(DockerResource):
         from docker.errors import NotFound
         from docker.models.networks import Network
 
-        logger.debug("Deleting: {}".format(self.get_resource_name()))
-        network_object: Optional[Network] = self._read(docker_client)
+        logger.debug(f"Deleting: {self.get_resource_name()}")
+        network_object: Network | None = self._read(docker_client)
         # Return True if there is no Network to delete
         if network_object is None:
             return True
@@ -113,12 +115,12 @@ class DockerNetwork(DockerResource):
             self.active_resource = None
             network_object.remove()
         except Exception as e:
-            logger.exception("Error while deleting network: {}".format(e))
+            logger.exception(f"Error while deleting network: {e}")
 
         # Validate that the network is deleted
         logger.debug("Validating network is deleted")
         try:
-            logger.debug("Reloading network_object: {}".format(network_object))
+            logger.debug(f"Reloading network_object: {network_object}")
             network_object.reload()
         except NotFound:
             logger.debug("Got NotFound Exception, Network is deleted")

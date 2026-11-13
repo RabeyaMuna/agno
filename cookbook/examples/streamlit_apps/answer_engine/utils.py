@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 import streamlit as st
 from agents import get_sage
@@ -7,7 +9,7 @@ from agno.utils.log import logger
 
 
 def add_message(
-    role: str, content: str, tool_calls: Optional[List[Dict[str, Any]]] = None
+    role: str, content: str, tool_calls: list[dict[str, Any]] | None = None
 ) -> None:
     """Safely add a message to the session state."""
     if "messages" not in st.session_state or not isinstance(
@@ -66,8 +68,7 @@ def display_tool_calls(tool_calls_container, tools):
                         if execution_time is not None:
                             execution_time_str = f"{execution_time:.2f}s"
                 except Exception as e:
-                    logger.error(f"Error displaying tool calls: {str(e)}")
-                    pass
+                    logger.error(f"Error displaying tool calls: {e!s}")
 
                 with st.expander(
                     f"🛠️ {tool_name.replace('_', ' ').title()} ({execution_time_str})",
@@ -86,11 +87,11 @@ def display_tool_calls(tool_calls_container, tools):
                         st.markdown("**Results:**")
                         try:
                             st.json(content)
-                        except Exception as e:
+                        except Exception:
                             st.markdown(content)
 
     except Exception as e:
-        logger.error(f"Error displaying tool calls: {str(e)}")
+        logger.error(f"Error displaying tool calls: {e!s}")
         tool_calls_container.error("Failed to display tool results")
 
 
@@ -234,7 +235,7 @@ def session_selector_widget(agent: Agent, model_id: str) -> None:
                                 seen_messages.add(msg_id)
                                 add_message("user", user_msg)
 
-                            if "content" in run and run["content"]:
+                            if run.get("content"):
                                 asst_msg = run["content"]
                                 msg_id = f"assistant:{asst_msg}"
 
@@ -244,8 +245,8 @@ def session_selector_widget(agent: Agent, model_id: str) -> None:
 
                 st.rerun()
             except Exception as e:
-                logger.error(f"Error switching sessions: {str(e)}")
-                st.sidebar.error(f"Error loading session: {str(e)}")
+                logger.error(f"Error switching sessions: {e!s}")
+                st.sidebar.error(f"Error loading session: {e!s}")
 
 
 def rename_session_widget(agent: Agent) -> None:

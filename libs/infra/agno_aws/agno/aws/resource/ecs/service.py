@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional, Union
+from __future__ import annotations
+
+from typing import Any
 
 from typing_extensions import Literal
 
@@ -19,77 +21,77 @@ class EcsService(AwsResource):
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html
     """
 
-    resource_type: Optional[str] = "Service"
+    resource_type: str | None = "Service"
     service_name: str = "ecs"
 
     # Name for the service.
     name: str
     # Name for the service.
     # Use name if not provided.
-    ecs_service_name: Optional[str] = None
+    ecs_service_name: str | None = None
 
     # EcsCluster for the service.
     # Can be
     # - string: The short name or full Amazon Resource Name (ARN) of the cluster
     # - EcsCluster
     # If you do not specify a cluster, the default cluster is assumed.
-    cluster: Optional[Union[EcsCluster, str]] = None
+    cluster: EcsCluster | str | None = None
 
     # EcsTaskDefinition for the service.
     # Can be
     # - string: The family and revision (family:revision ) or full ARN of the task definition.
     # - EcsTaskDefinition
     # If a revision isn't specified, the latest ACTIVE revision is used.
-    task_definition: Optional[Union[EcsTaskDefinition, str]] = None
+    task_definition: EcsTaskDefinition | str | None = None
 
     # A load balancer object representing the load balancers to use with your service.
-    load_balancers: Optional[List[Dict[str, Any]]] = None
+    load_balancers: list[dict[str, Any]] | None = None
 
     # We can generate the load_balancers dict using
     # the target_group, target_container_name and target_container_port
     # Target group to attach to a service.
-    target_group: Optional[TargetGroup] = None
+    target_group: TargetGroup | None = None
     # Target container name for the service.
-    target_container_name: Optional[str] = None
-    target_container_port: Optional[int] = None
+    target_container_name: str | None = None
+    target_container_port: int | None = None
 
     # The network configuration for the service. This parameter is required for task definitions that
     # use the awsvpc network mode to receive their own elastic network interface
-    network_configuration: Optional[Dict[str, Any]] = None
-    subnets: Optional[List[Union[str, Subnet]]] = None
-    security_groups: Optional[List[Union[str, SecurityGroup]]] = None
-    assign_public_ip: Optional[bool] = None
+    network_configuration: dict[str, Any] | None = None
+    subnets: list[str | Subnet] | None = None
+    security_groups: list[str | SecurityGroup] | None = None
+    assign_public_ip: bool | None = None
 
     # The configuration for this service to discover and connect to services,
     # and be discovered by, and connected from, other services within a namespace.
-    service_connect_configuration: Optional[Dict[str, Any]] = None
+    service_connect_configuration: dict[str, Any] | None = None
 
     # The details of the service discovery registries to assign to this service.
-    service_registries: Optional[List[Dict[str, Any]]] = None
+    service_registries: list[dict[str, Any]] | None = None
     # The number of instantiations of the specified task definition to place and keep running on your cluster.
     # This is required if schedulingStrategy is REPLICA or isn't specified.
     # If schedulingStrategy is DAEMON then this isn't required.
-    desired_count: Optional[int] = None
+    desired_count: int | None = None
     # An identifier that you provide to ensure the idempotency of the request. It must be unique and is case-sensitive.
-    client_token: Optional[str] = None
+    client_token: str | None = None
     # The infrastructure that you run your service on.
-    launch_type: Optional[Union[str, Literal["EC2", "FARGATE", "EXTERNAL"]]] = None
+    launch_type: str | Literal["EC2", "FARGATE", "EXTERNAL"] | None = None
     # The capacity provider strategy to use for the service.
-    capacity_provider_strategy: Optional[List[Dict[str, Any]]] = None
-    platform_version: Optional[str] = None
-    role: Optional[str] = None
-    deployment_configuration: Optional[Dict[str, Any]] = None
-    placement_constraints: Optional[List[Dict[str, Any]]] = None
-    placement_strategy: Optional[List[Dict[str, Any]]] = None
-    health_check_grace_period_seconds: Optional[int] = None
-    scheduling_strategy: Optional[Literal["REPLICA", "DAEMON"]] = None
-    deployment_controller: Optional[Dict[str, Any]] = None
-    tags: Optional[List[Dict[str, Any]]] = None
-    enable_ecsmanaged_tags: Optional[bool] = None
-    propagate_tags: Optional[Literal["TASK_DEFINITION", "SERVICE", "NONE"]] = None
-    enable_execute_command: Optional[bool] = None
+    capacity_provider_strategy: list[dict[str, Any]] | None = None
+    platform_version: str | None = None
+    role: str | None = None
+    deployment_configuration: dict[str, Any] | None = None
+    placement_constraints: list[dict[str, Any]] | None = None
+    placement_strategy: list[dict[str, Any]] | None = None
+    health_check_grace_period_seconds: int | None = None
+    scheduling_strategy: Literal["REPLICA", "DAEMON"] | None = None
+    deployment_controller: dict[str, Any] | None = None
+    tags: list[dict[str, Any]] | None = None
+    enable_ecsmanaged_tags: bool | None = None
+    propagate_tags: Literal["TASK_DEFINITION", "SERVICE", "NONE"] | None = None
+    enable_execute_command: bool | None = None
 
-    force_delete: Optional[bool] = None
+    force_delete: bool | None = None
     # Force a new deployment of the service on update.
     # By default, deployments aren't forced.
     # You can use this option to start a new deployment with no service
@@ -97,7 +99,7 @@ class EcsService(AwsResource):
     # tasks to use a newer Docker image with the same
     # image/tag combination (my_image:latest ) or
     # to roll Fargate tasks onto a newer platform version.
-    force_new_deployment: Optional[bool] = None
+    force_new_deployment: bool | None = None
 
     wait_for_create: bool = False
 
@@ -123,7 +125,7 @@ class EcsService(AwsResource):
         print_info(f"Creating {self.get_resource_type()}: {self.get_resource_name()}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
 
         cluster_name = self.get_ecs_cluster_name()
         if cluster_name is not None:
@@ -131,7 +133,7 @@ class EcsService(AwsResource):
 
         network_configuration = self.network_configuration
         if network_configuration is None and (self.subnets is not None or self.security_groups is not None):
-            aws_vpc_config: Dict[str, Any] = {}
+            aws_vpc_config: dict[str, Any] = {}
             if self.subnets is not None:
                 subnet_ids = []
                 for subnet in self.subnets:
@@ -246,14 +248,14 @@ class EcsService(AwsResource):
                 logger.error(e)
         return True
 
-    def _read(self, aws_client: AwsApiClient) -> Optional[Any]:
+    def _read(self, aws_client: AwsApiClient) -> Any | None:
         """Read EcsService"""
         from botocore.exceptions import ClientError
 
         logger.debug(f"Reading {self.get_resource_type()}: {self.get_resource_name()}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
 
         cluster_name = self.get_ecs_cluster_name()
         if cluster_name is not None:
@@ -286,7 +288,7 @@ class EcsService(AwsResource):
         print_info(f"Deleting {self.get_resource_type()}: {self.get_resource_name()}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
 
         cluster_name = self.get_ecs_cluster_name()
         if cluster_name is not None:
@@ -342,7 +344,7 @@ class EcsService(AwsResource):
         print_info(f"Updating {self.get_resource_type()}: {self.get_resource_name()}")
 
         # create a dict of args which are not null, otherwise aws type validation fails
-        not_null_args: Dict[str, Any] = {}
+        not_null_args: dict[str, Any] = {}
 
         cluster_name = self.get_ecs_cluster_name()
         if cluster_name is not None:
@@ -350,7 +352,7 @@ class EcsService(AwsResource):
 
         network_configuration = self.network_configuration
         if network_configuration is None and (self.subnets is not None or self.security_groups is not None):
-            aws_vpc_config: Dict[str, Any] = {}
+            aws_vpc_config: dict[str, Any] = {}
             if self.subnets is not None:
                 subnet_ids = []
                 for subnet in self.subnets:

@@ -20,9 +20,10 @@ Example prompts to try:
 Run `pip install openai lancedb tantivy pypdf duckduckgo-search inquirer agno` to install dependencies.
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 from textwrap import dedent
-from typing import List, Optional
 
 import inquirer
 import typer
@@ -79,9 +80,7 @@ def get_agent_storage():
     )
 
 
-def create_agent(
-    session_id: Optional[str] = None, load_knowledge: bool = False
-) -> Agent:
+def create_agent(session_id: str | None = None, load_knowledge: bool = False) -> Agent:
     """Create and return a configured Agno Support agent."""
     agent_knowledge = initialize_knowledge_base(load_knowledge)
     agent_storage = get_agent_storage()
@@ -198,7 +197,7 @@ def create_agent(
     )
 
 
-def get_example_topics() -> List[str]:
+def get_example_topics() -> list[str]:
     """Return a list of example topics for the agent."""
     return [
         "Tell me about Agno",
@@ -209,7 +208,7 @@ def get_example_topics() -> List[str]:
     ]
 
 
-def handle_session_selection() -> Optional[str]:
+def handle_session_selection() -> str | None:
     """Handle session selection and return the selected session ID."""
     agent_storage = get_agent_storage()
 
@@ -217,7 +216,7 @@ def handle_session_selection() -> Optional[str]:
     if new:
         return None
 
-    existing_sessions: List[str] = agent_storage.get_all_session_ids()
+    existing_sessions: list[str] = agent_storage.get_all_session_ids()
     if not existing_sessions:
         print("No existing sessions found. Starting a new session.")
         return None
@@ -302,18 +301,14 @@ def agno_support_agent(
         session_id = agent.session_id
         if session_id is not None:
             print(
-                "[bold green]📝 Started New Session: [white]{}[/white][/bold green]\n".format(
-                    session_id
-                )
+                f"[bold green]📝 Started New Session: [white]{session_id}[/white][/bold green]\n"
             )
         else:
             print("[bold green]📝 Started New Session[/bold green]\n")
         show_topics = True
     else:
         print(
-            "[bold blue]🔄 Continuing Previous Session: [white]{}[/white][/bold blue]\n".format(
-                session_id
-            )
+            f"[bold blue]🔄 Continuing Previous Session: [white]{session_id}[/white][/bold blue]\n"
         )
         show_topics = False
 
