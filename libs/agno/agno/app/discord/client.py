@@ -1,5 +1,5 @@
 from os import getenv
-from typing import Optional
+from typing import Optional, Union
 
 import requests
 
@@ -138,14 +138,16 @@ class DiscordClient:
                     )
                     await self._handle_response_in_thread(team_response, thread)
 
-    async def _handle_hitl(self, run_response: RunResponse | TeamRunResponse, thread: discord.Thread):
-        for tool in run_response.tools_requiring_confirmation:
+    async def _handle_hitl(self, run_response: Union[RunResponse, TeamRunResponse], thread: discord.Thread):
+        tools_requiring_confirmation = getattr(run_response, "tools_requiring_confirmation", None) or []
+        for tool in tools_requiring_confirmation:
             view = RequiresConfirmationView()
             await thread.send(f"Tool requiring confirmation: {tool.tool_name}", view=view)
             await view.wait()
             tool.confirmed = view.value if view.value is not None else False
 
-        for tool in run_response.tools_requiring_user_input:
+        tools_requiring_user_input = getattr(run_response, "tools_requiring_user_input", None) or []
+        for tool in tools_requiring_user_input:
             input_schema: List[UserInputField] = tool.user_input_schema
             RequiresUserInputModal = type(
                 "RequiresUserInputModal",
@@ -166,13 +168,17 @@ class DiscordClient:
 
             await thread.send_modal(RequiresUserInputModal())
 
-        if self.agent:
-            return await self.agent.acontinue_run(run_response=run_response, )
+        if self.agent and isinstance(run_response, RunResponse):
+            return await self.agent.acontinue_run(run_response=run_response)
         return None
 
-    async def _handle_response_in_thread(self, response: RunResponse, thread: discord.TextChannel):
+    async def _handle_response_in_thread(
+        self, response: Union[RunResponse, TeamRunResponse], thread: discord.TextChannel
+    ):
         if response.is_paused:
-            response = await self._handle_hitl(response, thread)
+            continued_response = await self._handle_hitl(response, thread)
+            if continued_response is not None:
+                response = continued_response
 
         if response.reasoning_content:
             await self._send_discord_messages(
