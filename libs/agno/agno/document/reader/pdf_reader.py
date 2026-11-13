@@ -9,7 +9,7 @@ from agno.utils.http import async_fetch_with_retry, fetch_with_retry
 from agno.utils.log import log_info, logger
 
 try:
-    from pypdf import PdfReader as DocumentReader  # noqa: F401
+    from pypdf import PdfReader as DocumentReader
     from pypdf.errors import PdfStreamError
 except ImportError:
     raise ImportError("`pypdf` not installed. Please install it via `pip install pypdf`.")
@@ -97,9 +97,11 @@ class PDFReader(BasePDFReader):
     def read(self, pdf: Union[str, Path, IO[Any]]) -> List[Document]:
         try:
             if isinstance(pdf, str):
-                doc_name = pdf.split("/")[-1].split(".")[0].replace(" ", "_")
+                doc_name = Path(pdf).stem.replace(" ", "_")
+            elif isinstance(pdf, Path):
+                doc_name = pdf.stem.replace(" ", "_")
             else:
-                doc_name = pdf.name.split(".")[0]
+                doc_name = Path(pdf.name).stem.replace(" ", "_")
         except Exception:
             doc_name = "pdf"
 
@@ -128,9 +130,11 @@ class PDFReader(BasePDFReader):
     async def async_read(self, pdf: Union[str, Path, IO[Any]]) -> List[Document]:
         try:
             if isinstance(pdf, str):
-                doc_name = pdf.split("/")[-1].split(".")[0].replace(" ", "_")
+                doc_name = Path(pdf).stem.replace(" ", "_")
+            elif isinstance(pdf, Path):
+                doc_name = pdf.stem.replace(" ", "_")
             else:
-                doc_name = pdf.name.split(".")[0]
+                doc_name = Path(pdf.name).stem.replace(" ", "_")
         except Exception:
             doc_name = "pdf"
 
@@ -245,9 +249,11 @@ class PDFImageReader(BasePDFReader):
 
         try:
             if isinstance(pdf, str):
-                doc_name = pdf.split("/")[-1].split(".")[0].replace(" ", "_")
+                doc_name = Path(pdf).stem.replace(" ", "_")
+            elif isinstance(pdf, Path):
+                doc_name = pdf.stem.replace(" ", "_")
             else:
-                doc_name = pdf.name.split(".")[0]
+                doc_name = Path(pdf.name).stem.replace(" ", "_")
         except Exception:
             doc_name = "pdf"
 
@@ -269,9 +275,11 @@ class PDFImageReader(BasePDFReader):
 
         try:
             if isinstance(pdf, str):
-                doc_name = pdf.split("/")[-1].split(".")[0].replace(" ", "_")
+                doc_name = Path(pdf).stem.replace(" ", "_")
+            elif isinstance(pdf, Path):
+                doc_name = pdf.stem.replace(" ", "_")
             else:
-                doc_name = pdf.name.split(".")[0]
+                doc_name = Path(pdf.name).stem.replace(" ", "_")
         except Exception:
             doc_name = "pdf"
 

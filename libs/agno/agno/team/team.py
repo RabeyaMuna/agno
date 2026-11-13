@@ -813,7 +813,7 @@ class Team:
             except ModelProviderError as e:
                 import time
 
-                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
+                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {e!s}")
 
                 last_exception = e
                 if attempt < num_attempts - 1:
@@ -1262,7 +1262,7 @@ class Team:
                     )
 
             except ModelProviderError as e:
-                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
+                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {e!s}")
                 last_exception = e
                 if attempt < num_attempts - 1:
                     await asyncio.sleep(2**attempt)
@@ -1911,6 +1911,7 @@ class Team:
 
     def _initialize_session_state(self, user_id: Optional[str] = None, session_id: Optional[str] = None) -> None:
         self.session_state = self.session_state or {}
+        self.team_session_state = self.team_session_state or {}
         if user_id is not None:
             self.session_state["current_user_id"] = user_id
             self.team_session_state["current_user_id"] = user_id
@@ -4847,7 +4848,7 @@ class Team:
                     if len(response_model_properties) > 0:
                         json_output_prompt += "\n<json_fields>"
                         json_output_prompt += (
-                            f"\n{json.dumps([key for key in response_model_properties.keys() if key != '$defs'])}"
+                            f"\n{json.dumps([key for key in response_model_properties if key != '$defs'])}"
                         )
                         json_output_prompt += "\n</json_fields>"
                         json_output_prompt += "\n\nHere are the properties for each field:"
@@ -5126,14 +5127,14 @@ class Team:
                         try:
                             yield f"Agent {member_agent.name}: {member_agent_run_response.content.model_dump_json(indent=2)}"  # type: ignore
                         except Exception as e:
-                            yield f"Agent {member_agent.name}: Error - {str(e)}"
+                            yield f"Agent {member_agent.name}: Error - {e!s}"
                     else:
                         try:
                             import json
 
                             yield f"Agent {member_agent.name}: {json.dumps(member_agent_run_response.content, indent=2)}"
                         except Exception as e:
-                            yield f"Agent {member_agent.name}: Error - {str(e)}"
+                            yield f"Agent {member_agent.name}: Error - {e!s}"
 
                 # Update the memory
                 member_name = member_agent.name if member_agent.name else f"agent_{member_agent_index}"
@@ -5278,14 +5279,14 @@ class Team:
                         try:
                             return f"Agent {member_name}: {response.content.model_dump_json(indent=2)}"  # type: ignore
                         except Exception as e:
-                            return f"Agent {member_name}: Error - {str(e)}"
+                            return f"Agent {member_name}: Error - {e!s}"
                     else:
                         try:
                             import json
 
                             return f"Agent {member_name}: {json.dumps(response.content, indent=2)}"
                         except Exception as e:
-                            return f"Agent {member_name}: Error - {str(e)}"
+                            return f"Agent {member_name}: Error - {e!s}"
 
                     return f"Agent {member_name}: No Response"
 
@@ -6557,7 +6558,7 @@ class Team:
             # Add the metrics message to the reasoning_messages
             run_response.extra_data.reasoning_messages.append(metrics_message)
         except Exception as e:
-            log_error(f"Failed to add reasoning metrics to extra_data: {str(e)}")
+            log_error(f"Failed to add reasoning metrics to extra_data: {e!s}")
 
     ###########################################################################
     # Knowledge
