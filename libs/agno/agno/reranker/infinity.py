@@ -9,8 +9,14 @@ try:
     from infinity_client import AuthenticatedClient, Client
     from infinity_client.api.default import rerank
     from infinity_client.models import RerankInput
+
+    infinity_client_available = True
 except ImportError:
-    raise ImportError("infinity_client not installed, please run `pip install infinity_client`")
+    infinity_client_available = False
+    AuthenticatedClient = None  # type: ignore
+    Client = None  # type: ignore
+    rerank = None  # type: ignore
+    RerankInput = None  # type: ignore
 
 
 class InfinityReranker(Reranker):
@@ -46,6 +52,9 @@ class InfinityReranker(Reranker):
     @property
     def client(self) -> Any:
         """Get or create the infinity client"""
+        if not infinity_client_available:
+            raise ImportError("infinity_client not installed, please run `pip install infinity_client`")
+
         if self._client:
             return self._client
 
@@ -59,6 +68,9 @@ class InfinityReranker(Reranker):
         return self._client
 
     def _rerank(self, query: str, documents: List[Document]) -> List[Document]:
+        if not infinity_client_available:
+            raise ImportError("infinity_client not installed, please run `pip install infinity_client`")
+
         # Validate input documents and top_n
         if not documents:
             return []
@@ -131,6 +143,9 @@ class InfinityReranker(Reranker):
 
     async def arerank(self, query: str, documents: List[Document]) -> List[Document]:
         """Async version of rerank"""
+        if not infinity_client_available:
+            raise ImportError("infinity_client not installed, please run `pip install infinity_client`")
+
         # Validate input documents and top_n
         if not documents:
             return []

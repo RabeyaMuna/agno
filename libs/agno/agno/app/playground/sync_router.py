@@ -527,7 +527,7 @@ def get_sync_playground_router(
                 )
         except Exception as e:
             # Handle unexpected runtime errors
-            raise HTTPException(status_code=500, detail=f"Error running workflow: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error running workflow: {e!s}")
 
     @playground_router.get("/workflows/{workflow_id}/sessions")
     def get_all_workflow_sessions(workflow_id: str, user_id: Optional[str] = Query(None, min_length=1)):
@@ -546,19 +546,19 @@ def get_sync_playground_router(
                 user_id=user_id, entity_id=workflow_id
             )  # type: ignore
         except Exception as e:
-            return JSONResponse(status_code=500, content=f"Error retrieving sessions: {str(e)}")
+            return JSONResponse(status_code=500, content=f"Error retrieving sessions: {e!s}")
 
         # Return the sessions
         workflow_sessions: List[WorkflowSessionResponse] = []
         for session in all_workflow_sessions:
             title = get_session_title_from_workflow_session(session)
             workflow_sessions.append(
-                {
-                    "title": title,
-                    "session_id": session.session_id,
-                    "session_name": session.session_data.get("session_name") if session.session_data else None,
-                    "created_at": session.created_at,
-                }
+                WorkflowSessionResponse(
+                    title=title,
+                    session_id=session.session_id,
+                    session_name=session.session_data.get("session_name") if session.session_data else None,
+                    created_at=session.created_at,
+                )
             )
         return workflow_sessions
 
@@ -577,7 +577,7 @@ def get_sync_playground_router(
         try:
             workflow_session: Optional[WorkflowSession] = workflow.storage.read(session_id, user_id)  # type: ignore
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error retrieving session: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error retrieving session: {e!s}")
 
         if not workflow_session:
             raise HTTPException(status_code=404, detail="Session not found")
@@ -741,7 +741,7 @@ def get_sync_playground_router(
         try:
             all_team_sessions: List[TeamSession] = team.storage.get_all_sessions(user_id=user_id, entity_id=team_id)  # type: ignore
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error retrieving sessions: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error retrieving sessions: {e!s}")
 
         team_sessions: List[TeamSessionResponse] = []
         for session in all_team_sessions:
@@ -768,7 +768,7 @@ def get_sync_playground_router(
         try:
             team_session: Optional[TeamSession] = team.storage.read(session_id, user_id)  # type: ignore
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error retrieving session: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error retrieving session: {e!s}")
 
         if not team_session:
             raise HTTPException(status_code=404, detail="Session not found")
