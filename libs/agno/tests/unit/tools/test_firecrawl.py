@@ -18,6 +18,11 @@ def mock_firecrawl():
     """Create a mock FirecrawlApp instance."""
     with patch("agno.tools.firecrawl.FirecrawlApp") as mock_firecrawl_cls:
         mock_app = Mock(spec=FirecrawlApp)
+        # Add instance attributes that are set in Firecrawl.__init__
+        mock_app.scrape_url = Mock()
+        mock_app.crawl_url = Mock()
+        mock_app.map_url = Mock()
+        mock_app.search = Mock()
         mock_firecrawl_cls.return_value = mock_app
         return mock_app
 
