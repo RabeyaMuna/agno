@@ -6,9 +6,19 @@ from agno.tools import Toolkit
 from agno.utils.log import logger
 
 try:
-    from firecrawl import FirecrawlApp, ScrapeOptions  # type: ignore[attr-defined]
+    from firecrawl import FirecrawlApp  # type: ignore[attr-defined]
 except ImportError:
     raise ImportError("`firecrawl-py` not installed. Please install using `pip install firecrawl-py`")
+
+try:
+    # firecrawl-py >= 2.x exposes the scrape options as `V1ScrapeOptions`
+    from firecrawl import V1ScrapeOptions as ScrapeOptions  # type: ignore[attr-defined]
+except ImportError:
+    try:
+        # older firecrawl-py releases exposed `ScrapeOptions` directly
+        from firecrawl import ScrapeOptions  # type: ignore[attr-defined,no-redef]
+    except ImportError:
+        ScrapeOptions = None  # type: ignore[assignment,misc]
 
 
 class CustomJSONEncoder(json.JSONEncoder):
