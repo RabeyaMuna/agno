@@ -2,7 +2,7 @@ from hashlib import md5
 from typing import Any, Dict, List, Optional
 
 try:
-    from qdrant_client import AsyncQdrantClient, QdrantClient  # noqa: F401
+    from qdrant_client import AsyncQdrantClient, QdrantClient
     from qdrant_client.http import models
 except ImportError:
     raise ImportError(
@@ -121,7 +121,7 @@ class Qdrant(VectorDb):
 
         if self.search_type in [SearchType.keyword, SearchType.hybrid]:
             try:
-                from fastembed import SparseTextEmbedding
+                from fastembed import SparseTextEmbedding  # type: ignore[import-not-found]
 
                 default_kwargs = {"model_name": DEFAULT_SPARSE_MODEL}
                 if fastembed_kwargs:
