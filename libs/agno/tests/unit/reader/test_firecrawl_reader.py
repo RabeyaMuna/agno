@@ -2,6 +2,8 @@ from unittest.mock import patch
 
 import pytest
 
+pytest.importorskip("firecrawl", reason="`firecrawl-py` not installed")
+
 from agno.document.base import Document
 from agno.document.chunking.fixed import FixedSizeChunking
 from agno.document.reader.firecrawl_reader import FirecrawlReader
