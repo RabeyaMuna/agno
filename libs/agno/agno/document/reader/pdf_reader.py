@@ -97,9 +97,9 @@ class PDFReader(BasePDFReader):
     def read(self, pdf: Union[str, Path, IO[Any]]) -> List[Document]:
         try:
             if isinstance(pdf, str):
-                doc_name = pdf.split("/")[-1].split(".")[0].replace(" ", "_")
+                doc_name = Path(pdf).stem.replace(" ", "_")
             else:
-                doc_name = pdf.name.split(".")[0]
+                doc_name = Path(pdf.name).stem
         except Exception:
             doc_name = "pdf"
 
@@ -128,9 +128,9 @@ class PDFReader(BasePDFReader):
     async def async_read(self, pdf: Union[str, Path, IO[Any]]) -> List[Document]:
         try:
             if isinstance(pdf, str):
-                doc_name = pdf.split("/")[-1].split(".")[0].replace(" ", "_")
+                doc_name = Path(pdf).stem.replace(" ", "_")
             else:
-                doc_name = pdf.name.split(".")[0]
+                doc_name = Path(pdf.name).stem
         except Exception:
             doc_name = "pdf"
 
@@ -181,7 +181,7 @@ class PDFUrlReader(BasePDFReader):
         # Retry the request up to 3 times with exponential backoff
         response = fetch_with_retry(url, proxy=self.proxy)
 
-        doc_name = url.split("/")[-1].split(".")[0].replace("/", "_").replace(" ", "_")
+        doc_name = Path(url).stem.replace(" ", "_")
         doc_reader = DocumentReader(BytesIO(response.content))
 
         documents = []
@@ -212,7 +212,7 @@ class PDFUrlReader(BasePDFReader):
         async with httpx.AsyncClient(**client_args) as client:  # type: ignore
             response = await async_fetch_with_retry(url, client=client)
 
-        doc_name = url.split("/")[-1].split(".")[0].replace("/", "_").replace(" ", "_")
+        doc_name = Path(url).stem.replace(" ", "_")
         doc_reader = DocumentReader(BytesIO(response.content))
 
         async def _process_document(doc_name: str, page_number: int, page: Any) -> Document:
@@ -245,9 +245,9 @@ class PDFImageReader(BasePDFReader):
 
         try:
             if isinstance(pdf, str):
-                doc_name = pdf.split("/")[-1].split(".")[0].replace(" ", "_")
+                doc_name = Path(pdf).stem.replace(" ", "_")
             else:
-                doc_name = pdf.name.split(".")[0]
+                doc_name = Path(pdf.name).stem
         except Exception:
             doc_name = "pdf"
 
@@ -269,9 +269,9 @@ class PDFImageReader(BasePDFReader):
 
         try:
             if isinstance(pdf, str):
-                doc_name = pdf.split("/")[-1].split(".")[0].replace(" ", "_")
+                doc_name = Path(pdf).stem.replace(" ", "_")
             else:
-                doc_name = pdf.name.split(".")[0]
+                doc_name = Path(pdf.name).stem
         except Exception:
             doc_name = "pdf"
 
@@ -309,7 +309,7 @@ class PDFUrlImageReader(BasePDFReader):
         log_info(f"Reading: {url}")
         response = httpx.get(url, proxy=self.proxy) if self.proxy else httpx.get(url)
 
-        doc_name = url.split("/")[-1].split(".")[0].replace(" ", "_")
+        doc_name = Path(url).stem.replace(" ", "_")
         doc_reader = DocumentReader(BytesIO(response.content))
 
         documents = []
@@ -337,7 +337,7 @@ class PDFUrlImageReader(BasePDFReader):
             response = await client.get(url)
             response.raise_for_status()
 
-        doc_name = url.split("/")[-1].split(".")[0].replace(" ", "_")
+        doc_name = Path(url).stem.replace(" ", "_")
         doc_reader = DocumentReader(BytesIO(response.content))
 
         documents = await asyncio.gather(
