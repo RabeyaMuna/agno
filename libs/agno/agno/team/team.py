@@ -6166,7 +6166,8 @@ class Team:
         """
         # First check direct members
         for i, member in enumerate(self.members):
-            if member.name or member.agent_id is not None:
+            member_id_attr = member.agent_id if isinstance(member, Agent) else member.team_id
+            if member.name or member_id_attr is not None:
                 url_safe_member_id = self._get_member_id(member)
                 if url_safe_member_id == member_id:
                     return i, member

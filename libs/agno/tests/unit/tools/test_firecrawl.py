@@ -5,7 +5,9 @@ import os
 from unittest.mock import Mock, patch
 
 import pytest
-from firecrawl import FirecrawlApp
+
+firecrawl = pytest.importorskip("firecrawl", reason="`firecrawl-py` is not installed")
+FirecrawlApp = firecrawl.FirecrawlApp
 
 from agno.tools.firecrawl import FirecrawlTools
 
