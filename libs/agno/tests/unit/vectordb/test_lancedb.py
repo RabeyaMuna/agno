@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import os
 import shutil
-from typing import List
 
 import pytest
 
@@ -30,15 +31,15 @@ def lance_db(mock_embedder):
     # Cleanup after test
     try:
         db.drop()
-    except Exception:
-        pass
+    except Exception:  # noqa: S110, BLE001
+        pass  # Cleanup already handled below
 
     if os.path.exists(TEST_PATH):
         shutil.rmtree(TEST_PATH)
 
 
 @pytest.fixture
-def sample_documents() -> List[Document]:
+def sample_documents() -> list[Document]:
     """Fixture to create sample documents"""
     return [
         Document(
