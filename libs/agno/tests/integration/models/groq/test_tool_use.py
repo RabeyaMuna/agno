@@ -3,7 +3,7 @@ from typing import Optional
 import pytest
 from pydantic import BaseModel, Field
 
-from agno.agent import Agent, RunResponse  # noqa
+from agno.agent import Agent, RunResponse
 from agno.models.groq import Groq
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.exa import ExaTools

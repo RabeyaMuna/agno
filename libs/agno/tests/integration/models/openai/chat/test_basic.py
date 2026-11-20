@@ -3,7 +3,7 @@ from typing import Optional
 import pytest
 from pydantic import BaseModel, Field
 
-from agno.agent import Agent, RunResponse  # noqa
+from agno.agent import Agent, RunResponse
 from agno.exceptions import ModelProviderError
 from agno.models.openai import OpenAIChat
 from agno.storage.sqlite import SqliteStorage

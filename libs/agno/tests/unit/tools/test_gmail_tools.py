@@ -116,11 +116,10 @@ def test_auth_with_expired_credentials():
 
         tools = GmailTools(creds=mock_creds)
 
-        with patch.object(mock_creds, "refresh") as mock_refresh:
-            with patch("pathlib.Path.exists") as mock_exists:
-                mock_exists.return_value = False  # Force refresh path
-                tools._auth()
-                mock_refresh.assert_called_once()
+        with patch.object(mock_creds, "refresh") as mock_refresh, patch("pathlib.Path.exists") as mock_exists:
+            mock_exists.return_value = False  # Force refresh path
+            tools._auth()
+            mock_refresh.assert_called_once()
 
 
 def test_auth_with_custom_paths():
@@ -298,7 +297,7 @@ def test_message_with_attachments(gmail_tools, mock_gmail_service):
             "parts": [
                 {
                     "mimeType": "text/plain",
-                    "body": {"data": base64.urlsafe_b64encode("Message with attachment".encode()).decode()},
+                    "body": {"data": base64.urlsafe_b64encode(b"Message with attachment").decode()},
                 },
                 {"filename": "test.pdf", "mimeType": "application/pdf"},
             ],
@@ -421,11 +420,11 @@ def test_multipart_complex_message(gmail_tools, mock_gmail_service):
             "parts": [
                 {
                     "mimeType": "text/plain",
-                    "body": {"data": base64.urlsafe_b64encode("Plain text version".encode()).decode()},
+                    "body": {"data": base64.urlsafe_b64encode(b"Plain text version").decode()},
                 },
                 {
                     "mimeType": "text/html",
-                    "body": {"data": base64.urlsafe_b64encode("<p>HTML version</p>".encode()).decode()},
+                    "body": {"data": base64.urlsafe_b64encode(b"<p>HTML version</p>").decode()},
                 },
                 {"filename": "test.pdf", "mimeType": "application/pdf"},
             ],
