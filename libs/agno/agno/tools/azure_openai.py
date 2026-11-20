@@ -126,7 +126,7 @@ class AzureOpenAITools(Toolkit):
             - For dall-e-3, n will always be set to 1
         """
         # Check if DALL-E is properly initialized
-        if not hasattr(self, "dalle_base_url"):
+        if not hasattr(self, "dalle_base_url") or not self.api_key or not self.azure_endpoint or not self.dalle_deployment:
             return "DALL-E tool not properly initialized. Please check your configuration."
 
         # Enforce valid parameters
