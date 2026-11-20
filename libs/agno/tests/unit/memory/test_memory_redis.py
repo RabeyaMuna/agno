@@ -1,4 +1,3 @@
-from typing import Dict
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
@@ -16,7 +15,7 @@ def mock_redis_client():
         client = MagicMock()
 
         # Create an in-memory store to simulate Redis
-        mock_data: Dict[str, str] = {}
+        mock_data: dict[str, str] = {}
 
         # Mock Redis client methods
         client.get.side_effect = lambda key: mock_data.get(key)

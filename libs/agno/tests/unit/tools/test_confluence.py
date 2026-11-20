@@ -4,7 +4,6 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
-from atlassian import Confluence
 
 from agno.tools.confluence import ConfluenceTools
 
@@ -13,7 +12,7 @@ from agno.tools.confluence import ConfluenceTools
 def mock_confluence():
     """Create a mock Confluence client."""
     with patch("agno.tools.confluence.Confluence") as mock_confluence_class:
-        mock_client = MagicMock(spec=Confluence)
+        mock_client = MagicMock()
         mock_confluence_class.return_value = mock_client
         yield mock_client
 
