@@ -65,10 +65,13 @@ def test_read_video_with_chunking(mock_transcript):
 def test_read_invalid_video_url():
     video_url = "invalid_url"
 
-    reader = YouTubeReader()
-    documents = reader.read(video_url)
+    with patch("agno.document.reader.youtube_reader.YouTubeTranscriptApi") as mock_api:
+        mock_api.get_transcript.side_effect = Exception("Invalid URL")
 
-    assert len(documents) == 0
+        reader = YouTubeReader()
+        documents = reader.read(video_url)
+
+        assert len(documents) == 0
 
 
 def test_read_video_api_error():
@@ -189,10 +192,13 @@ async def test_async_read_video_with_chunking(mock_transcript):
 async def test_async_read_invalid_video_url():
     video_url = "invalid_url"
 
-    reader = YouTubeReader()
-    documents = await reader.async_read(video_url)
+    with patch("agno.document.reader.youtube_reader.YouTubeTranscriptApi") as mock_api:
+        mock_api.get_transcript.side_effect = Exception("Invalid URL")
 
-    assert len(documents) == 0
+        reader = YouTubeReader()
+        documents = await reader.async_read(video_url)
+
+        assert len(documents) == 0
 
 
 @pytest.mark.asyncio

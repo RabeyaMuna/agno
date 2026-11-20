@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import os
 import shutil
-from typing import List
 
 import pytest
 
 from agno.document import Document
+from agno.utils.log import logger
 from agno.vectordb.chroma import ChromaDb
 from agno.vectordb.distance import Distance
 
@@ -30,15 +32,15 @@ def chroma_db(mock_embedder):
     # Cleanup after test
     try:
         db.drop()
-    except Exception:
-        pass
+    except Exception as e:  # noqa: BLE001
+        logger.warning(f"Failed to drop collection: {e}")
 
     if os.path.exists(TEST_PATH):
         shutil.rmtree(TEST_PATH)
 
 
 @pytest.fixture
-def sample_documents() -> List[Document]:
+def sample_documents() -> list[Document]:
     """Fixture to create sample documents"""
     return [
         Document(
