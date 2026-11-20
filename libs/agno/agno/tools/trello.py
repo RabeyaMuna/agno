@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import json
 from os import getenv
-from typing import Optional
 
 from agno.tools import Toolkit
 from agno.utils.log import log_debug, log_info, logger
@@ -14,9 +15,9 @@ except ImportError:
 class TrelloTools(Toolkit):
     def __init__(
         self,
-        api_key: Optional[str] = None,
-        api_secret: Optional[str] = None,
-        token: Optional[str] = None,
+        api_key: str | None = None,
+        api_secret: str | None = None,
+        token: str | None = None,
         create_card: bool = True,
         get_board_lists: bool = True,
         move_card: bool = True,

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from os import getenv
-from typing import Literal, Optional, Union
+from typing import Literal
 from uuid import uuid4
 
 from agno.agent import Agent
@@ -20,10 +22,10 @@ class DalleTools(Toolkit):
         self,
         model: str = "dall-e-3",
         n: int = 1,
-        size: Optional[Literal["256x256", "512x512", "1024x1024", "1792x1024", "1024x1792"]] = "1024x1024",
+        size: Literal["256x256", "512x512", "1024x1024", "1792x1024", "1024x1792"] | None = "1024x1024",
         quality: Literal["standard", "hd"] = "standard",
         style: Literal["vivid", "natural"] = "vivid",
-        api_key: Optional[str] = None,
+        api_key: str | None = None,
         **kwargs,
     ):
         super().__init__(name="dalle", **kwargs)
@@ -58,7 +60,7 @@ class DalleTools(Toolkit):
         # - Add support for saving images
         # - Add support for editing images
 
-    def create_image(self, agent: Union[Agent, Team], prompt: str) -> str:
+    def create_image(self, agent: Agent | Team, prompt: str) -> str:
         """Use this function to generate an image for a prompt.
 
         Args:

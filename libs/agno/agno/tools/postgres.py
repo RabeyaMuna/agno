@@ -1,4 +1,6 @@
-from typing import Any, Dict, Optional
+from __future__ import annotations
+
+from typing import Any
 
 try:
     import psycopg2
@@ -16,12 +18,12 @@ class PostgresTools(Toolkit):
 
     def __init__(
         self,
-        connection: Optional[psycopg2.extensions.connection] = None,
-        db_name: Optional[str] = None,
-        user: Optional[str] = None,
-        password: Optional[str] = None,
-        host: Optional[str] = None,
-        port: Optional[int] = None,
+        connection: psycopg2.extensions.connection | None = None,
+        db_name: str | None = None,
+        user: str | None = None,
+        password: str | None = None,
+        host: str | None = None,
+        port: int | None = None,
         run_queries: bool = True,
         inspect_queries: bool = False,
         summarize_tables: bool = True,
@@ -30,12 +32,12 @@ class PostgresTools(Toolkit):
         **kwargs,
     ):
         super().__init__(name="postgres_tools", **kwargs)
-        self._connection: Optional[psycopg2.extensions.connection] = connection
-        self.db_name: Optional[str] = db_name
-        self.user: Optional[str] = user
-        self.password: Optional[str] = password
-        self.host: Optional[str] = host
-        self.port: Optional[int] = port
+        self._connection: psycopg2.extensions.connection | None = connection
+        self.db_name: str | None = db_name
+        self.user: str | None = user
+        self.password: str | None = password
+        self.host: str | None = host
+        self.port: int | None = port
         self.table_schema: str = table_schema
 
         self.register(self.show_tables)
@@ -57,7 +59,7 @@ class PostgresTools(Toolkit):
         :return psycopg2.extensions.connection: psycopg2 connection
         """
         if self._connection is None:
-            connection_kwargs: Dict[str, Any] = {}
+            connection_kwargs: dict[str, Any] = {}
             if self.db_name is not None:
                 connection_kwargs["database"] = self.db_name
             if self.user is not None:
@@ -179,7 +181,7 @@ class PostgresTools(Toolkit):
         log_debug(f"Explain plan: {explain_plan}")
         return explain_plan
 
-    def export_table_to_path(self, table: str, path: Optional[str] = None) -> str:
+    def export_table_to_path(self, table: str, path: str | None = None) -> str:
         """Save a table in CSV format.
         If the path is provided, the table will be saved under that path.
             Eg: If path is /tmp, the table will be saved as /tmp/table.csv

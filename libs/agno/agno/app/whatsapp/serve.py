@@ -1,4 +1,4 @@
-from typing import Union
+from __future__ import annotations
 
 from fastapi import FastAPI
 
@@ -6,7 +6,7 @@ from agno.utils.log import logger
 
 
 def serve_whatsapp_app(
-    app: Union[str, FastAPI],
+    app: str | FastAPI,
     *,
     host: str = "localhost",
     port: int = 7777,

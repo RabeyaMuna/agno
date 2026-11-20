@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import json
 from os import getenv
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from agno.tools import Toolkit
 from agno.utils.log import log_debug, log_info, logger
@@ -47,20 +49,20 @@ class ExaTools(Toolkit):
         text_length_limit: int = 1000,
         highlights: bool = True,
         summary: bool = False,
-        api_key: Optional[str] = None,
-        num_results: Optional[int] = None,
+        api_key: str | None = None,
+        num_results: int | None = None,
         livecrawl: str = "always",
-        start_crawl_date: Optional[str] = None,
-        end_crawl_date: Optional[str] = None,
-        start_published_date: Optional[str] = None,
-        end_published_date: Optional[str] = None,
-        use_autoprompt: Optional[bool] = None,
-        type: Optional[str] = None,
-        category: Optional[str] = None,
-        include_domains: Optional[List[str]] = None,
-        exclude_domains: Optional[List[str]] = None,
+        start_crawl_date: str | None = None,
+        end_crawl_date: str | None = None,
+        start_published_date: str | None = None,
+        end_published_date: str | None = None,
+        use_autoprompt: bool | None = None,
+        type: str | None = None,
+        category: str | None = None,
+        include_domains: list[str] | None = None,
+        exclude_domains: list[str] | None = None,
         show_results: bool = False,
-        model: Optional[str] = None,
+        model: str | None = None,
         **kwargs,
     ):
         super().__init__(name="exa", **kwargs)
@@ -76,18 +78,18 @@ class ExaTools(Toolkit):
         self.text_length_limit: int = text_length_limit
         self.highlights: bool = highlights
         self.summary: bool = summary
-        self.num_results: Optional[int] = num_results
+        self.num_results: int | None = num_results
         self.livecrawl: str = livecrawl
-        self.start_crawl_date: Optional[str] = start_crawl_date
-        self.end_crawl_date: Optional[str] = end_crawl_date
-        self.start_published_date: Optional[str] = start_published_date
-        self.end_published_date: Optional[str] = end_published_date
-        self.use_autoprompt: Optional[bool] = use_autoprompt
-        self.type: Optional[str] = type
-        self.category: Optional[str] = category
-        self.include_domains: Optional[List[str]] = include_domains
-        self.exclude_domains: Optional[List[str]] = exclude_domains
-        self.model: Optional[str] = model
+        self.start_crawl_date: str | None = start_crawl_date
+        self.end_crawl_date: str | None = end_crawl_date
+        self.start_published_date: str | None = start_published_date
+        self.end_published_date: str | None = end_published_date
+        self.use_autoprompt: bool | None = use_autoprompt
+        self.type: str | None = type
+        self.category: str | None = category
+        self.include_domains: list[str] | None = include_domains
+        self.exclude_domains: list[str] | None = exclude_domains
+        self.model: str | None = model
 
         if search:
             self.register(self.search_exa)
@@ -123,7 +125,7 @@ class ExaTools(Toolkit):
             exa_results_parsed.append(result_dict)
         return json.dumps(exa_results_parsed, indent=4)
 
-    def search_exa(self, query: str, num_results: int = 5, category: Optional[str] = None) -> str:
+    def search_exa(self, query: str, num_results: int = 5, category: str | None = None) -> str:
         """Use this function to search Exa (a web search engine) for a query.
 
         Args:
@@ -139,7 +141,7 @@ class ExaTools(Toolkit):
         try:
             if self.show_results:
                 log_info(f"Searching exa for: {query}")
-            search_kwargs: Dict[str, Any] = {
+            search_kwargs: dict[str, Any] = {
                 "text": self.text,
                 "highlights": self.highlights,
                 "summary": self.summary,
@@ -178,7 +180,7 @@ class ExaTools(Toolkit):
             str: The search results in JSON format.
         """
 
-        query_kwargs: Dict[str, Any] = {
+        query_kwargs: dict[str, Any] = {
             "text": self.text,
             "highlights": self.highlights,
             "summary": self.summary,
@@ -211,7 +213,7 @@ class ExaTools(Toolkit):
             str: The search results in JSON format.
         """
 
-        query_kwargs: Dict[str, Any] = {
+        query_kwargs: dict[str, Any] = {
             "text": self.text,
             "highlights": self.highlights,
             "summary": self.summary,
@@ -255,7 +257,7 @@ class ExaTools(Toolkit):
         try:
             if self.show_results:
                 log_info(f"Generating answer for query: {query}")
-            answer_kwargs: Dict[str, Any] = {
+            answer_kwargs: dict[str, Any] = {
                 "model": self.model,
                 "text": text,
             }

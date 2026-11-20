@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import os
-from typing import Optional
 
 import httpx
 import requests
@@ -161,7 +162,7 @@ async def upload_media_async(media_data: bytes, mime_type: str, filename: str = 
 async def send_image_message_async(
     media_id: str,
     recipient: str,
-    text: Optional[str] = None,
+    text: str | None = None,
 ):
     """Send an image message to a WhatsApp user (asynchronous version).
 
@@ -204,14 +205,14 @@ async def send_image_message_async(
         log_error(f"Error response: {e.response.text if hasattr(e, 'response') else 'No response text'}")
         raise
     except Exception as e:
-        log_error(f"Unexpected error sending WhatsApp image message: {str(e)}")
+        log_error(f"Unexpected error sending WhatsApp image message: {e!s}")
         raise
 
 
 def send_image_message(
     media_id: str,
     recipient: str,
-    text: Optional[str] = None,
+    text: str | None = None,
 ):
     """Send an image message to a WhatsApp user (synchronous version).
 
@@ -252,5 +253,5 @@ def send_image_message(
         log_error(f"Error response: {e.response.text if hasattr(e, 'response') else 'No response text'}")
         raise
     except Exception as e:
-        log_error(f"Unexpected error sending WhatsApp image message: {str(e)}")
+        log_error(f"Unexpected error sending WhatsApp image message: {e!s}")
         raise

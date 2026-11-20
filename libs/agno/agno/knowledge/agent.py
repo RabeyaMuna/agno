@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import asyncio
+from collections.abc import AsyncIterator, Iterator
 from pathlib import Path
-from typing import Any, AsyncIterator, Dict, Iterator, List, Optional, Set, Tuple
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -16,43 +19,43 @@ class AgentKnowledge(BaseModel):
     """Base class for Agent knowledge"""
 
     # Reader for reading documents from files, pdfs, urls, etc.
-    reader: Optional[Reader] = None
+    reader: Reader | None = None
     # Vector db for storing knowledge
-    vector_db: Optional[VectorDb] = None
+    vector_db: VectorDb | None = None
     # Number of relevant documents to return on search
     num_documents: int = 5
     # Number of documents to optimize the vector db on
-    optimize_on: Optional[int] = 1000
+    optimize_on: int | None = 1000
 
     chunking_strategy: ChunkingStrategy = Field(default_factory=FixedSizeChunking)
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    valid_metadata_filters: Set[str] = None  # type: ignore
+    valid_metadata_filters: set[str] = None  # type: ignore
 
     @model_validator(mode="after")
-    def update_reader(self) -> "AgentKnowledge":
+    def update_reader(self) -> AgentKnowledge:
         if self.reader is not None and self.reader.chunking_strategy is None:
             self.reader.chunking_strategy = self.chunking_strategy
         return self
 
     @property
-    def document_lists(self) -> Iterator[List[Document]]:
+    def document_lists(self) -> Iterator[list[Document]]:
         """Iterator that yields lists of documents in the knowledge base
         Each object yielded by the iterator is a list of documents.
         """
         raise NotImplementedError
 
     @property
-    def async_document_lists(self) -> AsyncIterator[List[Document]]:
+    def async_document_lists(self) -> AsyncIterator[list[Document]]:
         """Iterator that yields lists of documents in the knowledge base
         Each object yielded by the iterator is a list of documents.
         """
         raise NotImplementedError
 
     def search(
-        self, query: str, num_documents: Optional[int] = None, filters: Optional[Dict[str, Any]] = None
-    ) -> List[Document]:
+        self, query: str, num_documents: int | None = None, filters: dict[str, Any] | None = None
+    ) -> list[Document]:
         """Returns relevant documents matching a query"""
         try:
             if self.vector_db is None:
@@ -67,8 +70,8 @@ class AgentKnowledge(BaseModel):
             return []
 
     async def async_search(
-        self, query: str, num_documents: Optional[int] = None, filters: Optional[Dict[str, Any]] = None
-    ) -> List[Document]:
+        self, query: str, num_documents: int | None = None, filters: dict[str, Any] | None = None
+    ) -> list[Document]:
         """Returns relevant documents matching a query"""
         try:
             if self.vector_db is None:
@@ -190,10 +193,10 @@ class AgentKnowledge(BaseModel):
 
     def load_documents(
         self,
-        documents: List[Document],
+        documents: list[Document],
         upsert: bool = False,
         skip_existing: bool = True,
-        filters: Optional[Dict[str, Any]] = None,
+        filters: dict[str, Any] | None = None,
     ) -> None:
         """Load documents to the knowledge base
 
@@ -233,10 +236,10 @@ class AgentKnowledge(BaseModel):
 
     async def async_load_documents(
         self,
-        documents: List[Document],
+        documents: list[Document],
         upsert: bool = False,
         skip_existing: bool = True,
-        filters: Optional[Dict[str, Any]] = None,
+        filters: dict[str, Any] | None = None,
     ) -> None:
         """Load documents to the knowledge base
 
@@ -302,7 +305,7 @@ class AgentKnowledge(BaseModel):
         document: Document,
         upsert: bool = False,
         skip_existing: bool = True,
-        filters: Optional[Dict[str, Any]] = None,
+        filters: dict[str, Any] | None = None,
     ) -> None:
         """Load a document to the knowledge base
 
@@ -319,7 +322,7 @@ class AgentKnowledge(BaseModel):
         document: Document,
         upsert: bool = False,
         skip_existing: bool = True,
-        filters: Optional[Dict[str, Any]] = None,
+        filters: dict[str, Any] | None = None,
     ) -> None:
         """Load a document to the knowledge base
 
@@ -335,10 +338,10 @@ class AgentKnowledge(BaseModel):
 
     def load_dict(
         self,
-        document: Dict[str, Any],
+        document: dict[str, Any],
         upsert: bool = False,
         skip_existing: bool = True,
-        filters: Optional[Dict[str, Any]] = None,
+        filters: dict[str, Any] | None = None,
     ) -> None:
         """Load a dictionary representation of a document to the knowledge base
 
@@ -353,7 +356,7 @@ class AgentKnowledge(BaseModel):
         )
 
     def load_json(
-        self, document: str, upsert: bool = False, skip_existing: bool = True, filters: Optional[Dict[str, Any]] = None
+        self, document: str, upsert: bool = False, skip_existing: bool = True, filters: dict[str, Any] | None = None
     ) -> None:
         """Load a json representation of a document to the knowledge base
 
@@ -368,7 +371,7 @@ class AgentKnowledge(BaseModel):
         )
 
     def load_text(
-        self, text: str, upsert: bool = False, skip_existing: bool = True, filters: Optional[Dict[str, Any]] = None
+        self, text: str, upsert: bool = False, skip_existing: bool = True, filters: dict[str, Any] | None = None
     ) -> None:
         """Load a text to the knowledge base
 
@@ -397,7 +400,7 @@ class AgentKnowledge(BaseModel):
 
         return self.vector_db.delete()
 
-    def filter_existing_documents(self, documents: List[Document]) -> List[Document]:
+    def filter_existing_documents(self, documents: list[Document]) -> list[Document]:
         """Filter out documents that already exist in the vector database.
 
         This helper method is used across various knowledge base implementations
@@ -434,7 +437,7 @@ class AgentKnowledge(BaseModel):
 
         return filtered_documents
 
-    def _track_metadata_structure(self, metadata: Optional[Dict[str, Any]]) -> None:
+    def _track_metadata_structure(self, metadata: dict[str, Any] | None) -> None:
         """Track metadata structure to enable filter extraction from queries
 
         Args:
@@ -445,10 +448,10 @@ class AgentKnowledge(BaseModel):
                 self.valid_metadata_filters = set()
 
             # Extract top-level keys to track as potential filter fields
-            for key in metadata.keys():
+            for key in metadata:
                 self.valid_metadata_filters.add(key)
 
-    def validate_filters(self, filters: Optional[Dict[str, Any]]) -> Tuple[Dict[str, Any], List[str]]:
+    def validate_filters(self, filters: dict[str, Any] | None) -> tuple[dict[str, Any], list[str]]:
         if not filters:
             return {}, []
 
@@ -485,8 +488,8 @@ class AgentKnowledge(BaseModel):
     def prepare_load(
         self,
         file_path: Path,
-        allowed_formats: Optional[List[str]],
-        metadata: Optional[Dict[str, Any]] = None,
+        allowed_formats: list[str] | None,
+        metadata: dict[str, Any] | None = None,
         recreate: bool = False,
         is_url: bool = False,
     ) -> bool:
@@ -533,8 +536,8 @@ class AgentKnowledge(BaseModel):
     async def aprepare_load(
         self,
         file_path: Path,
-        allowed_formats: List[str],
-        metadata: Optional[Dict[str, Any]] = None,
+        allowed_formats: list[str],
+        metadata: dict[str, Any] | None = None,
         recreate: bool = False,
         is_url: bool = False,
     ) -> bool:
@@ -580,8 +583,8 @@ class AgentKnowledge(BaseModel):
 
     def process_documents(
         self,
-        documents: List[Document],
-        metadata: Optional[Dict[str, Any]] = None,
+        documents: list[Document],
+        metadata: dict[str, Any] | None = None,
         upsert: bool = False,
         skip_existing: bool = True,
         source_info: str = "documents",
@@ -621,8 +624,8 @@ class AgentKnowledge(BaseModel):
 
     async def aprocess_documents(
         self,
-        documents: List[Document],
-        metadata: Optional[Dict[str, Any]] = None,
+        documents: list[Document],
+        metadata: dict[str, Any] | None = None,
         upsert: bool = False,
         skip_existing: bool = True,
         source_info: str = "documents",

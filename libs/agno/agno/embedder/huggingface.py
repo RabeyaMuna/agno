@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import json
 from dataclasses import dataclass
 from os import getenv
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from agno.embedder.base import Embedder
 from agno.utils.log import logger
@@ -18,16 +20,16 @@ class HuggingfaceCustomEmbedder(Embedder):
     """Huggingface Custom Embedder"""
 
     id: str = "jinaai/jina-embeddings-v2-base-code"
-    api_key: Optional[str] = getenv("HUGGINGFACE_API_KEY")
+    api_key: str | None = getenv("HUGGINGFACE_API_KEY")
     task: str = "feature-extraction"
-    client_params: Optional[Dict[str, Any]] = None
-    huggingface_client: Optional[InferenceClient] = None
+    client_params: dict[str, Any] | None = None
+    huggingface_client: InferenceClient | None = None
 
     @property
     def client(self) -> InferenceClient:
         if self.huggingface_client:
             return self.huggingface_client
-        _client_params: Dict[str, Any] = {}
+        _client_params: dict[str, Any] = {}
         if self.api_key:
             _client_params["api_key"] = self.api_key
         if self.client_params:
@@ -38,7 +40,7 @@ class HuggingfaceCustomEmbedder(Embedder):
     def _response(self, text: str):
         return self.client.post(json={"inputs": text}, model=self.id, task=self.task)
 
-    def get_embedding(self, text: str) -> List[float]:
+    def get_embedding(self, text: str) -> list[float]:
         response = self._response(text=text)
         try:
             decoded_string = response.decode("utf-8")
@@ -48,5 +50,5 @@ class HuggingfaceCustomEmbedder(Embedder):
             logger.warning(e)
             return []
 
-    def get_embedding_and_usage(self, text: str) -> Tuple[List[float], Optional[Dict]]:
+    def get_embedding_and_usage(self, text: str) -> tuple[list[float], dict | None]:
         return self.get_embedding(text=text), None

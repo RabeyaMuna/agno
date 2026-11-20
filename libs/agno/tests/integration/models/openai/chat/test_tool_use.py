@@ -1,9 +1,9 @@
-from typing import Optional
+from __future__ import annotations
 
 import pytest
 from pydantic import BaseModel, Field
 
-from agno.agent import Agent, RunResponse  # noqa
+from agno.agent import Agent, RunResponse
 from agno.models.openai import OpenAIChat
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.exa import ExaTools
@@ -224,7 +224,7 @@ def test_tool_call_custom_tool_untyped_parameters():
 
 @pytest.mark.parametrize("model", ["gpt-4o-mini", "o3"])
 def test_tool_call_custom_tool_optional_parameters(model: str):
-    def get_the_weather(city: Optional[str] = None):
+    def get_the_weather(city: str | None = None):
         """
         Get the weather in a city
 

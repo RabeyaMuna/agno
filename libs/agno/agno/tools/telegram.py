@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import os
-from typing import Optional, Union
 
 import httpx
 
@@ -10,7 +11,7 @@ from agno.utils.log import log_debug, logger
 class TelegramTools(Toolkit):
     base_url = "https://api.telegram.org"
 
-    def __init__(self, chat_id: Union[str, int], token: Optional[str] = None, **kwargs):
+    def __init__(self, chat_id: str | int, token: str | None = None, **kwargs):
         super().__init__(name="telegram", **kwargs)
 
         self.token = token or os.getenv("TELEGRAM_TOKEN")

@@ -1,14 +1,14 @@
-from typing import Optional, Tuple
+from __future__ import annotations
 
 
 def parse_resource_filter(
     resource_filter: str,
-) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]:
-    target_env: Optional[str] = None
-    target_infra: Optional[str] = None
-    target_group: Optional[str] = None
-    target_name: Optional[str] = None
-    target_type: Optional[str] = None
+) -> tuple[str | None, str | None, str | None, str | None, str | None]:
+    target_env: str | None = None
+    target_infra: str | None = None
+    target_group: str | None = None
+    target_name: str | None = None
+    target_type: str | None = None
 
     filters = resource_filter.split(":")
     num_filters = len(filters)

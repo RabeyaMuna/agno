@@ -1,10 +1,12 @@
+from __future__ import annotations
+
+import sys
 from pathlib import Path
-from typing import Optional
 
 from agno.utils.log import logger
 
 
-def get_workspace_dir_from_env() -> Optional[Path]:
+def get_workspace_dir_from_env() -> Path | None:
     from os import getenv
 
     from agno.constants import WORKSPACE_DIR_ENV_VAR
@@ -45,4 +47,4 @@ def get_workspace_dir_path(ws_root_path: Path) -> Path:
                 return agno_conf_workspace_dir_path
 
     logger.error(f"Could not find a workspace at: {ws_root_path}")
-    exit(0)
+    sys.exit(0)

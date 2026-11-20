@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import json
 import re
 from os import getenv
-from typing import Optional
 
 from agno.tools import Toolkit
 from agno.utils.log import log_debug, logger
@@ -20,9 +21,9 @@ class ZendeskTools(Toolkit):
 
     def __init__(
         self,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        company_name: Optional[str] = None,
+        username: str | None = None,
+        password: str | None = None,
+        company_name: str | None = None,
         **kwargs,
     ):
         """

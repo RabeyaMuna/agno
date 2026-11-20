@@ -1,4 +1,6 @@
-from typing import Iterator, List
+from __future__ import annotations
+
+from collections.abc import Iterator
 
 from agno.document import Document
 from agno.knowledge.agent import AgentKnowledge
@@ -6,10 +8,10 @@ from agno.utils.log import log_debug
 
 
 class CombinedKnowledgeBase(AgentKnowledge):
-    sources: List[AgentKnowledge] = []
+    sources: list[AgentKnowledge] = []
 
     @property
-    def document_lists(self) -> Iterator[List[Document]]:
+    def document_lists(self) -> Iterator[list[Document]]:
         """Iterate over knowledge bases and yield lists of documents.
         Each object yielded by the iterator is a list of documents.
 

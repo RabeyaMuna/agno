@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import json
 import os
-from typing import Optional
 
 from agno.tools.toolkit import Toolkit
 from agno.utils.log import logger
@@ -13,9 +14,7 @@ except ImportError:
 
 
 class WebexTools(Toolkit):
-    def __init__(
-        self, send_message: bool = True, list_rooms: bool = True, access_token: Optional[str] = None, **kwargs
-    ):
+    def __init__(self, send_message: bool = True, list_rooms: bool = True, access_token: str | None = None, **kwargs):
         super().__init__(name="webex", **kwargs)
         if access_token is None:
             access_token = os.getenv("WEBEX_ACCESS_TOKEN")

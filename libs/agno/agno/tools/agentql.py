@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from os import getenv
-from typing import Optional
 
 from agno.tools import Toolkit
 from agno.utils.log import log_info
@@ -12,7 +13,7 @@ except ImportError:
 
 
 class AgentQLTools(Toolkit):
-    def __init__(self, api_key: Optional[str] = None, scrape: bool = True, agentql_query: str = "", **kwargs):
+    def __init__(self, api_key: str | None = None, scrape: bool = True, agentql_query: str = "", **kwargs):
         super().__init__(name="agentql_tools", **kwargs)
 
         self.api_key = api_key or getenv("AGENTQL_API_KEY")

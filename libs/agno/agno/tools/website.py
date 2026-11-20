@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import json
-from typing import List, Optional, Union, cast
+from typing import cast
 
 from agno.document import Document
 from agno.knowledge.combined import CombinedKnowledgeBase
@@ -9,9 +11,9 @@ from agno.utils.log import log_debug
 
 
 class WebsiteTools(Toolkit):
-    def __init__(self, knowledge_base: Optional[Union[WebsiteKnowledgeBase, CombinedKnowledgeBase]] = None, **kwargs):
+    def __init__(self, knowledge_base: WebsiteKnowledgeBase | CombinedKnowledgeBase | None = None, **kwargs):
         super().__init__(name="website_tools", **kwargs)
-        self.knowledge_base: Optional[Union[WebsiteKnowledgeBase, CombinedKnowledgeBase]] = knowledge_base
+        self.knowledge_base: WebsiteKnowledgeBase | CombinedKnowledgeBase | None = knowledge_base
 
         if self.knowledge_base is not None:
             if isinstance(self.knowledge_base, WebsiteKnowledgeBase):
@@ -79,5 +81,5 @@ class WebsiteTools(Toolkit):
         website = WebsiteReader()
 
         log_debug(f"Reading website: {url}")
-        relevant_docs: List[Document] = website.read(url=url)
+        relevant_docs: list[Document] = website.read(url=url)
         return json.dumps([doc.to_dict() for doc in relevant_docs])

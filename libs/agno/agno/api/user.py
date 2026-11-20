@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from __future__ import annotations
 
 from httpx import Response, codes
 
@@ -28,7 +28,7 @@ def user_ping() -> bool:
     return False
 
 
-def authenticate_and_get_user(auth_token: str, existing_user: Optional[UserSchema] = None) -> Optional[UserSchema]:
+def authenticate_and_get_user(auth_token: str, existing_user: UserSchema | None = None) -> UserSchema | None:
     if not agno_cli_settings.api_enabled:
         return None
 
@@ -62,7 +62,7 @@ def authenticate_and_get_user(auth_token: str, existing_user: Optional[UserSchem
     return None
 
 
-def sign_in_user(sign_in_data: EmailPasswordAuthSchema) -> Optional[UserSchema]:
+def sign_in_user(sign_in_data: EmailPasswordAuthSchema) -> UserSchema | None:
     if not agno_cli_settings.api_enabled:
         return None
 
@@ -99,10 +99,10 @@ def user_is_authenticated() -> bool:
         return False
 
     logger.debug("--**-- Checking if user is authenticated")
-    agno_config: Optional[AgnoCliConfig] = AgnoCliConfig.from_saved_config()
+    agno_config: AgnoCliConfig | None = AgnoCliConfig.from_saved_config()
     if agno_config is None:
         return False
-    user: Optional[UserSchema] = agno_config.user
+    user: UserSchema | None = agno_config.user
     if user is None:
         return False
 
@@ -114,7 +114,7 @@ def user_is_authenticated() -> bool:
             if invalid_response(r):
                 return False
 
-            response_json: Union[Dict, List] = r.json()
+            response_json: dict | list = r.json()
             if response_json is None or not isinstance(response_json, dict):
                 logger.error("Could not parse response")
                 return False
@@ -125,7 +125,7 @@ def user_is_authenticated() -> bool:
     return False
 
 
-def create_anon_user() -> Optional[UserSchema]:
+def create_anon_user() -> UserSchema | None:
     if not agno_cli_settings.api_enabled:
         return None
 

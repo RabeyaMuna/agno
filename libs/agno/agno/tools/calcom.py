@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 from datetime import datetime
 from os import getenv
-from typing import Dict, Optional
 
 from agno.tools import Toolkit
 from agno.utils.log import logger
@@ -15,9 +16,9 @@ except ImportError:
 class CalComTools(Toolkit):
     def __init__(
         self,
-        api_key: Optional[str] = None,
-        event_type_id: Optional[int] = None,
-        user_timezone: Optional[str] = None,
+        api_key: str | None = None,
+        event_type_id: int | None = None,
+        user_timezone: str | None = None,
         get_available_slots: bool = True,
         create_booking: bool = True,
         get_upcoming_bookings: bool = True,
@@ -76,7 +77,7 @@ class CalComTools(Toolkit):
         user_dt = utc_dt.astimezone(user_tz)
         return user_dt.strftime("%Y-%m-%d %H:%M %Z")
 
-    def _get_headers(self, api_version: str = "2024-08-13") -> Dict[str, str]:
+    def _get_headers(self, api_version: str = "2024-08-13") -> dict[str, str]:
         """Get headers for Cal.com API requests.
 
         Args:
@@ -119,7 +120,7 @@ class CalComTools(Toolkit):
             if response.status_code == 200:
                 slots = response.json()["data"]["slots"]
                 available_slots = []
-                for date, times in slots.items():
+                for times in slots.values():
                     for slot in times:
                         user_time = self._convert_to_user_timezone(slot["time"])
                         available_slots.append(user_time)
@@ -127,7 +128,7 @@ class CalComTools(Toolkit):
             return f"Failed to fetch slots: {response.text}"
         except Exception as e:
             logger.error(f"Error fetching available slots: {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e!s}"
 
     def create_booking(
         self,
@@ -162,9 +163,9 @@ class CalComTools(Toolkit):
             return f"Failed to create booking: {response.text}"
         except Exception as e:
             logger.error(f"Error creating booking: {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e!s}"
 
-    def get_upcoming_bookings(self, email: Optional[str] = None) -> str:
+    def get_upcoming_bookings(self, email: str | None = None) -> str:
         """Get all upcoming bookings for an attendee.
 
         Args:
@@ -195,7 +196,7 @@ class CalComTools(Toolkit):
             return f"Failed to fetch bookings: {response.text}"
         except Exception as e:
             logger.error(f"Error fetching upcoming bookings: {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e!s}"
 
     def reschedule_booking(
         self,
@@ -227,7 +228,7 @@ class CalComTools(Toolkit):
             return f"Failed to reschedule booking: {response.text}"
         except Exception as e:
             logger.error(f"Error rescheduling booking: {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e!s}"
 
     def cancel_booking(self, booking_uid: str, reason: str) -> str:
         """Cancel an existing booking.
@@ -249,4 +250,4 @@ class CalComTools(Toolkit):
             return f"Failed to cancel booking: {response.text}"
         except Exception as e:
             logger.error(f"Error cancelling booking: {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e!s}"

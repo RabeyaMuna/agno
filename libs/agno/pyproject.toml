@@ -259,7 +259,50 @@ asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 line-length = 120
-# Ignore `F401` (import violations) in all `__init__.py` files
+target-version = "py39"
+
+[tool.ruff.lint]
+# Ignore rules that are too numerous to fix in existing codebase
+ignore = [
+    "ASYNC230",  # Async generator should not be immediately awaited
+    "ASYNC251",  # Async functions should not call time.sleep
+    "B008",      # Function call in argument defaults
+    "B017",      # Exception handling
+    "B018",      # Found useless expression
+    "B020",      # Loop variable overwritten
+    "B023",      # Function definition in loop
+    "BLE001",    # Blind exception handling
+    "DTZ001",    # Datetime without timezone
+    "DTZ005",    # Datetime.now without tz
+    "DTZ006",    # Datetime with timezone
+    "DTZ011",    # Datetime with timezone
+    "DTZ901",    # Datetime with timezone
+    "N999",      # Naming convention
+    "PERF402",   # Performance issue
+    "PLE0704",   # Invalid exception
+    "PLC0206",   # Invalid exception
+    "PLW0127",   # Invalid exception
+    "PLW0602",   # Invalid exception
+    "PLW1510",   # Invalid exception
+    "RUF012",    # Ruff specific
+    "S102",      # Security issue
+    "S110",      # Try-except-pass
+    "S112",      # Security issue
+    "SIM102",    # Use single if statement
+    "SIM103",    # Use single if statement
+    "SIM113",    # Use enumerate
+    "SIM115",    # Use single if statement
+    "SIM117",    # Use a single with statement
+    "TRY002",    # Create your own exception
+    "TRY003",    # Create your own exception
+    "TRY203",    # Remove exception handler; error is immediately re-raised
+    "TRY004",    # Prefer TypeError exception
+    "UP006",     # Use dict instead of Dict
+    "UP033",     # Use X | Y for type annotations
+    "UP035",     # Deprecated type annotations
+    "YTT204",    # Yaml loading
+]
+
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 
