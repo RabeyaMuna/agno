@@ -462,7 +462,6 @@ class PineconeDb(VectorDb):
         This method can be left empty as Pinecone automatically optimizes indexes.
 
         """
-        pass
 
     def delete(self, namespace: Optional[str] = None) -> bool:
         """Clear the index.

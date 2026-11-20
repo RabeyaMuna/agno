@@ -11,7 +11,7 @@ def is_groq_reasoning_model(reasoning_model: Model) -> bool:
     return reasoning_model.__class__.__name__ == "Groq" and "deepseek" in reasoning_model.id.lower()
 
 
-def get_groq_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
+def get_groq_reasoning(reasoning_agent: Agent, messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
     from agno.run.response import RunResponse
 
     # Update system message role to "system"
@@ -41,7 +41,7 @@ def get_groq_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> Opt
     )
 
 
-async def aget_groq_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
+async def aget_groq_reasoning(reasoning_agent: Agent, messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
     from agno.run.response import RunResponse
 
     # Update system message role to "system"

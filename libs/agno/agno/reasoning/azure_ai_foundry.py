@@ -16,7 +16,7 @@ def is_ai_foundry_reasoning_model(reasoning_model: Model) -> bool:
     )
 
 
-def get_ai_foundry_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
+def get_ai_foundry_reasoning(reasoning_agent: Agent, messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
     from agno.run.response import RunResponse
 
     try:
@@ -42,7 +42,7 @@ def get_ai_foundry_reasoning(reasoning_agent: "Agent", messages: List[Message]) 
     )
 
 
-async def aget_ai_foundry_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
+async def aget_ai_foundry_reasoning(reasoning_agent: Agent, messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
     from agno.run.response import RunResponse
 
     try:

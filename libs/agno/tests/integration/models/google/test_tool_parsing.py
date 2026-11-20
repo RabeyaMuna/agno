@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from pydantic import BaseModel
 
@@ -78,7 +78,7 @@ def test_optional_parameters_tool_parsing():
 
 def test_union_type_parameters_tool_parsing():
     def generate_weather_string(
-        degrees: Union[int, float], city: str = "New York", condition: Optional[str] = None
+        degrees: float, city: str = "New York", condition: Optional[str] = None
     ) -> str:
         """
         Generate a weather string for any city
@@ -105,7 +105,7 @@ def test_union_type_parameters_tool_parsing():
 
 
 def test_python312_union_syntax_tool_parsing():
-    def get_weather_data(temperature: int | float, location: str = "San Francisco", unit: str | None = None) -> str:
+    def get_weather_data(temperature: float, location: str = "San Francisco", unit: str | None = None) -> str:
         """
         Get weather data for a location
 

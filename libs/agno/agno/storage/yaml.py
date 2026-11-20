@@ -54,22 +54,14 @@ class YamlStorage(Storage):
                 data = self.deserialize(f.read())
                 if user_id or entity_id:
                     if user_id and entity_id:
-                        if self.mode == "agent" and data["agent_id"] == entity_id and data["user_id"] == user_id:
-                            session_ids.append(data["session_id"])
-                        elif self.mode == "team" and data["team_id"] == entity_id and data["user_id"] == user_id:
-                            session_ids.append(data["session_id"])
-                        elif (
+                        if self.mode == "agent" and data["agent_id"] == entity_id and data["user_id"] == user_id or self.mode == "team" and data["team_id"] == entity_id and data["user_id"] == user_id or (
                             self.mode == "workflow" and data["workflow_id"] == entity_id and data["user_id"] == user_id
                         ):
                             session_ids.append(data["session_id"])
                     elif user_id and data["user_id"] == user_id:
                         session_ids.append(data["session_id"])
                     elif entity_id:
-                        if self.mode == "agent" and data["agent_id"] == entity_id:
-                            session_ids.append(data["session_id"])
-                        elif self.mode == "team" and data["team_id"] == entity_id:
-                            session_ids.append(data["session_id"])
-                        elif self.mode == "workflow" and data["workflow_id"] == entity_id:
+                        if self.mode == "agent" and data["agent_id"] == entity_id or self.mode == "team" and data["team_id"] == entity_id or self.mode == "workflow" and data["workflow_id"] == entity_id:
                             session_ids.append(data["session_id"])
                 else:
                     # No filters applied, add all session_ids
@@ -153,4 +145,3 @@ class YamlStorage(Storage):
 
     def upgrade_schema(self) -> None:
         """Upgrade the schema of the storage."""
-        pass

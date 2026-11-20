@@ -240,7 +240,6 @@ class MongoDbStorage(Storage):
 
     def upgrade_schema(self) -> None:
         """Placeholder for schema upgrades"""
-        pass
 
     def __deepcopy__(self, memo):
         """Create a deep copy of the MongoDbStorage instance"""

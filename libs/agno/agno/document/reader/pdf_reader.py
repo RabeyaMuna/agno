@@ -9,7 +9,7 @@ from agno.utils.http import async_fetch_with_retry, fetch_with_retry
 from agno.utils.log import log_info, logger
 
 try:
-    from pypdf import PdfReader as DocumentReader  # noqa: F401
+    from pypdf import PdfReader as DocumentReader
     from pypdf.errors import PdfStreamError
 except ImportError:
     raise ImportError("`pypdf` not installed. Please install it via `pip install pypdf`.")

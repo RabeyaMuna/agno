@@ -4,7 +4,7 @@ from agno.document import Document
 from agno.knowledge.agent import AgentKnowledge
 
 try:
-    import wikipedia  # noqa: F401
+    import wikipedia
 except ImportError:
     raise ImportError("The `wikipedia` package is not installed. Please install it via `pip install wikipedia`.")
 

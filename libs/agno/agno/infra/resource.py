@@ -108,7 +108,7 @@ class InfraResource(InfraBase):
                     output_file_path.parent.mkdir(parents=True, exist_ok=True)
                     output_file_path.touch(exist_ok=True)
                 write_yaml_file(output_file_path, self.active_resource)
-                logger.info(f"Resource saved to: {str(output_file_path)}")
+                logger.info(f"Resource saved to: {output_file_path!s}")
                 return True
             except Exception as e:
                 logger.error(f"Could not write {self.get_resource_name()} to file: {e}")
@@ -136,7 +136,7 @@ class InfraResource(InfraBase):
             try:
                 if output_file_path.exists() and output_file_path.is_file():
                     output_file_path.unlink()
-                    logger.debug(f"Output file deleted: {str(output_file_path)}")
+                    logger.debug(f"Output file deleted: {output_file_path!s}")
                     return True
             except Exception as e:
                 logger.error(f"Could not delete output file: {e}")

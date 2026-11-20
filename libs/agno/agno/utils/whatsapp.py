@@ -204,7 +204,7 @@ async def send_image_message_async(
         log_error(f"Error response: {e.response.text if hasattr(e, 'response') else 'No response text'}")
         raise
     except Exception as e:
-        log_error(f"Unexpected error sending WhatsApp image message: {str(e)}")
+        log_error(f"Unexpected error sending WhatsApp image message: {e!s}")
         raise
 
 
@@ -252,5 +252,5 @@ def send_image_message(
         log_error(f"Error response: {e.response.text if hasattr(e, 'response') else 'No response text'}")
         raise
     except Exception as e:
-        log_error(f"Unexpected error sending WhatsApp image message: {str(e)}")
+        log_error(f"Unexpected error sending WhatsApp image message: {e!s}")
         raise

@@ -299,7 +299,6 @@ class OllamaTools(Ollama):
                         tool_call_data = ToolCall()
                     except Exception as e:
                         log_warning(e)
-                        pass
 
             # Yield content if not a tool call and content is not None
             if not tool_call_data.response_is_tool_call and content_delta is not None:

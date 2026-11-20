@@ -142,10 +142,10 @@ class AwsBedrockEmbedder(Embedder):
             response_body = json.loads(response["body"].read().decode("utf-8"))
             return response_body
         except ClientError as e:
-            log_error(f"Unexpected error calling Bedrock API: {str(e)}")
+            log_error(f"Unexpected error calling Bedrock API: {e!s}")
             raise ModelProviderError(message=str(e.response), model_name="AwsBedrockEmbedder", model_id=self.id) from e
         except Exception as e:
-            log_error(f"Unexpected error calling Bedrock API: {str(e)}")
+            log_error(f"Unexpected error calling Bedrock API: {e!s}")
             raise ModelProviderError(message=str(e), model_name="AwsBedrockEmbedder", model_id=self.id) from e
 
     def get_embedding(self, text: str) -> List[float]:

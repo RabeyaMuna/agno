@@ -151,7 +151,7 @@ class WhatsAppTools(Toolkit):
             logger.error(f"Error response: {e.response.text if hasattr(e, 'response') else 'No response text'}")
             raise
         except Exception as e:
-            logger.error(f"Unexpected error sending WhatsApp message: {str(e)}")
+            logger.error(f"Unexpected error sending WhatsApp message: {e!s}")
             raise
 
     def send_template_message_sync(
@@ -242,7 +242,7 @@ class WhatsAppTools(Toolkit):
             logger.error(f"Error response: {e.response.text if hasattr(e, 'response') else 'No response text'}")
             raise
         except Exception as e:
-            logger.error(f"Unexpected error sending WhatsApp message: {str(e)}")
+            logger.error(f"Unexpected error sending WhatsApp message: {e!s}")
             raise
 
     async def send_template_message_async(

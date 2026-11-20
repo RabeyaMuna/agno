@@ -12,7 +12,7 @@ except (ModuleNotFoundError, ImportError):
     raise ImportError("`agno-aws` not installed. Please install using `pip install agno-aws`")
 
 try:
-    import textract  # noqa: F401
+    import textract
 except ImportError:
     raise ImportError("`textract` not installed. Please install it via `pip install textract`.")
 

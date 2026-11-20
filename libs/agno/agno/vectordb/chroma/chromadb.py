@@ -296,7 +296,7 @@ class ChromaDb(VectorDb):
             return {}
 
         # If filters already use ChromaDB operators ($eq, $ne, etc.), return as is
-        if any(key.startswith("$") for key in filters.keys()):
+        if any(key.startswith("$") for key in filters):
             return filters
 
         # Convert simple key-value pairs to ChromaDB's format

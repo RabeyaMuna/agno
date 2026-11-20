@@ -156,10 +156,10 @@ def process_image(image: Image) -> Optional[Dict[str, Any]]:
         return image_payload
 
     except (FileNotFoundError, IsADirectoryError, ValueError) as e:
-        log_error(f"Failed to process image due to invalid input: {str(e)}")
+        log_error(f"Failed to process image due to invalid input: {e!s}")
         return None  # Return None for handled validation errors
     except Exception as e:
-        log_error(f"An unexpected error occurred while processing image: {str(e)}")
+        log_error(f"An unexpected error occurred while processing image: {e!s}")
         # Depending on policy, you might want to return None or re-raise
         return None  # Return None for unexpected errors as well, preventing crashes
 
@@ -189,7 +189,7 @@ def images_to_message(images: Sequence[Image]) -> List[Dict[str, Any]]:
             if image_data:
                 image_messages.append(image_data)
         except Exception as e:
-            log_error(f"Failed to process image: {str(e)}")
+            log_error(f"Failed to process image: {e!s}")
             continue
 
     return image_messages

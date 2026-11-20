@@ -240,7 +240,7 @@ def deploy_playground_app(
             panels.pop()
             live_display.update(Group(*panels))
         except Exception as e:
-            status.update(f"[bold red]Deployment failed: {str(e)}[/bold red]")
+            status.update(f"[bold red]Deployment failed: {e!s}[/bold red]")
             panels[0] = create_error_panel(
                 create_deployment_info(app=app, root=root, elapsed_time=f"{response_timer.elapsed:.1f}s", error=str(e))
             )

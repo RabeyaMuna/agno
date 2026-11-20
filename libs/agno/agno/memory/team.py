@@ -34,7 +34,7 @@ class TeamRun:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "TeamRun":
+    def from_dict(cls, data: Dict[str, Any]) -> TeamRun:
         message = Message.model_validate(data.get("message")) if data.get("message") else None
         member_runs = (
             [AgentRun.model_validate(run) for run in data.get("member_runs", [])] if data.get("member_runs") else None
@@ -393,7 +393,7 @@ class TeamMemory:
         self.updating_memory = False
         return response
 
-    def deep_copy(self) -> "TeamMemory":
+    def deep_copy(self) -> TeamMemory:
         from copy import deepcopy
 
         # Create a shallow copy of the object

@@ -88,4 +88,4 @@ def deploy_playground_archive(name: str, tar_path: Path) -> bool:
             return True
 
     except Exception as e:
-        raise RuntimeError(f"Failed to deploy playground app: {str(e)}") from e
+        raise RuntimeError(f"Failed to deploy playground app: {e!s}") from e

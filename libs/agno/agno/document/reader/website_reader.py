@@ -12,7 +12,7 @@ from agno.document.reader.base import Reader
 from agno.utils.log import log_debug, logger
 
 try:
-    from bs4 import BeautifulSoup, Tag  # noqa: F401
+    from bs4 import BeautifulSoup, Tag
 except ImportError:
     raise ImportError("The `bs4` package is not installed. Please install it via `pip install beautifulsoup4`.")
 
@@ -205,7 +205,7 @@ class WebsiteReader(Reader):
                 # For the initial URL, we should raise the error
                 if current_url == url and not crawler_result:
                     # Wrap non-HTTP exceptions in a RequestError
-                    raise httpx.RequestError(f"Failed to crawl starting URL {url}: {str(e)}", request=None) from e
+                    raise httpx.RequestError(f"Failed to crawl starting URL {url}: {e!s}", request=None) from e
 
         # If we couldn't crawl any pages, raise an error
         if not crawler_result:
@@ -307,7 +307,7 @@ class WebsiteReader(Reader):
                     if current_url == url and not crawler_result:
                         # Wrap non-HTTP exceptions in a RequestError
                         raise httpx.RequestError(
-                            f"Failed to crawl starting URL {url} asynchronously: {str(e)}", request=None
+                            f"Failed to crawl starting URL {url} asynchronously: {e!s}", request=None
                         ) from e
 
         # If we couldn't crawl any pages, raise an error

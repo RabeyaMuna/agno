@@ -38,11 +38,9 @@ def authenticate_user() -> None:
     print_heading("Authenticating with agno.com")
 
     auth_server_port = get_port_for_auth_server()
-    redirect_uri = "http%3A%2F%2Flocalhost%3A{}%2Fauth".format(auth_server_port)
-    auth_url = "{}?source=cli&action=signin&redirection_supported=true&redirecturi={}".format(
-        agno_cli_settings.cli_auth_url, redirect_uri
-    )
-    print_info("\nYour browser will be opened to visit:\n{}".format(auth_url))
+    redirect_uri = f"http%3A%2F%2Flocalhost%3A{auth_server_port}%2Fauth"
+    auth_url = f"{agno_cli_settings.cli_auth_url}?source=cli&action=signin&redirection_supported=true&redirecturi={redirect_uri}"
+    print_info(f"\nYour browser will be opened to visit:\n{auth_url}")
     typer_launch(auth_url)
     print_info("\nWaiting for a response from the browser...\n")
 
@@ -74,7 +72,7 @@ def authenticate_user() -> None:
     else:
         agno_config.user = user
 
-    print_info("Welcome {}".format(user.email))
+    print_info(f"Welcome {user.email}")
 
 
 def initialize_agno(reset: bool = False, login: bool = False) -> Optional[AgnoCliConfig]:

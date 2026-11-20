@@ -37,7 +37,7 @@ def mock_redis_client():
 
         # Mock scan_iter to return keys
         client.scan_iter.side_effect = lambda match, count=None: [
-            k for k in mock_data.keys() if k.startswith(match.replace("*", ""))
+            k for k in mock_data if k.startswith(match.replace("*", ""))
         ]
 
         # Return the mock Redis instance when Redis.Redis() is called

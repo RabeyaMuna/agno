@@ -16,7 +16,7 @@ def is_ollama_reasoning_model(reasoning_model: Model) -> bool:
     )
 
 
-def get_ollama_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
+def get_ollama_reasoning(reasoning_agent: Agent, messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
     from agno.run.response import RunResponse
 
     try:
@@ -42,7 +42,7 @@ def get_ollama_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> O
     )
 
 
-async def aget_ollama_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
+async def aget_ollama_reasoning(reasoning_agent: Agent, messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
     from agno.run.response import RunResponse
 
     try:

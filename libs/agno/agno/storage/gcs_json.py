@@ -187,4 +187,3 @@ class GCSJsonStorage(JsonStorage):
         """
         Schema upgrade is not implemented.
         """
-        pass

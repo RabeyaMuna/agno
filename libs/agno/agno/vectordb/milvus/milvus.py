@@ -755,7 +755,7 @@ class Milvus(VectorDb):
                 expr = f'meta_data["{k}"] is null'
             else:
                 # For other types, convert to string
-                expr = f'meta_data["{k}"] == "{str(v)}"'
+                expr = f'meta_data["{k}"] == "{v!s}"'
 
             expressions.append(expr)
 

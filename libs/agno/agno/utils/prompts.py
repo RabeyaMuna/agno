@@ -77,7 +77,7 @@ def get_json_output_prompt(response_model: Union[str, list, BaseModel]) -> str:
                 if len(response_model_properties) > 0:
                     json_output_prompt += "\n<json_fields>"
                     json_output_prompt += (
-                        f"\n{json.dumps([key for key in response_model_properties.keys() if key != '$defs'])}"
+                        f"\n{json.dumps([key for key in response_model_properties if key != '$defs'])}"
                     )
                     json_output_prompt += "\n</json_fields>"
                     json_output_prompt += "\n\nHere are the properties for each field:"

@@ -62,7 +62,7 @@ class MemorySummarizer(BaseModel):
 
             if len(response_model_properties) > 0:
                 system_prompt += "\n<json_fields>"
-                system_prompt += f"\n{json.dumps([key for key in response_model_properties.keys() if key != '$defs'])}"
+                system_prompt += f"\n{json.dumps([key for key in response_model_properties if key != '$defs'])}"
                 system_prompt += "\n</json_fields>"
                 system_prompt += "\nHere are the properties for each field:"
                 system_prompt += "\n<json_field_properties>"

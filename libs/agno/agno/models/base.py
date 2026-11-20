@@ -113,7 +113,6 @@ class Model(ABC):
         Returns:
             ModelResponse: Parsed response data
         """
-        pass
 
     @abstractmethod
     def parse_provider_response_delta(self, response: Any) -> ModelResponse:
@@ -126,7 +125,6 @@ class Model(ABC):
         Returns:
             ModelResponse: Parsed response delta
         """
-        pass
 
     def response(
         self,
@@ -973,10 +971,7 @@ class Model(ABC):
                 iscoroutinefunction(function_call.function.entrypoint)
                 or isasyncgenfunction(function_call.function.entrypoint)
                 or iscoroutine(function_call.function.entrypoint)
-            ):
-                success = await function_call.aexecute()
-            # If any of the hooks are async, we need to run the function call asynchronously
-            elif function_call.function.tool_hooks is not None and any(
+            ) or function_call.function.tool_hooks is not None and any(
                 iscoroutinefunction(f) for f in function_call.function.tool_hooks
             ):
                 success = await function_call.aexecute()

@@ -2,8 +2,8 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from agno.agent import Agent, RunResponse  # noqa
-from agno.models.openai.chat import OpenAIChat  # noqa
+from agno.agent import Agent, RunResponse
+from agno.models.openai.chat import OpenAIChat
 
 
 def test_structured_output_parsing_with_quotes():

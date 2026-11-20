@@ -5,7 +5,7 @@ from agno.embedder.base import Embedder
 from agno.utils.log import logger
 
 try:
-    import importlib.metadata as metadata
+    from importlib import metadata
 
     from ollama import Client as OllamaClient
     from packaging import version

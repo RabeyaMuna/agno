@@ -455,7 +455,6 @@ class DynamoDbStorage(Storage):
         Upgrade the schema to the latest version.
         This method is currently a placeholder and does not perform any actions.
         """
-        pass
 
     def _serialize_item(self, item: Dict[str, Any]) -> Dict[str, Any]:
         """

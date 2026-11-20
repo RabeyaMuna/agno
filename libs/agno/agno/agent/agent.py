@@ -932,7 +932,7 @@ class Agent:
                     )
                     return response
             except ModelProviderError as e:
-                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
+                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {e!s}")
                 if isinstance(e, StopAgentRun):
                     raise e
                 last_exception = e
@@ -1300,7 +1300,7 @@ class Agent:
                         messages=messages,
                     )
             except ModelProviderError as e:
-                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
+                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {e!s}")
                 if isinstance(e, StopAgentRun):
                     raise e
                 last_exception = e
@@ -2654,9 +2654,7 @@ class Agent:
         if self.model is not None:
             self.model.clear()
         if self.memory is not None:
-            if isinstance(self.memory, AgentMemory):
-                self.memory.clear()
-            elif isinstance(self.memory, Memory):
+            if isinstance(self.memory, AgentMemory) or isinstance(self.memory, Memory):
                 self.memory.clear()
         self.session_id = str(uuid4())
         self.load_session(force=True)
@@ -3292,18 +3290,7 @@ class Agent:
             return field_value.deep_copy()
 
         # For storage, model and reasoning_model, use a deep copy
-        elif field_name in ("storage", "model", "reasoning_model"):
-            try:
-                return deepcopy(field_value)
-            except Exception:
-                try:
-                    return copy(field_value)
-                except Exception as e:
-                    log_warning(f"Failed to copy field: {field_name} - {e}")
-                    return field_value
-
-        # For compound types, attempt a deep copy
-        elif isinstance(field_value, (list, dict, set)):
+        elif field_name in ("storage", "model", "reasoning_model") or isinstance(field_value, (list, dict, set)):
             try:
                 return deepcopy(field_value)
             except Exception:
@@ -5761,7 +5748,7 @@ class Agent:
             # Log the error but don't crash
             from agno.utils.log import log_error
 
-            log_error(f"Failed to add reasoning metrics to extra_data: {str(e)}")
+            log_error(f"Failed to add reasoning metrics to extra_data: {e!s}")
 
     def _get_effective_filters(self, knowledge_filters: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
         """

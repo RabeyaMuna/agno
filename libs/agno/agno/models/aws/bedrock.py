@@ -259,10 +259,10 @@ class AwsBedrock(Model):
 
             return self.get_client().converse(modelId=self.id, messages=formatted_messages, **body)
         except ClientError as e:
-            log_error(f"Unexpected error calling Bedrock API: {str(e)}")
+            log_error(f"Unexpected error calling Bedrock API: {e!s}")
             raise ModelProviderError(message=str(e.response), model_name=self.name, model_id=self.id) from e
         except Exception as e:
-            log_error(f"Unexpected error calling Bedrock API: {str(e)}")
+            log_error(f"Unexpected error calling Bedrock API: {e!s}")
             raise ModelProviderError(message=str(e), model_name=self.name, model_id=self.id) from e
 
     def invoke_stream(
@@ -294,10 +294,10 @@ class AwsBedrock(Model):
 
             return self.get_client().converse_stream(modelId=self.id, messages=formatted_messages, **body)["stream"]
         except ClientError as e:
-            log_error(f"Unexpected error calling Bedrock API: {str(e)}")
+            log_error(f"Unexpected error calling Bedrock API: {e!s}")
             raise ModelProviderError(message=str(e.response), model_name=self.name, model_id=self.id) from e
         except Exception as e:
-            log_error(f"Unexpected error calling Bedrock API: {str(e)}")
+            log_error(f"Unexpected error calling Bedrock API: {e!s}")
             raise ModelProviderError(message=str(e), model_name=self.name, model_id=self.id) from e
 
     # Overwrite the default from the base model

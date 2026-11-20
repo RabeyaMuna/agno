@@ -135,7 +135,6 @@ class Workflow:
 
     def run(self, **kwargs: Any):
         logger.error(f"{self.__class__.__name__}.run() method not implemented.")
-        return
 
     def run_workflow(self, **kwargs: Any):
         """Run the Workflow"""

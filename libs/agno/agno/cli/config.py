@@ -72,7 +72,7 @@ class AgnoCliConfig:
 
     def set_active_ws_dir(self, ws_root_path: Optional[Path]) -> None:
         if ws_root_path is not None:
-            logger.debug(f"Setting active workspace to: {str(ws_root_path)}")
+            logger.debug(f"Setting active workspace to: {ws_root_path!s}")
             self._active_ws_dir = str(ws_root_path)
             self.save_config()
 

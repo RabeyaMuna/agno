@@ -18,7 +18,7 @@ def get_default_reasoning_agent(
     monitoring: bool = False,
     telemetry: bool = True,
     debug_mode: bool = False,
-) -> Optional["Agent"]:  # type: ignore  # noqa: F821
+) -> Optional[Agent]:  # type: ignore  # noqa: F821
     from agno.agent import Agent
 
     agent = Agent(

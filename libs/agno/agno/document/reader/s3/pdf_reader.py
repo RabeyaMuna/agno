@@ -13,7 +13,7 @@ except (ModuleNotFoundError, ImportError):
     raise ImportError("`agno-aws` not installed. Please install using `pip install agno-aws`")
 
 try:
-    from pypdf import PdfReader as DocumentReader  # noqa: F401
+    from pypdf import PdfReader as DocumentReader
 except ImportError:
     raise ImportError("`pypdf` not installed. Please install it via `pip install pypdf`.")
 

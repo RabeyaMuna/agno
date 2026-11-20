@@ -77,7 +77,7 @@ def get_sync_router(agent: Optional[Agent] = None, team: Optional[Team] = None) 
             return {"status": "processing"}
 
         except Exception as e:
-            log_error(f"Error processing webhook: {str(e)}")
+            log_error(f"Error processing webhook: {e!s}")
             raise HTTPException(status_code=500, detail=str(e))
 
     def process_message(message: dict, agent: Optional[Agent], team: Optional[Team]):
@@ -162,14 +162,14 @@ def get_sync_router(agent: Optional[Agent] = None, team: Optional[Team] = None) 
                 _send_whatsapp_message(phone_number, response.content or "")
 
         except Exception as e:
-            log_error(f"Error processing message: {str(e)}")
+            log_error(f"Error processing message: {e!s}")
             # Optionally send an error message to the user
             try:
                 _send_whatsapp_message(
                     phone_number, "Sorry, there was an error processing your message. Please try again later."
                 )
             except Exception as send_error:
-                log_error(f"Error sending error message: {str(send_error)}")
+                log_error(f"Error sending error message: {send_error!s}")
 
     def _send_whatsapp_message(recipient: str, message: str, italics: bool = False):
         if len(message) <= 4096:

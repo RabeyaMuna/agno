@@ -387,7 +387,7 @@ class AgentMemory(BaseModel):
         self.summary = None
         self.memories = None
 
-    def deep_copy(self) -> "AgentMemory":
+    def deep_copy(self) -> AgentMemory:
         from copy import deepcopy
 
         # Create a shallow copy of the object

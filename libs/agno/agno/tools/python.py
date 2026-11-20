@@ -85,7 +85,7 @@ class PythonTools(Toolkit):
                 log_debug(f"Variable {variable_to_return} value: {variable_value}")
                 return str(variable_value)
             else:
-                return f"successfully ran {str(file_path)}"
+                return f"successfully ran {file_path!s}"
         except Exception as e:
             logger.error(f"Error saving and running code: {e}")
             return f"Error saving and running code: {e}"
@@ -112,7 +112,7 @@ class PythonTools(Toolkit):
                 log_debug(f"Variable {variable_to_return} value: {variable_value}")
                 return str(variable_value)
             else:
-                return f"successfully ran {str(file_path)}"
+                return f"successfully ran {file_path!s}"
         except Exception as e:
             logger.error(f"Error running file: {e}")
             return f"Error running file: {e}"

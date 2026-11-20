@@ -196,7 +196,7 @@ class SingleStoreStorage(Storage):
                     if row is not None and row.session_id is not None:
                         session_ids.append(row.session_id)
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {str(e)}")
+            logger.error(f"An unexpected error occurred: {e!s}")
         return session_ids
 
     def get_all_sessions(self, user_id: Optional[str] = None, entity_id: Optional[str] = None) -> List[Session]:

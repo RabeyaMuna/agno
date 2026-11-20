@@ -134,7 +134,7 @@ class ApifyTools(Toolkit):
                     return json.dumps(results)
 
                 except Exception as e:
-                    error_msg = f"Error running Apify Actor {actor_id}: {str(e)}"
+                    error_msg = f"Error running Apify Actor {actor_id}: {e!s}"
                     logger.error(error_msg)
                     return json.dumps([{"error": error_msg}])
 
@@ -162,7 +162,7 @@ Returns:
             log_info(f"Registered Apify Actor '{actor_id}' as function '{tool_name}'")
 
         except Exception as e:
-            logger.error(f"Failed to register Apify Actor '{actor_id}': {str(e)}")
+            logger.error(f"Failed to register Apify Actor '{actor_id}': {e!s}")
 
 
 # Constants

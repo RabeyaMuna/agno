@@ -119,7 +119,7 @@ class TwilioTools(Toolkit):
             return f"Message sent successfully. SID: {message.sid}"
         except TwilioRestException as e:
             logger.error(f"Failed to send SMS to {to}: {e}")
-            return f"Error sending message: {str(e)}"
+            return f"Error sending message: {e!s}"
 
     def get_call_details(self, call_sid: str) -> Dict[str, Any]:
         """

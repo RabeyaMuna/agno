@@ -113,7 +113,7 @@ def get_json_schema(
             else:
                 logger.warning(f"Could not parse argument {k} of type {v}")
         except Exception as e:
-            logger.error(f"Error processing argument {k}: {str(e)}")
+            logger.error(f"Error processing argument {k}: {e!s}")
             continue
 
     return json_schema

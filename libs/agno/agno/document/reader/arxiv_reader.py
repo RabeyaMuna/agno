@@ -5,7 +5,7 @@ from agno.document.base import Document
 from agno.document.reader.base import Reader
 
 try:
-    import arxiv  # noqa: F401
+    import arxiv
 except ImportError:
     raise ImportError("The `arxiv` package is not installed. Please install it via `pip install arxiv`.")
 

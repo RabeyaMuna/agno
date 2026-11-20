@@ -122,7 +122,7 @@ class LanceDb(VectorDb):
                 import tantivy  # noqa: F401
             except ImportError:
                 raise ImportError(
-                    "Please install tantivy-py `pip install tantivy` to use the full text search feature."  # noqa: E501
+                    "Please install tantivy-py `pip install tantivy` to use the full text search feature."
                 )
 
         log_debug(f"Initialized LanceDb with table: '{self.table_name}'")

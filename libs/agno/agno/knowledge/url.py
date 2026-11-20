@@ -23,7 +23,7 @@ class UrlKnowledge(AgentKnowledge):
             try:
                 yield self.reader.read(url=url)
             except Exception as e:
-                logger.error(f"Error reading URL {url}: {str(e)}")
+                logger.error(f"Error reading URL {url}: {e!s}")
 
     @property
     async def async_document_lists(self) -> AsyncIterator[List[Document]]:
@@ -33,7 +33,7 @@ class UrlKnowledge(AgentKnowledge):
             try:
                 return await self.reader.async_read(url=url)
             except Exception as e:
-                logger.error(f"Error reading URL {url}: {str(e)}")
+                logger.error(f"Error reading URL {url}: {e!s}")
                 return []
 
         # Process all URLs concurrently

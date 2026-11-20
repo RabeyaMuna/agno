@@ -91,4 +91,3 @@ class ModelRateLimitError(ModelProviderError):
 class EvalError(Exception):
     """Exception raised when an evaluation fails."""
 
-    pass

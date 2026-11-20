@@ -171,7 +171,7 @@ class WatsonX(Model):
             return response
 
         except Exception as e:
-            log_error(f"Error calling WatsonX API: {str(e)}")
+            log_error(f"Error calling WatsonX API: {e!s}")
             raise ModelProviderError(message=str(e), model_name=self.name, model_id=self.id) from e
 
     async def ainvoke(
@@ -195,7 +195,7 @@ class WatsonX(Model):
             return await client.achat(messages=formatted_messages, **request_params)
 
         except Exception as e:
-            log_error(f"Error calling WatsonX API: {str(e)}")
+            log_error(f"Error calling WatsonX API: {e!s}")
             raise ModelProviderError(message=str(e), model_name=self.name, model_id=self.id) from e
 
     def invoke_stream(
@@ -219,7 +219,7 @@ class WatsonX(Model):
             yield from client.chat_stream(messages=formatted_messages, **request_params)
 
         except Exception as e:
-            log_error(f"Error calling WatsonX API: {str(e)}")
+            log_error(f"Error calling WatsonX API: {e!s}")
             raise ModelProviderError(message=str(e), model_name=self.name, model_id=self.id) from e
 
     async def ainvoke_stream(
@@ -246,7 +246,7 @@ class WatsonX(Model):
                 yield chunk
 
         except Exception as e:
-            log_error(f"Error in async streaming from WatsonX API: {str(e)}")
+            log_error(f"Error in async streaming from WatsonX API: {e!s}")
             raise ModelProviderError(message=str(e), model_name=self.name, model_id=self.id) from e
 
     # Override base method

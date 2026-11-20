@@ -183,18 +183,18 @@ class Claude(AnthropicClaude):
                 **request_kwargs,
             )
         except APIConnectionError as e:
-            log_error(f"Connection error while calling Claude API: {str(e)}")
+            log_error(f"Connection error while calling Claude API: {e!s}")
             raise ModelProviderError(message=e.message, model_name=self.name, model_id=self.id) from e
         except RateLimitError as e:
-            log_warning(f"Rate limit exceeded: {str(e)}")
+            log_warning(f"Rate limit exceeded: {e!s}")
             raise ModelRateLimitError(message=e.message, model_name=self.name, model_id=self.id) from e
         except APIStatusError as e:
-            log_error(f"Claude API error (status {e.status_code}): {str(e)}")
+            log_error(f"Claude API error (status {e.status_code}): {e!s}")
             raise ModelProviderError(
                 message=e.message, status_code=e.status_code, model_name=self.name, model_id=self.id
             ) from e
         except Exception as e:
-            log_error(f"Unexpected error calling Claude API: {str(e)}")
+            log_error(f"Unexpected error calling Claude API: {e!s}")
             raise ModelProviderError(message=str(e), model_name=self.name, model_id=self.id) from e
 
     def invoke_stream(
@@ -233,18 +233,18 @@ class Claude(AnthropicClaude):
                 .__enter__()
             )
         except APIConnectionError as e:
-            log_error(f"Connection error while calling Claude API: {str(e)}")
+            log_error(f"Connection error while calling Claude API: {e!s}")
             raise ModelProviderError(message=e.message, model_name=self.name, model_id=self.id) from e
         except RateLimitError as e:
-            log_warning(f"Rate limit exceeded: {str(e)}")
+            log_warning(f"Rate limit exceeded: {e!s}")
             raise ModelRateLimitError(message=e.message, model_name=self.name, model_id=self.id) from e
         except APIStatusError as e:
-            log_error(f"Claude API error (status {e.status_code}): {str(e)}")
+            log_error(f"Claude API error (status {e.status_code}): {e!s}")
             raise ModelProviderError(
                 message=e.message, status_code=e.status_code, model_name=self.name, model_id=self.id
             ) from e
         except Exception as e:
-            log_error(f"Unexpected error calling Claude API: {str(e)}")
+            log_error(f"Unexpected error calling Claude API: {e!s}")
             raise ModelProviderError(message=str(e), model_name=self.name, model_id=self.id) from e
 
     async def ainvoke(
@@ -268,18 +268,18 @@ class Claude(AnthropicClaude):
                 **request_kwargs,
             )
         except APIConnectionError as e:
-            log_error(f"Connection error while calling Claude API: {str(e)}")
+            log_error(f"Connection error while calling Claude API: {e!s}")
             raise ModelProviderError(message=e.message, model_name=self.name, model_id=self.id) from e
         except RateLimitError as e:
-            log_warning(f"Rate limit exceeded: {str(e)}")
+            log_warning(f"Rate limit exceeded: {e!s}")
             raise ModelRateLimitError(message=e.message, model_name=self.name, model_id=self.id) from e
         except APIStatusError as e:
-            log_error(f"Claude API error (status {e.status_code}): {str(e)}")
+            log_error(f"Claude API error (status {e.status_code}): {e!s}")
             raise ModelProviderError(
                 message=e.message, status_code=e.status_code, model_name=self.name, model_id=self.id
             ) from e
         except Exception as e:
-            log_error(f"Unexpected error calling Claude API: {str(e)}")
+            log_error(f"Unexpected error calling Claude API: {e!s}")
             raise ModelProviderError(message=str(e), model_name=self.name, model_id=self.id) from e
 
     async def ainvoke_stream(
@@ -315,16 +315,16 @@ class Claude(AnthropicClaude):
                 async for chunk in stream:
                     yield chunk
         except APIConnectionError as e:
-            log_error(f"Connection error while calling Claude API: {str(e)}")
+            log_error(f"Connection error while calling Claude API: {e!s}")
             raise ModelProviderError(message=e.message, model_name=self.name, model_id=self.id) from e
         except RateLimitError as e:
-            log_warning(f"Rate limit exceeded: {str(e)}")
+            log_warning(f"Rate limit exceeded: {e!s}")
             raise ModelRateLimitError(message=e.message, model_name=self.name, model_id=self.id) from e
         except APIStatusError as e:
-            log_error(f"Claude API error (status {e.status_code}): {str(e)}")
+            log_error(f"Claude API error (status {e.status_code}): {e!s}")
             raise ModelProviderError(
                 message=e.message, status_code=e.status_code, model_name=self.name, model_id=self.id
             ) from e
         except Exception as e:
-            log_error(f"Unexpected error calling Claude API: {str(e)}")
+            log_error(f"Unexpected error calling Claude API: {e!s}")
             raise ModelProviderError(message=str(e), model_name=self.name, model_id=self.id) from e

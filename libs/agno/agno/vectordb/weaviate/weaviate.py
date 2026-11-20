@@ -323,7 +323,7 @@ class Weaviate(VectorDb):
                     log_debug(f"Inserted document asynchronously: {document.name}")
 
                 except Exception as e:
-                    logger.error(f"Error inserting document {document.name}: {str(e)}")
+                    logger.error(f"Error inserting document {document.name}: {e!s}")
         finally:
             await client.close()
 
@@ -690,7 +690,6 @@ class Weaviate(VectorDb):
 
     def optimize(self) -> None:
         """Optimize the vector database (e.g., rebuild indexes)."""
-        pass
 
     def delete(self) -> bool:
         """Delete all records from the database."""

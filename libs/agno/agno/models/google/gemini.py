@@ -689,7 +689,7 @@ class Gemini(Model):
             for part in response_message.parts:
                 # Extract text if present
                 if hasattr(part, "text") and part.text is not None:
-                    text_content: Optional[str] = getattr(part, "text")
+                    text_content: Optional[str] = part.text
                     if isinstance(text_content, str):
                         model_response.content = text_content
                     else:
@@ -850,7 +850,7 @@ class Gemini(Model):
                     setattr(new_instance, key, value)
 
         # Explicitly set client to None
-        setattr(new_instance, "client", None)
+        new_instance.client = None
 
         # Clear the new model to remove any references to the old model
         if hasattr(new_instance, "clear"):

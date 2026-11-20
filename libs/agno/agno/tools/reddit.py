@@ -382,7 +382,7 @@ class RedditTools(Toolkit):
             return error_msg
 
         except Exception as e:
-            error_msg = f"Error creating reply: {str(e)}"
+            error_msg = f"Error creating reply: {e!s}"
             logger.error(error_msg)
             return error_msg
 
@@ -456,7 +456,7 @@ class RedditTools(Toolkit):
             return error_msg
 
         except Exception as e:
-            error_msg = f"Error creating reply: {str(e)}"
+            error_msg = f"Error creating reply: {e!s}"
             logger.error(error_msg)
             return error_msg
 
@@ -477,5 +477,5 @@ class RedditTools(Toolkit):
             _ = submission.author
             return True
         except Exception as e:
-            logger.error(f"Error checking post existence: {str(e)}")
+            logger.error(f"Error checking post existence: {e!s}")
             return False

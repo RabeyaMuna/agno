@@ -145,7 +145,7 @@ class XTools(Toolkit):
             return json.dumps({"error": error_message}, indent=2)
         except Exception as e:
             logger.error(f"Unexpected error sending DM: {e}")
-            return json.dumps({"error": f"An unexpected error occurred: {str(e)}"}, indent=2)
+            return json.dumps({"error": f"An unexpected error occurred: {e!s}"}, indent=2)
 
     def get_my_info(self) -> str:
         """

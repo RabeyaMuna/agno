@@ -25,7 +25,7 @@ def is_openai_reasoning_model(reasoning_model: Model) -> bool:
     ) or (isinstance(reasoning_model, OpenAILike) and "deepseek-r1" in reasoning_model.id.lower())
 
 
-def get_openai_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
+def get_openai_reasoning(reasoning_agent: Agent, messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
     from agno.run.response import RunResponse
 
     try:
@@ -51,7 +51,7 @@ def get_openai_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> O
     )
 
 
-async def aget_openai_reasoning(reasoning_agent: "Agent", messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
+async def aget_openai_reasoning(reasoning_agent: Agent, messages: List[Message]) -> Optional[Message]:  # type: ignore  # noqa: F821
     from agno.run.response import RunResponse
 
     # Update system message role to "system"

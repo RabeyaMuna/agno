@@ -96,7 +96,7 @@ class TeamRunResponse:
         messages = [Message.model_validate(message) for message in messages] if messages else None
 
         member_responses = data.pop("member_responses", None)
-        parsed_member_responses: List[Union["TeamRunResponse", RunResponse]] = []
+        parsed_member_responses: List[Union[TeamRunResponse, RunResponse]] = []
         if member_responses is not None:
             for response in member_responses:
                 if "agent_id" in response:

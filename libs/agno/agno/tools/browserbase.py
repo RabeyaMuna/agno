@@ -76,7 +76,7 @@ class BrowserbaseTools(Toolkit):
                 if self._session:
                     log_debug(f"Created new session with ID: {self._session.id}")
             except Exception as e:
-                logger.error(f"Failed to create session: {str(e)}")
+                logger.error(f"Failed to create session: {e!s}")
                 raise
 
     def _initialize_browser(self, connect_url: Optional[str] = None):
@@ -196,4 +196,4 @@ class BrowserbaseTools(Toolkit):
                 }
             )
         except Exception as e:
-            return json.dumps({"status": "warning", "message": f"Cleanup completed with warning: {str(e)}"})
+            return json.dumps({"status": "warning", "message": f"Cleanup completed with warning: {e!s}"})

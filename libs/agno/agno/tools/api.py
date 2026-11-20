@@ -108,10 +108,10 @@ class CustomApiTools(Toolkit):
             return json.dumps(result, indent=2)
 
         except requests.exceptions.RequestException as e:
-            error_message = f"Request failed: {str(e)}"
+            error_message = f"Request failed: {e!s}"
             logger.error(error_message)
             return json.dumps({"error": error_message}, indent=2)
         except Exception as e:
-            error_message = f"Unexpected error: {str(e)}"
+            error_message = f"Unexpected error: {e!s}"
             logger.error(error_message)
             return json.dumps({"error": error_message}, indent=2)

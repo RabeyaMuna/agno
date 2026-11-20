@@ -33,7 +33,7 @@ def format_images_for_message(message: Message, images: Sequence[Image]) -> Mess
                 message_content_with_image.append(image_payload)
 
         except Exception as e:
-            log_error(f"Failed to process image: {str(e)}")
+            log_error(f"Failed to process image: {e!s}")
 
     # Update the message content with the images
     if len(message_content_with_image) > 1:

@@ -703,7 +703,6 @@ class MongoDb(VectorDb):
 
     def optimize(self) -> None:
         """TODO: not implemented"""
-        pass
 
     def delete(self) -> bool:
         """Delete all documents from the collection."""

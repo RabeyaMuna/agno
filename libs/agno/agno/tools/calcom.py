@@ -127,7 +127,7 @@ class CalComTools(Toolkit):
             return f"Failed to fetch slots: {response.text}"
         except Exception as e:
             logger.error(f"Error fetching available slots: {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e!s}"
 
     def create_booking(
         self,
@@ -162,7 +162,7 @@ class CalComTools(Toolkit):
             return f"Failed to create booking: {response.text}"
         except Exception as e:
             logger.error(f"Error creating booking: {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e!s}"
 
     def get_upcoming_bookings(self, email: Optional[str] = None) -> str:
         """Get all upcoming bookings for an attendee.
@@ -195,7 +195,7 @@ class CalComTools(Toolkit):
             return f"Failed to fetch bookings: {response.text}"
         except Exception as e:
             logger.error(f"Error fetching upcoming bookings: {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e!s}"
 
     def reschedule_booking(
         self,
@@ -227,7 +227,7 @@ class CalComTools(Toolkit):
             return f"Failed to reschedule booking: {response.text}"
         except Exception as e:
             logger.error(f"Error rescheduling booking: {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e!s}"
 
     def cancel_booking(self, booking_uid: str, reason: str) -> str:
         """Cancel an existing booking.
@@ -249,4 +249,4 @@ class CalComTools(Toolkit):
             return f"Failed to cancel booking: {response.text}"
         except Exception as e:
             logger.error(f"Error cancelling booking: {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e!s}"
