@@ -1,4 +1,5 @@
-from typing import List
+from __future__ import annotations
+
 from unittest.mock import Mock, patch
 
 import pytest
@@ -74,7 +75,7 @@ def qdrant_db(mock_qdrant_client, mock_embedder):
 
 
 @pytest.fixture
-def sample_documents() -> List[Document]:
+def sample_documents() -> list[Document]:
     """Fixture to create sample documents"""
     return [
         Document(
@@ -136,7 +137,7 @@ def test_insert_documents(qdrant_db, sample_documents, mock_qdrant_client):
         mock_qdrant_client.upsert.assert_called_once()
 
         # Verify the right number of points are created
-        args, kwargs = mock_qdrant_client.upsert.call_args
+        _args, kwargs = mock_qdrant_client.upsert.call_args
         assert kwargs["collection_name"] == "test_collection"
         assert kwargs["wait"] is False
         assert len(kwargs["points"]) == 3
@@ -205,7 +206,7 @@ def test_search(qdrant_db, mock_qdrant_client):
 
         # Verify search was called with correct parameters
         mock_qdrant_client.search.assert_called_once()
-        args, kwargs = mock_qdrant_client.search.call_args
+        _args, kwargs = mock_qdrant_client.search.call_args
         assert kwargs["collection_name"] == "test_collection"
         assert kwargs["query_vector"] == [0.1] * 768
         assert kwargs["limit"] == 2

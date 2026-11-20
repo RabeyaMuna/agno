@@ -1,6 +1,10 @@
+from __future__ import annotations
+
+import logging
+
+logger = logging.getLogger(__name__)
 import os
 import shutil
-from typing import List
 
 import pytest
 
@@ -30,15 +34,16 @@ def chroma_db(mock_embedder):
     # Cleanup after test
     try:
         db.drop()
-    except Exception:
-        pass
+    except Exception:  # noqa: BLE001
+        # Cleanup failure is non-critical
+        logger.warning("Failed to drop collection during cleanup")
 
     if os.path.exists(TEST_PATH):
         shutil.rmtree(TEST_PATH)
 
 
 @pytest.fixture
-def sample_documents() -> List[Document]:
+def sample_documents() -> list[Document]:
     """Fixture to create sample documents"""
     return [
         Document(
