@@ -1,6 +1,6 @@
 import json
 from base64 import b64encode
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from os import getenv
 from typing import Any, List, Optional
 
@@ -58,7 +58,7 @@ class ZoomTools(Toolkit):
             str: The current access token or empty string if token generation fails.
         """
         # Check if we have a valid token
-        if self.__access_token and self.__token_expiry and datetime.now() < self.__token_expiry:
+        if self.__access_token and self.__token_expiry and datetime.now(timezone.utc) < self.__token_expiry:
             return self.__access_token
 
         # Generate new token
@@ -82,7 +82,7 @@ class ZoomTools(Toolkit):
             token_data = response.json()
             self.__access_token = token_data["access_token"]
             # Set expiry time slightly before actual expiry to ensure token validity
-            self.__token_expiry = datetime.now() + timedelta(seconds=token_data["expires_in"] - 60)  # type: ignore
+            self.__token_expiry = datetime.now(timezone.utc) + timedelta(seconds=token_data["expires_in"] - 60)  # type: ignore
 
             log_debug("Successfully generated new Zoom access token")
             return self.__access_token  # type: ignore
