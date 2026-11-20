@@ -1,10 +1,14 @@
 """Unit tests for FirecrawlTools class."""
 
+from __future__ import annotations
+
 import json
 import os
 from unittest.mock import Mock, patch
 
 import pytest
+
+firecrawl = pytest.importorskip("firecrawl")
 from firecrawl import FirecrawlApp
 
 from agno.tools.firecrawl import FirecrawlTools
@@ -34,7 +38,7 @@ def firecrawl_tools(mock_firecrawl):
 
 def test_init_with_env_vars():
     """Test initialization with environment variables."""
-    with patch("agno.tools.firecrawl.FirecrawlApp"):
+    with patch("agno.tools.firecrawl.FirecrawlApp"):  # noqa: SIM117
         with patch.dict("os.environ", {"FIRECRAWL_API_KEY": TEST_API_KEY}, clear=True):
             tools = FirecrawlTools()
             assert tools.api_key == TEST_API_KEY
