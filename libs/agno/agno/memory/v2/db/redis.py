@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import json
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from redis import ConnectionError, Redis
@@ -19,7 +21,7 @@ class RedisMemoryDb(MemoryDb):
         host: str = "localhost",
         port: int = 6379,
         db: int = 0,
-        password: Optional[str] = None,
+        password: str | None = None,
     ):
         """
         Initialize Redis memory store.
@@ -41,7 +43,7 @@ class RedisMemoryDb(MemoryDb):
         )
         log_debug(f"Created RedisMemoryDb with prefix: '{self.prefix}'")
 
-    def __dict__(self) -> Dict[str, Any]:
+    def __dict__(self) -> dict[str, Any]:
         return {
             "name": "RedisMemoryDb",
             "prefix": self.prefix,
@@ -73,10 +75,10 @@ class RedisMemoryDb(MemoryDb):
             return False
 
     def read_memories(
-        self, user_id: Optional[str] = None, limit: Optional[int] = None, sort: Optional[str] = None
-    ) -> List[MemoryRow]:
+        self, user_id: str | None = None, limit: int | None = None, sort: str | None = None
+    ) -> list[MemoryRow]:
         """Read memories from Redis"""
-        memories: List[MemoryRow] = []
+        memories: list[MemoryRow] = []
         try:
             # Get all keys matching the prefix pattern
             pattern = f"{self.prefix}:*"
@@ -111,7 +113,7 @@ class RedisMemoryDb(MemoryDb):
 
         return memories
 
-    def upsert_memory(self, memory: MemoryRow) -> Optional[MemoryRow]:
+    def upsert_memory(self, memory: MemoryRow) -> MemoryRow | None:
         """Upsert a memory in Redis"""
         try:
             # Prepare data

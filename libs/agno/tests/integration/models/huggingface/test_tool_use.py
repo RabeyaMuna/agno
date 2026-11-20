@@ -44,9 +44,8 @@ def test_tool_use_stream():
     for chunk in response_stream:
         assert isinstance(chunk, RunResponse)
         responses.append(chunk)
-        if chunk.tools:
-            if any(tc.get("tool_name") for tc in chunk.tools):
-                tool_call_seen = True
+        if chunk.tools and any(tc.get("tool_name") for tc in chunk.tools):
+            tool_call_seen = True
 
     assert len(responses) > 0
     assert tool_call_seen, "No tool calls observed in stream"
@@ -94,9 +93,8 @@ async def test_async_tool_use_stream():
     async for chunk in response_stream:
         assert isinstance(chunk, RunResponse)
         responses.append(chunk)
-        if chunk.tools:
-            if any(tc.get("tool_name") for tc in chunk.tools):
-                tool_call_seen = True
+        if chunk.tools and any(tc.get("tool_name") for tc in chunk.tools):
+            tool_call_seen = True
 
     assert len(responses) > 0
     assert tool_call_seen, "No tool calls observed in stream"

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import MagicMock, Mock, patch
 
 import pytest
@@ -52,13 +52,19 @@ def memory_with_managers(mock_model, mock_db, mock_memory_manager, mock_summary_
 
 @pytest.fixture
 def sample_user_memory():
-    return UserMemory(memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now())
+    return UserMemory(
+        memory="The user's name is John Doe",
+        topics=["name", "user"],
+        last_updated=datetime.now(tz=timezone.utc),
+    )
 
 
 @pytest.fixture
 def sample_session_summary():
     return SessionSummary(
-        summary="This was a session about stocks", topics=["stocks", "finance"], last_updated=datetime.now()
+        summary="This was a session about stocks",
+        topics=["stocks", "finance"],
+        last_updated=datetime.now(tz=timezone.utc),
     )
 
 
@@ -254,7 +260,9 @@ def test_replace_user_memory(memory_with_model, sample_user_memory):
 
     # Now replace it
     updated_memory = UserMemory(
-        memory="The user's name is Jane Doe", topics=["name", "user"], last_updated=datetime.now()
+        memory="The user's name is Jane Doe",
+        topics=["name", "user"],
+        last_updated=datetime.now(tz=timezone.utc),
     )
 
     memory_with_model.replace_user_memory(memory_id=memory_id, memory=updated_memory, user_id="test_user")

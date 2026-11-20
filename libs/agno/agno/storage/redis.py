@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import json
 import time
 from dataclasses import asdict
-from typing import List, Literal, Optional
+from typing import Literal
 
 from agno.storage.base import Storage
 from agno.storage.session import Session
@@ -23,9 +25,9 @@ class RedisStorage(Storage):
         host: str = "localhost",
         port: int = 6379,
         db: int = 0,
-        password: Optional[str] = None,
-        mode: Optional[Literal["agent", "team", "workflow"]] = "agent",
-        ssl: Optional[bool] = False,
+        password: str | None = None,
+        mode: Literal["agent", "team", "workflow"] | None = "agent",
+        ssl: bool | None = False,
     ):
         """
         Initialize Redis storage for sessions.
@@ -76,7 +78,7 @@ class RedisStorage(Storage):
             logger.error(f"Could not connect to Redis: {e}")
             raise
 
-    def read(self, session_id: str, user_id: Optional[str] = None) -> Optional[Session]:
+    def read(self, session_id: str, user_id: str | None = None) -> Session | None:
         """Read a Session from Redis."""
         try:
             data = self.redis_client.get(self._get_key(session_id))
@@ -98,7 +100,7 @@ class RedisStorage(Storage):
             logger.error(f"Error reading session: {e}")
             return None
 
-    def get_all_session_ids(self, user_id: Optional[str] = None, entity_id: Optional[str] = None) -> List[str]:
+    def get_all_session_ids(self, user_id: str | None = None, entity_id: str | None = None) -> list[str]:
         """Get all session IDs, optionally filtered by user_id and/or entity_id."""
         session_ids = []
         try:
@@ -109,22 +111,31 @@ class RedisStorage(Storage):
 
                 if user_id or entity_id:
                     if user_id and entity_id:
-                        if self.mode == "agent" and data["agent_id"] == entity_id and data["user_id"] == user_id:
-                            session_ids.append(data["session_id"])
-                        elif self.mode == "team" and data["team_id"] == entity_id and data["user_id"] == user_id:
-                            session_ids.append(data["session_id"])
-                        elif (
-                            self.mode == "workflow" and data["workflow_id"] == entity_id and data["user_id"] == user_id
+                        if (
+                            self.mode == "agent"
+                            and data["agent_id"] == entity_id
+                            and data["user_id"] == user_id
+                            or self.mode == "team"
+                            and data["team_id"] == entity_id
+                            and data["user_id"] == user_id
+                            or (
+                                self.mode == "workflow"
+                                and data["workflow_id"] == entity_id
+                                and data["user_id"] == user_id
+                            )
                         ):
                             session_ids.append(data["session_id"])
                     elif user_id and data["user_id"] == user_id:
                         session_ids.append(data["session_id"])
                     elif entity_id:
-                        if self.mode == "agent" and data["agent_id"] == entity_id:
-                            session_ids.append(data["session_id"])
-                        elif self.mode == "team" and data["team_id"] == entity_id:
-                            session_ids.append(data["session_id"])
-                        elif self.mode == "workflow" and data["workflow_id"] == entity_id:
+                        if (
+                            self.mode == "agent"
+                            and data["agent_id"] == entity_id
+                            or self.mode == "team"
+                            and data["team_id"] == entity_id
+                            or self.mode == "workflow"
+                            and data["workflow_id"] == entity_id
+                        ):
                             session_ids.append(data["session_id"])
                 else:
                     # No filters applied, add all session_ids
@@ -135,16 +146,16 @@ class RedisStorage(Storage):
 
         return session_ids
 
-    def get_all_sessions(self, user_id: Optional[str] = None, entity_id: Optional[str] = None) -> List[Session]:
+    def get_all_sessions(self, user_id: str | None = None, entity_id: str | None = None) -> list[Session]:
         """Get all sessions, optionally filtered by user_id and/or entity_id."""
-        sessions: List[Session] = []
+        sessions: list[Session] = []
         try:
             pattern = f"{self.prefix}:*"
             for key in self.redis_client.scan_iter(match=pattern):
                 data = self.deserialize(self.redis_client.get(key))  # type: ignore
 
                 if user_id or entity_id:
-                    _session: Optional[Session] = None
+                    _session: Session | None = None
 
                     if user_id and entity_id:
                         if self.mode == "agent" and data["agent_id"] == entity_id and data["user_id"] == user_id:
@@ -189,7 +200,7 @@ class RedisStorage(Storage):
 
         return sessions
 
-    def upsert(self, session: Session) -> Optional[Session]:
+    def upsert(self, session: Session) -> Session | None:
         """Insert or update a Session in Redis."""
         try:
             data = asdict(session)
@@ -204,7 +215,7 @@ class RedisStorage(Storage):
             logger.error(f"Error upserting session: {e}")
             return None
 
-    def delete_session(self, session_id: Optional[str] = None):
+    def delete_session(self, session_id: str | None = None):
         """Delete a session from Redis."""
         if session_id is None:
             return
@@ -230,4 +241,3 @@ class RedisStorage(Storage):
         Upgrade the schema of the storage.
         For Redis, this is a no-op as it's schema-less.
         """
-        pass

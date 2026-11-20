@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from agno.media import Image
 from agno.utils.log import log_error, log_warning
@@ -15,7 +17,7 @@ except ImportError:
     raise ImportError("`google-genai` not installed. Please install it using `pip install google-genai`")
 
 
-def format_image_for_message(image: Image) -> Optional[Dict[str, Any]]:
+def format_image_for_message(image: Image) -> dict[str, Any] | None:
     # Case 1: Image is a URL
     # Download the image from the URL and add it as base64 encoded data
     if image.url is not None:
@@ -66,7 +68,7 @@ def format_image_for_message(image: Image) -> Optional[Dict[str, Any]]:
         return None
 
 
-def convert_schema(schema_dict: Dict[str, Any]) -> Optional[Schema]:
+def convert_schema(schema_dict: dict[str, Any]) -> Schema | None:
     """
     Recursively convert a JSON-like schema dictionary to a types.Schema object.
 
@@ -148,7 +150,7 @@ def convert_schema(schema_dict: Dict[str, Any]) -> Optional[Schema]:
         return Schema(type=schema_type, description=description, default=default)
 
 
-def format_function_definitions(tools_list: List[Dict[str, Any]]) -> Optional[Tool]:
+def format_function_definitions(tools_list: list[dict[str, Any]]) -> Tool | None:
     function_declarations = []
 
     for tool in tools_list:

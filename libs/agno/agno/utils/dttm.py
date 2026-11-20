@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 
 def current_datetime() -> datetime:
-    return datetime.now()
+    return datetime.now(tz=timezone.utc)
 
 
 def current_datetime_utc() -> datetime:

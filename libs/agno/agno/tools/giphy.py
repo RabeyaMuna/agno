@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import os
 import uuid
-from typing import Optional, Union
 
 import httpx
 
@@ -14,7 +15,7 @@ from agno.utils.log import logger
 class GiphyTools(Toolkit):
     def __init__(
         self,
-        api_key: Optional[str] = None,
+        api_key: str | None = None,
         limit: int = 1,
         **kwargs,
     ):
@@ -28,7 +29,7 @@ class GiphyTools(Toolkit):
 
         self.register(self.search_gifs)
 
-    def search_gifs(self, agent: Union[Agent, Team], query: str) -> str:
+    def search_gifs(self, agent: Agent | Team, query: str) -> str:
         """Find a GIPHY gif
 
         Args:

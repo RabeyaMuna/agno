@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from functools import partial
-from typing import Any, Callable, Dict, List, Literal, Optional, Type, TypeVar, get_type_hints
+from typing import Any, Callable, Literal, TypeVar, get_type_hints
 
 from docstring_parser import parse
 from pydantic import BaseModel, Field, validate_call
@@ -36,11 +38,11 @@ def get_entrypoint_docstring(entrypoint: Callable) -> str:
 @dataclass
 class UserInputField:
     name: str
-    field_type: Type
-    description: Optional[str] = None
-    value: Optional[Any] = None
+    field_type: type
+    description: str | None = None
+    value: Any | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
             "field_type": str(self.field_type.__name__),
@@ -56,21 +58,21 @@ class Function(BaseModel):
     # Must be a-z, A-Z, 0-9, or contain underscores and dashes, with a maximum length of 64.
     name: str
     # A description of what the function does, used by the model to choose when and how to call the function.
-    description: Optional[str] = None
+    description: str | None = None
     # The parameters the functions accepts, described as a JSON Schema object.
     # To describe a function that accepts no parameters, provide the value {"type": "object", "properties": {}}.
-    parameters: Dict[str, Any] = Field(
+    parameters: dict[str, Any] = Field(
         default_factory=lambda: {"type": "object", "properties": {}, "required": []},
         description="JSON Schema object describing function parameters",
     )
-    strict: Optional[bool] = None
+    strict: bool | None = None
 
-    instructions: Optional[str] = None
+    instructions: str | None = None
     # If True, add instructions to the Agent's system message
     add_instructions: bool = True
 
     # The function to be called.
-    entrypoint: Optional[Callable] = None
+    entrypoint: Callable | None = None
     # If True, the entrypoint processing is skipped and the Function is used as is.
     skip_entrypoint_processing: bool = False
     # If True, the arguments are sanitized before being passed to the function.
@@ -82,47 +84,47 @@ class Function(BaseModel):
     # Hook that runs before the function is executed.
     # If defined, can accept the FunctionCall instance as a parameter.
     # Deprecated: Use tool_hooks instead.
-    pre_hook: Optional[Callable] = None
+    pre_hook: Callable | None = None
     # Hook that runs after the function is executed, regardless of success/failure.
     # If defined, can accept the FunctionCall instance as a parameter.
     # Deprecated: Use tool_hooks instead.
-    post_hook: Optional[Callable] = None
+    post_hook: Callable | None = None
 
     # A list of hooks to run around tool calls.
-    tool_hooks: Optional[List[Callable]] = None
+    tool_hooks: list[Callable] | None = None
 
     # If True, the function will require confirmation before execution
-    requires_confirmation: Optional[bool] = None
+    requires_confirmation: bool | None = None
 
     # If True, the function will require user input before execution
-    requires_user_input: Optional[bool] = None
+    requires_user_input: bool | None = None
     # List of fields that the user will provide as input and that should be ignored by the agent (empty list means all fields are provided by the user)
-    user_input_fields: Optional[List[str]] = None
+    user_input_fields: list[str] | None = None
     # This is set during parsing, not by the user
-    user_input_schema: Optional[List[UserInputField]] = None
+    user_input_schema: list[UserInputField] | None = None
 
     # If True, the function will be executed outside the agent's control.
-    external_execution: Optional[bool] = None
+    external_execution: bool | None = None
 
     # Caching configuration
     cache_results: bool = False
-    cache_dir: Optional[str] = None
+    cache_dir: str | None = None
     cache_ttl: int = 3600
 
     # --*-- FOR INTERNAL USE ONLY --*--
     # The agent that the function is associated with
-    _agent: Optional[Any] = None
+    _agent: Any | None = None
     # The team that the function is associated with
-    _team: Optional[Any] = None
+    _team: Any | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return self.model_dump(
             exclude_none=True,
             include={"name", "description", "parameters", "strict", "requires_confirmation", "external_execution"},
         )
 
     @classmethod
-    def from_callable(cls, c: Callable, strict: bool = False) -> "Function":
+    def from_callable(cls, c: Callable, strict: bool = False) -> Function:
         from inspect import getdoc, isasyncgenfunction, signature
 
         from agno.utils.json_schema import get_json_schema
@@ -148,7 +150,7 @@ class Function(BaseModel):
             }
 
             # Parse docstring for parameters
-            param_descriptions: Dict[str, Any] = {}
+            param_descriptions: dict[str, Any] = {}
             if docstring := getdoc(c):
                 parsed_doc = parse(docstring)
                 param_docs = parsed_doc.params
@@ -187,7 +189,7 @@ class Function(BaseModel):
         if isasyncgenfunction(c):
             entrypoint = c
         else:
-            entrypoint = validate_call(c, config=dict(arbitrary_types_allowed=True))  # type: ignore
+            entrypoint = validate_call(c, config={"arbitrary_types_allowed": True})  # type: ignore
         return cls(
             name=function_name,
             description=get_entrypoint_docstring(entrypoint=c),
@@ -312,7 +314,7 @@ class Function(BaseModel):
         try:
             # Don't wrap async generator with validate_call
             if not isasyncgenfunction(self.entrypoint):
-                self.entrypoint = validate_call(self.entrypoint, config=dict(arbitrary_types_allowed=True))  # type: ignore
+                self.entrypoint = validate_call(self.entrypoint, config={"arbitrary_types_allowed": True})  # type: ignore
         except Exception as e:
             log_warning(f"Failed to add validate decorator to entrypoint: {e}")
 
@@ -320,7 +322,7 @@ class Function(BaseModel):
         self.parameters["additionalProperties"] = False
         self.parameters["required"] = [name for name in self.parameters["properties"] if name not in ["agent", "team"]]
 
-    def _get_cache_key(self, entrypoint_args: Dict[str, Any], call_args: Optional[Dict[str, Any]] = None) -> str:
+    def _get_cache_key(self, entrypoint_args: dict[str, Any], call_args: dict[str, Any] | None = None) -> str:
         """Generate a cache key based on function name and arguments."""
         from hashlib import md5
 
@@ -346,7 +348,7 @@ class Function(BaseModel):
         func_cache_dir.mkdir(parents=True, exist_ok=True)
         return str(func_cache_dir / f"{cache_key}.json")
 
-    def _get_cached_result(self, cache_file: str) -> Optional[Any]:
+    def _get_cached_result(self, cache_file: str) -> Any | None:
         """Retrieve cached result if valid."""
         import json
         from pathlib import Path
@@ -395,14 +397,14 @@ class FunctionCall(BaseModel):
     # The function to be called.
     function: Function
     # The arguments to call the function with.
-    arguments: Optional[Dict[str, Any]] = None
+    arguments: dict[str, Any] | None = None
     # The result of the function call.
-    result: Optional[Any] = None
+    result: Any | None = None
     # The ID of the function call.
-    call_id: Optional[str] = None
+    call_id: str | None = None
 
     # Error while parsing arguments or running the function.
-    error: Optional[str] = None
+    error: str | None = None
 
     def get_call_str(self) -> str:
         """Returns a string representation of the function call."""
@@ -480,7 +482,7 @@ class FunctionCall(BaseModel):
                 log_warning(f"Error in post-hook callback: {e}")
                 log_exception(e)
 
-    def _build_entrypoint_args(self) -> Dict[str, Any]:
+    def _build_entrypoint_args(self) -> dict[str, Any]:
         """Builds the arguments for the entrypoint."""
         from inspect import signature
 
@@ -496,7 +498,7 @@ class FunctionCall(BaseModel):
             entrypoint_args["fc"] = self
         return entrypoint_args
 
-    def _build_nested_execution_chain(self, entrypoint_args: Dict[str, Any]):
+    def _build_nested_execution_chain(self, entrypoint_args: dict[str, Any]):
         """Build a nested chain of hook executions with the entrypoint at the center.
 
         This creates a chain where each hook wraps the next one, with the function call
@@ -657,7 +659,7 @@ class FunctionCall(BaseModel):
                 log_warning(f"Error in post-hook callback: {e}")
                 log_exception(e)
 
-    async def _build_nested_execution_chain_async(self, entrypoint_args: Dict[str, Any]):
+    async def _build_nested_execution_chain_async(self, entrypoint_args: dict[str, Any]):
         """Build a nested chain of async hook executions with the entrypoint at the center.
 
         Similar to _build_nested_execution_chain but for async execution.

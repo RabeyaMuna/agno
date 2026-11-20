@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from agno.tools import Toolkit
 from agno.utils.log import log_debug, logger
@@ -18,7 +20,7 @@ except ImportError:
 
 class ArxivTools(Toolkit):
     def __init__(
-        self, search_arxiv: bool = True, read_arxiv_papers: bool = True, download_dir: Optional[Path] = None, **kwargs
+        self, search_arxiv: bool = True, read_arxiv_papers: bool = True, download_dir: Path | None = None, **kwargs
     ):
         super().__init__(name="arxiv_tools", **kwargs)
 
@@ -69,7 +71,7 @@ class ArxivTools(Toolkit):
                 logger.error(f"Error processing article: {e}")
         return json.dumps(articles, indent=4)
 
-    def read_arxiv_papers(self, id_list: List[str], pages_to_read: Optional[int] = None) -> str:
+    def read_arxiv_papers(self, id_list: list[str], pages_to_read: int | None = None) -> str:
         """Use this function to read a list of arxiv papers and return the content.
 
         Args:
@@ -88,7 +90,7 @@ class ArxivTools(Toolkit):
         log_debug(f"Searching arxiv for: {id_list}")
         for result in self.client.results(search=arxiv.Search(id_list=id_list)):
             try:
-                article: Dict[str, Any] = {
+                article: dict[str, Any] = {
                     "title": result.title,
                     "id": result.get_short_id(),
                     "entry_id": result.entry_id,

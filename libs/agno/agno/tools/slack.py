@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import json
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from agno.tools.toolkit import Toolkit
 from agno.utils.log import logger
@@ -15,14 +17,14 @@ except ImportError:
 class SlackTools(Toolkit):
     def __init__(
         self,
-        token: Optional[str] = None,
+        token: str | None = None,
         send_message: bool = True,
         list_channels: bool = True,
         get_channel_history: bool = True,
         **kwargs,
     ):
         super().__init__(name="slack", **kwargs)
-        self.token: Optional[str] = token or os.getenv("SLACK_TOKEN")
+        self.token: str | None = token or os.getenv("SLACK_TOKEN")
         if self.token is None or self.token == "":
             raise ValueError("SLACK_TOKEN is not set")
         self.client = WebClient(token=self.token)
@@ -79,7 +81,7 @@ class SlackTools(Toolkit):
         """
         try:
             response = self.client.conversations_history(channel=channel, limit=limit)
-            messages: List[Dict[str, Any]] = [  # type: ignore
+            messages: list[dict[str, Any]] = [  # type: ignore
                 {
                     "text": msg.get("text", ""),
                     "user": "webhook" if msg.get("subtype") == "bot_message" else msg.get("user", "unknown"),

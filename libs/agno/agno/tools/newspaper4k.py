@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import json
-from typing import Any, Dict, Optional
+from typing import Any
 
 from agno.tools import Toolkit
 from agno.utils.log import log_debug, logger
@@ -20,16 +22,16 @@ class Newspaper4kTools(Toolkit):
     """
 
     def __init__(
-        self, read_article: bool = True, include_summary: bool = False, article_length: Optional[int] = None, **kwargs
+        self, read_article: bool = True, include_summary: bool = False, article_length: int | None = None, **kwargs
     ):
         super().__init__(name="newspaper4k_tools", **kwargs)
 
         self.include_summary: bool = include_summary
-        self.article_length: Optional[int] = article_length
+        self.article_length: int | None = article_length
         if read_article:
             self.register(self.read_article)
 
-    def get_article_data(self, url: str) -> Optional[Dict[str, Any]]:
+    def get_article_data(self, url: str) -> dict[str, Any] | None:
         """Read and get article data from a URL.
 
         Args:

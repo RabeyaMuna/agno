@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from os import getenv
-from typing import Optional, Union
 from uuid import uuid4
 
 import requests
@@ -14,8 +15,8 @@ from agno.utils.log import logger
 class DesiVocalTools(Toolkit):
     def __init__(
         self,
-        api_key: Optional[str] = None,
-        voice_id: Optional[str] = "f27d74e5-ea71-4697-be3e-f04bbd80c1a8",
+        api_key: str | None = None,
+        voice_id: str | None = "f27d74e5-ea71-4697-be3e-f04bbd80c1a8",
         **kwargs,
     ):
         super().__init__(name="desi_vocal_tools", **kwargs)
@@ -62,7 +63,7 @@ class DesiVocalTools(Toolkit):
             logger.error(f"Failed to get voices: {e}")
             return f"Error: {e}"
 
-    def text_to_speech(self, agent: Union[Agent, Team], prompt: str, voice_id: Optional[str] = None) -> str:
+    def text_to_speech(self, agent: Agent | Team, prompt: str, voice_id: str | None = None) -> str:
         """
         Use this function to generate audio from text.
         Args:

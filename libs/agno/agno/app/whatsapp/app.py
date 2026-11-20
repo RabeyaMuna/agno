@@ -1,4 +1,4 @@
-from typing import Optional, Set
+from __future__ import annotations
 
 from fastapi import FastAPI
 from fastapi.routing import APIRouter
@@ -14,11 +14,11 @@ from agno.team.team import Team
 class WhatsappAPI:
     def __init__(
         self,
-        agent: Optional[Agent] = None,
-        team: Optional[Team] = None,
-        settings: Optional[APIAppSettings] = None,
-        api_app: Optional[FastAPI] = None,
-        router: Optional[APIRouter] = None,
+        agent: Agent | None = None,
+        team: Team | None = None,
+        settings: APIAppSettings | None = None,
+        api_app: FastAPI | None = None,
+        router: APIRouter | None = None,
     ):
         if not agent and not team:
             raise ValueError("Either agent or team must be provided.")
@@ -26,21 +26,19 @@ class WhatsappAPI:
         if agent and team:
             raise ValueError("Only one of agent or team can be provided.")
 
-        self.agent: Optional[Agent] = agent
-        self.team: Optional[Team] = team
+        self.agent: Agent | None = agent
+        self.team: Team | None = team
 
-        if self.agent:
-            if not self.agent.agent_id:
-                self.agent.agent_id = generate_id(self.agent.name)
+        if self.agent and not self.agent.agent_id:
+            self.agent.agent_id = generate_id(self.agent.name)
 
-        if self.team:
-            if not self.team.team_id:
-                self.team.team_id = generate_id(self.team.name)
+        if self.team and not self.team.team_id:
+            self.team.team_id = generate_id(self.team.name)
 
         self.settings: APIAppSettings = settings or APIAppSettings()
-        self.api_app: Optional[FastAPI] = api_app
-        self.router: Optional[APIRouter] = router
-        self.endpoints_created: Set[str] = set()
+        self.api_app: FastAPI | None = api_app
+        self.router: APIRouter | None = router
+        self.endpoints_created: set[str] = set()
 
     def get_router(self) -> APIRouter:
         return get_sync_router(agent=self.agent, team=self.team)

@@ -1,4 +1,4 @@
-from typing import List, Optional, Set
+from __future__ import annotations
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
@@ -20,19 +20,19 @@ from agno.workflow.workflow import Workflow
 class Playground:
     def __init__(
         self,
-        agents: Optional[List[Agent]] = None,
-        teams: Optional[List[Team]] = None,
-        workflows: Optional[List[Workflow]] = None,
-        settings: Optional[PlaygroundSettings] = None,
-        api_app: Optional[FastAPI] = None,
-        router: Optional[APIRouter] = None,
+        agents: list[Agent] | None = None,
+        teams: list[Team] | None = None,
+        workflows: list[Workflow] | None = None,
+        settings: PlaygroundSettings | None = None,
+        api_app: FastAPI | None = None,
+        router: APIRouter | None = None,
     ):
         if not agents and not workflows and not teams:
             raise ValueError("Either agents, teams or workflows must be provided.")
 
-        self.agents: Optional[List[Agent]] = agents
-        self.workflows: Optional[List[Workflow]] = workflows
-        self.teams: Optional[List[Team]] = teams
+        self.agents: list[Agent] | None = agents
+        self.workflows: list[Workflow] | None = workflows
+        self.teams: list[Team] | None = teams
 
         if self.agents:
             for agent in self.agents:
@@ -52,9 +52,9 @@ class Playground:
                     workflow.workflow_id = generate_id(workflow.name)
 
         self.settings: PlaygroundSettings = settings or PlaygroundSettings()
-        self.api_app: Optional[FastAPI] = api_app
-        self.router: Optional[APIRouter] = router
-        self.endpoints_created: Set[str] = set()
+        self.api_app: FastAPI | None = api_app
+        self.router: APIRouter | None = router
+        self.endpoints_created: set[str] = set()
 
     def get_router(self) -> APIRouter:
         return get_sync_playground_router(self.agents, self.workflows, self.teams)

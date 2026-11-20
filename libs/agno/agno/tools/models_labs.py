@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import json
 import time
 from os import getenv
-from typing import Any, Dict, Optional, Union
+from typing import Any
 from uuid import uuid4
 
 from agno.agent import Agent
@@ -33,7 +35,7 @@ MODELS_LAB_FETCH_URLS = {
 class ModelsLabTools(Toolkit):
     def __init__(
         self,
-        api_key: Optional[str] = None,
+        api_key: str | None = None,
         wait_for_completion: bool = False,
         add_to_eta: int = 15,
         max_wait_time: int = 60,
@@ -56,9 +58,9 @@ class ModelsLabTools(Toolkit):
 
         self.register(self.generate_media)
 
-    def _create_payload(self, prompt: str) -> Dict[str, Any]:
+    def _create_payload(self, prompt: str) -> dict[str, Any]:
         """Create payload based on file type."""
-        base_payload: Dict[str, Any] = {
+        base_payload: dict[str, Any] = {
             "key": self.api_key,
             "prompt": prompt,
             "webhook": None,
@@ -85,9 +87,7 @@ class ModelsLabTools(Toolkit):
 
         return base_payload
 
-    def _add_media_artifact(
-        self, agent: Union[Agent, Team], media_id: str, media_url: str, eta: Optional[str] = None
-    ) -> None:
+    def _add_media_artifact(self, agent: Agent | Team, media_id: str, media_url: str, eta: str | None = None) -> None:
         """Add appropriate media artifact based on file type."""
         if self.file_type == FileType.MP4:
             agent.add_video(VideoArtifact(id=str(media_id), url=media_url, eta=str(eta)))
@@ -120,7 +120,7 @@ class ModelsLabTools(Toolkit):
 
         return False
 
-    def generate_media(self, agent: Union[Agent, Team], prompt: str) -> str:
+    def generate_media(self, agent: Agent | Team, prompt: str) -> str:
         """Generate media (video, image, or audio) given a prompt."""
         if not self.api_key:
             return "Please set the MODELS_LAB_API_KEY"

@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import json
 from os import getenv
-from typing import Optional
 
 from agno.tools import Toolkit
 from agno.utils.log import log_info, logger
@@ -14,10 +15,10 @@ except (ModuleNotFoundError, ImportError):
 class ConfluenceTools(Toolkit):
     def __init__(
         self,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        url: Optional[str] = None,
-        api_key: Optional[str] = None,
+        username: str | None = None,
+        password: str | None = None,
+        url: str | None = None,
+        api_key: str | None = None,
         verify_ssl: bool = True,
         **kwargs,
     ):
@@ -70,7 +71,7 @@ class ConfluenceTools(Toolkit):
         self.register(self.get_all_space_detail)
         self.register(self.get_all_page_from_space)
 
-    def get_page_content(self, space_name: str, page_title: str, expand: Optional[str] = "body.storage"):
+    def get_page_content(self, space_name: str, page_title: str, expand: str | None = "body.storage"):
         """Retrieve the content of a specific page in a Confluence space.
 
         Args:
@@ -143,7 +144,7 @@ class ConfluenceTools(Toolkit):
         page_details = str([{"id": page["id"], "title": page["title"]} for page in page_details])
         return page_details
 
-    def create_page(self, space_name: str, title: str, body: str, parent_id: Optional[str] = None) -> str:
+    def create_page(self, space_name: str, title: str, body: str, parent_id: str | None = None) -> str:
         """Create a new page in Confluence.
 
         Args:

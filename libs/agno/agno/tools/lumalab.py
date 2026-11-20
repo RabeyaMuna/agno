@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import time
 import uuid
 from os import getenv
-from typing import Any, Dict, Literal, Optional, TypedDict
+from typing import Any, Dict, Literal, TypedDict
 
 from agno.agent import Agent
 from agno.media import VideoArtifact
@@ -26,7 +28,7 @@ Keyframes = Dict[str, KeyframeImage]
 class LumaLabTools(Toolkit):
     def __init__(
         self,
-        api_key: Optional[str] = None,
+        api_key: str | None = None,
         wait_for_completion: bool = True,
         poll_interval: int = 3,
         max_wait_time: int = 300,  # 5 minutes
@@ -51,7 +53,7 @@ class LumaLabTools(Toolkit):
         agent: Agent,
         prompt: str,
         start_image_url: str,
-        end_image_url: Optional[str] = None,
+        end_image_url: str | None = None,
         loop: bool = False,
         aspect_ratio: Literal["1:1", "16:9", "9:16", "4:3", "3:4", "21:9", "9:21"] = "16:9",
     ) -> str:
@@ -71,7 +73,7 @@ class LumaLabTools(Toolkit):
 
         try:
             # Construct keyframes
-            keyframes: Dict[str, Dict[str, str]] = {"frame0": {"type": "image", "url": start_image_url}}
+            keyframes: dict[str, dict[str, str]] = {"frame0": {"type": "image", "url": start_image_url}}
 
             # Add end image if provided
             if end_image_url:
@@ -122,12 +124,12 @@ class LumaLabTools(Toolkit):
         prompt: str,
         loop: bool = False,
         aspect_ratio: Literal["1:1", "16:9", "9:16", "4:3", "3:4", "21:9", "9:21"] = "16:9",
-        keyframes: Optional[Dict[str, Dict[str, str]]] = None,
+        keyframes: dict[str, dict[str, str]] | None = None,
     ) -> str:
         """Use this function to generate a video given a prompt."""
 
         try:
-            generation_params: Dict[str, Any] = {
+            generation_params: dict[str, Any] = {
                 "prompt": prompt,
                 "loop": loop,
                 "aspect_ratio": aspect_ratio,

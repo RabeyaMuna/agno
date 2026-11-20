@@ -1,11 +1,13 @@
-from typing import Any, Dict
+from __future__ import annotations
+
+from typing import Any
 
 from agno.agent import Message
 from agno.utils.log import log_warning
 from agno.utils.openai import process_image
 
 
-def format_message(message: Message, openai_like: bool = False) -> Dict[str, Any]:
+def format_message(message: Message, openai_like: bool = False) -> dict[str, Any]:
     """
     Format a message into the format expected by Llama API.
 
@@ -16,7 +18,7 @@ def format_message(message: Message, openai_like: bool = False) -> Dict[str, Any
     Returns:
         Dict[str, Any]: The formatted message.
     """
-    message_dict: Dict[str, Any] = {
+    message_dict: dict[str, Any] = {
         "role": message.role,
         "content": [{"type": "text", "text": message.content or " "}],
         "name": message.name,
