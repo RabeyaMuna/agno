@@ -31,10 +31,8 @@ async def test_streamable_http_transport_without_url_nor_server_params():
 
 def test_empty_command_string():
     """Test that ValueError is raised when command string is empty."""
-    with pytest.raises(ValueError, match="Empty command string"):
-        # Mock shlex.split to return an empty list
-        with patch("shlex.split", return_value=[]):
-            MCPTools(command="")
+    with pytest.raises(ValueError, match="Empty command string"), patch("shlex.split", return_value=[]):
+        MCPTools(command="")
 
 
 @pytest.mark.asyncio
@@ -47,10 +45,8 @@ async def test_multimcp_without_endpoints():
 
 def test_multimcp_empty_command_string():
     """Test that ValueError is raised when a command string is empty."""
-    with pytest.raises(ValueError, match="Empty command string"):
-        # Mock shlex.split to return an empty list
-        with patch("shlex.split", return_value=[]):
-            MultiMCPTools(commands=[""])
+    with pytest.raises(ValueError, match="Empty command string"), patch("shlex.split", return_value=[]):
+        MultiMCPTools(commands=[""])
 
 
 @pytest.mark.asyncio

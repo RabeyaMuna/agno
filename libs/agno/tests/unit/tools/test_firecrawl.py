@@ -34,13 +34,15 @@ def firecrawl_tools(mock_firecrawl):
 
 def test_init_with_env_vars():
     """Test initialization with environment variables."""
-    with patch("agno.tools.firecrawl.FirecrawlApp"):
-        with patch.dict("os.environ", {"FIRECRAWL_API_KEY": TEST_API_KEY}, clear=True):
-            tools = FirecrawlTools()
-            assert tools.api_key == TEST_API_KEY
-            assert tools.formats is None
-            assert tools.limit == 10
-            assert tools.app is not None
+    with (
+        patch("agno.tools.firecrawl.FirecrawlApp"),
+        patch.dict("os.environ", {"FIRECRAWL_API_KEY": TEST_API_KEY}, clear=True),
+    ):
+        tools = FirecrawlTools()
+        assert tools.api_key == TEST_API_KEY
+        assert tools.formats is None
+        assert tools.limit == 10
+        assert tools.app is not None
 
 
 def test_init_with_params():
