@@ -387,10 +387,10 @@ def test_create_scope_collection_exists(couchbase_fts, mock_bucket):
 
 def test_create_scope_error(couchbase_fts, mock_bucket):
     # Then make the create_scope method raise an exception
-    mock_bucket.collections().create_scope.side_effect = Exception("Creation error")
+    mock_bucket.collections().create_scope.side_effect = RuntimeError("Creation error")
 
     # Test that the exception is propagated
-    with pytest.raises(Exception, match="Creation error"):
+    with pytest.raises(RuntimeError, match="Creation error"):
         couchbase_fts._create_collection_and_scope()
 
 
@@ -450,7 +450,7 @@ def test_name_exists(couchbase_fts, mock_scope):
     assert couchbase_fts.name_exists("nonexistent_doc") is False
 
     # Test query error
-    mock_scope.query.side_effect = Exception("Query error")
+    mock_scope.query.side_effect = RuntimeError("Query error")
     assert couchbase_fts.name_exists("test_doc") is False
 
 
@@ -467,7 +467,7 @@ def test_id_exists(couchbase_fts, mock_collection):
     assert couchbase_fts.id_exists("test_id") is False
 
     # Test exception handling
-    mock_collection.exists.side_effect = Exception("Test error")
+    mock_collection.exists.side_effect = RuntimeError("Test error")
     assert couchbase_fts.id_exists("test_id") is False
 
 

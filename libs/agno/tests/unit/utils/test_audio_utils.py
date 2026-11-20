@@ -1,4 +1,5 @@
 import base64
+import binascii
 import os
 import tempfile
 from pathlib import Path
@@ -265,7 +266,7 @@ def test_write_audio_to_file_invalid_base64():
 
     try:
         # This should raise a binascii.Error
-        with pytest.raises(Exception):
+        with pytest.raises(binascii.Error):
             write_audio_to_file(invalid_base64, filename)
     finally:
         # Cleanup
