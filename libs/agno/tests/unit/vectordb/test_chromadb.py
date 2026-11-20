@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import os
 import shutil
-from typing import List
 
 import pytest
 
@@ -28,17 +29,17 @@ def chroma_db(mock_embedder):
     yield db
 
     # Cleanup after test
-    try:
+    from contextlib import suppress
+
+    with suppress(Exception):
         db.drop()
-    except Exception:
-        pass
 
     if os.path.exists(TEST_PATH):
         shutil.rmtree(TEST_PATH)
 
 
 @pytest.fixture
-def sample_documents() -> List[Document]:
+def sample_documents() -> list[Document]:
     """Fixture to create sample documents"""
     return [
         Document(
