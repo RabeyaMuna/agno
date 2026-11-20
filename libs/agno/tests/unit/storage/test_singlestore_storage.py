@@ -313,15 +313,14 @@ def test_drop_table(agent_storage):
 
 def test_mode_switching():
     """Test switching between agent and workflow modes."""
-    with patch("agno.storage.singlestore.sessionmaker"):
-        with patch("agno.storage.singlestore.inspect"):
-            with patch("agno.storage.singlestore.create_engine"):
-                # Create storage in agent mode
-                storage = SingleStoreStorage(table_name="test_table", db_url="mysql://user:pass@localhost/db")
-                assert storage.mode == "agent"
+    with patch("agno.storage.singlestore.sessionmaker"), patch("agno.storage.singlestore.inspect"):
+        with patch("agno.storage.singlestore.create_engine"):
+            # Create storage in agent mode
+            storage = SingleStoreStorage(table_name="test_table", db_url="mysql://user:pass@localhost/db")
+            assert storage.mode == "agent"
 
-                # Switch to workflow mode
-                with patch.object(storage, "get_table") as mock_get_table:
-                    storage.mode = "workflow"
-                    assert storage.mode == "workflow"
-                    mock_get_table.assert_called_once()
+            # Switch to workflow mode
+            with patch.object(storage, "get_table") as mock_get_table:
+                storage.mode = "workflow"
+                assert storage.mode == "workflow"
+                mock_get_table.assert_called_once()

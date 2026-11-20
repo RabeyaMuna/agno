@@ -116,11 +116,10 @@ def test_auth_with_expired_credentials():
 
         tools = GmailTools(creds=mock_creds)
 
-        with patch.object(mock_creds, "refresh") as mock_refresh:
-            with patch("pathlib.Path.exists") as mock_exists:
-                mock_exists.return_value = False  # Force refresh path
-                tools._auth()
-                mock_refresh.assert_called_once()
+        with patch.object(mock_creds, "refresh") as mock_refresh, patch("pathlib.Path.exists") as mock_exists:
+            mock_exists.return_value = False  # Force refresh path
+            tools._auth()
+            mock_refresh.assert_called_once()
 
 
 def test_auth_with_custom_paths():
