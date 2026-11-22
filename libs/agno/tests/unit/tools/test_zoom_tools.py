@@ -353,6 +353,6 @@ def test_api_methods_request_failure(zoom_tools, method_name, mock_func, error_m
         else:
             result = method("123456789" if "meeting" in method_name else "me")
 
-        error_response = json.loads(result)
-        assert "error" in error_response
-        assert error_message in str(error_response["error"])
+        assert isinstance(result, dict)
+        assert "error" in result
+        assert error_message in str(result["error"])

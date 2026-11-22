@@ -150,7 +150,7 @@ def test_audio_to_message_filepath_not_found(tmp_path):
     """Test audio_to_message with a non-existent file path."""
     audio = [Audio(filepath=str(tmp_path / "nonexistent.wav"))]
     result = audio_to_message(audio)
-    assert result == []  # Should log error and skip
+    assert result is None  # Should log error and skip
 
 
 def test_audio_to_message_filepath_is_dir(tmp_path):
@@ -257,7 +257,7 @@ def test_images_to_message_filepath_not_found(tmp_path):
     """Test images_to_message with a non-existent file path."""
     images = [Image(filepath=str(tmp_path / "nonexistent.png"))]
     result = images_to_message(images)
-    assert result == []  # _process_image should return None
+    assert result is None  # _process_image should return None
 
 
 def test_images_to_message_filepath_is_dir(tmp_path):
