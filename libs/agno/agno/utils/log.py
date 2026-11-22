@@ -1,6 +1,7 @@
 import logging
 from os import getenv
-from typing import Any, Optional
+from typing import Any
+from typing import Optional as Optional
 
 from rich.logging import RichHandler
 from rich.text import Text
@@ -46,12 +47,12 @@ class AgnoLogger(logging.Logger):
     def debug(self, msg: str, center: bool = False, symbol: str = "*", *args, **kwargs):
         if center:
             msg = center_header(str(msg), symbol)
-        super().debug(msg, *args, **kwargs)
+        super().debug(msg, **kwargs)
 
     def info(self, msg: str, center: bool = False, symbol: str = "*", *args, **kwargs):
         if center:
             msg = center_header(str(msg), symbol)
-        super().info(msg, *args, **kwargs)
+        super().info(msg, **kwargs)
 
 
 def build_logger(logger_name: str, source_type: Optional[str] = None) -> Any:
@@ -139,24 +140,24 @@ def log_debug(msg, center: bool = False, symbol: str = "*", *args, **kwargs):
     global logger
     global debug_on
     if debug_on:
-        logger.debug(msg, center, symbol, *args, **kwargs)
+        logger.debug(msg, center, symbol, **kwargs)
 
 
 def log_info(msg, center: bool = False, symbol: str = "*", *args, **kwargs):
     global logger
-    logger.info(msg, center, symbol, *args, **kwargs)
+    logger.info(msg, center, symbol, **kwargs)
 
 
 def log_warning(msg, *args, **kwargs):
     global logger
-    logger.warning(msg, *args, **kwargs)
+    logger.warning(msg, **kwargs)
 
 
 def log_error(msg, *args, **kwargs):
     global logger
-    logger.error(msg, *args, **kwargs)
+    logger.error(msg, **kwargs)
 
 
 def log_exception(msg, *args, **kwargs):
     global logger
-    logger.exception(msg, *args, **kwargs)
+    logger.exception(msg, **kwargs)
