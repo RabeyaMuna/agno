@@ -2,7 +2,7 @@
 
 import base64
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import MagicMock, Mock, patch
 
 import pytest
@@ -37,7 +37,7 @@ def gmail_tools(mock_credentials, mock_gmail_service):
         return tools
 
 
-def create_mock_message(msg_id: str, subject: str, sender: str, date: str, body: str) -> Dict[str, Any]:
+def create_mock_message(msg_id: str, subject: str, sender: str, date: str, body: str) -> dict[str, Any]:
     """Helper function to create mock message data."""
     return {
         "id": msg_id,
