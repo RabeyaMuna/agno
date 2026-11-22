@@ -698,19 +698,12 @@ async def test_async_name_exists(couchbase_fts):
     with patch.object(CouchbaseSearch, "get_async_scope", new_callable=AsyncMock) as mock_get_async_scope:
         mock_get_async_scope.return_value = mock_scope_inst
 
-        async def mock_rows_found():
-            yield {"name": "test_doc"}
-
-        mock_query_result.rows = mock_rows_found
+        mock_query_result.rows = lambda: ({"name": "test_doc"} for _ in range(1))
 
         assert await couchbase_fts.async_name_exists("test_doc") is True
         mock_scope_inst.query.assert_called_once()
 
-        async def mock_rows_not_found():
-            if False:  # pragma: no cover
-                yield
-
-        mock_query_result.rows = mock_rows_not_found
+        mock_query_result.rows = lambda: ({} for _ in range(0))
         mock_scope_inst.query.reset_mock()
         assert await couchbase_fts.async_name_exists("nonexistent_doc") is False
         mock_scope_inst.query.assert_called_once()

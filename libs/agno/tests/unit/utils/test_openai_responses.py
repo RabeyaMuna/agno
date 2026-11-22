@@ -1,7 +1,7 @@
 """Tests for openai_responses module"""
 
 import copy
-from typing import Dict, List, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -15,13 +15,13 @@ class SimpleModel(BaseModel):
 
 class DictModel(BaseModel):
     name: str = Field(..., description="Name field")
-    rating: Dict[str, int] = Field(..., description="Rating dictionary")
-    scores: Dict[str, float] = Field(..., description="Score dictionary")
+    rating: dict[str, int] = Field(..., description="Rating dictionary")
+    scores: dict[str, float] = Field(..., description="Score dictionary")
 
 
 class OptionalModel(BaseModel):
     name: str = Field(..., description="Name field")
-    optional_field: Optional[str] = Field(None, description="Optional field")
+    optional_field: str | None = Field(None, description="Optional field")
 
 
 def test_sanitize_response_schema_dict_fields_excluded_from_required():
@@ -120,7 +120,7 @@ def test_sanitize_response_schema_array_items():
 
     class ArrayModel(BaseModel):
         name: str = Field(..., description="Name")
-        items: List[Dict[str, int]] = Field(..., description="Array of dicts")
+        items: list[dict[str, int]] = Field(..., description="Array of dicts")
 
     original_schema = ArrayModel.model_json_schema()
     schema = copy.deepcopy(original_schema)

@@ -2,7 +2,7 @@
 
 import base64
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import MagicMock, Mock, mock_open, patch
 
 import pytest
@@ -37,7 +37,7 @@ def gmail_tools(mock_credentials, mock_gmail_service):
         return tools
 
 
-def create_mock_message(msg_id: str, subject: str, sender: str, date: str, body: str) -> Dict[str, Any]:
+def create_mock_message(msg_id: str, subject: str, sender: str, date: str, body: str) -> dict[str, Any]:
     """Helper function to create mock message data."""
     return {
         "id": msg_id,
@@ -92,15 +92,13 @@ def test_authentication_decorator():
     mock_creds = Mock(spec=Credentials)
     mock_creds.valid = False
 
-    with patch("agno.tools.gmail.build") as mock_build:
+    with patch("agno.tools.gmail.build") as mock_build, patch.object(GmailTools, "_auth") as mock_auth:
         mock_service = MagicMock()
         mock_build.return_value = mock_service
 
         tools = GmailTools(creds=mock_creds)
-
-        with patch.object(tools, "_auth") as mock_auth:
-            tools.get_latest_emails(count=1)
-            mock_auth.assert_called_once()
+        tools.get_latest_emails(count=1)
+        mock_auth.assert_called_once()
 
 
 def test_auth_with_expired_credentials():
@@ -110,17 +108,14 @@ def test_auth_with_expired_credentials():
     mock_creds.expired = True
     mock_creds.refresh_token = True
 
-    with patch("agno.tools.gmail.build") as mock_build:
+    with patch("agno.tools.gmail.build") as mock_build, patch.object(mock_creds, "refresh") as mock_refresh, patch("pathlib.Path.exists") as mock_exists:
         mock_service = MagicMock()
         mock_build.return_value = mock_service
 
         tools = GmailTools(creds=mock_creds)
-
-        with patch.object(mock_creds, "refresh") as mock_refresh:
-            with patch("pathlib.Path.exists") as mock_exists:
-                mock_exists.return_value = False  # Force refresh path
-                tools._auth()
-                mock_refresh.assert_called_once()
+        mock_exists.return_value = False  # Force refresh path
+        tools._auth()
+        mock_refresh.assert_called_once()
 
 
 def test_auth_with_custom_paths():
@@ -128,12 +123,11 @@ def test_auth_with_custom_paths():
     custom_creds_path = "custom_creds.json"
     custom_token_path = "custom_token.json"
 
-    with patch("pathlib.Path.exists") as mock_exists:
+    with patch("pathlib.Path.exists") as mock_exists, patch("agno.tools.gmail.Credentials.from_authorized_user_file") as mock_from_file:
         mock_exists.return_value = True
-        with patch("agno.tools.gmail.Credentials.from_authorized_user_file") as mock_from_file:
-            tools = GmailTools(credentials_path=custom_creds_path, token_path=custom_token_path)
-            tools._auth()
-            mock_from_file.assert_called_once_with(custom_token_path, tools.scopes)
+        tools = GmailTools(credentials_path=custom_creds_path, token_path=custom_token_path)
+        tools._auth()
+        mock_from_file.assert_called_once_with(custom_token_path, tools.scopes)
 
 
 def test_get_latest_emails(gmail_tools, mock_gmail_service):
@@ -700,16 +694,14 @@ def test_attachment_filename_extraction(gmail_tools, mock_gmail_service):
     # Reset mock to clear any setup calls
     mock_gmail_service.reset_mock()
 
-    with patch("pathlib.Path.exists", return_value=True):
-        with patch("builtins.open", mock_open(read_data=b"fake file content")):
-            with patch("mimetypes.guess_type", return_value=("application/pdf", None)):
-                # Test with full path - should extract just the filename
-                result = gmail_tools.send_email(
-                    to="recipient@test.com",
-                    subject="Path Test",
-                    body="Email with full path attachment",
-                    attachments="/full/path/to/document.pdf",
-                )
+    with patch("pathlib.Path.exists", return_value=True), patch("builtins.open", mock_open(read_data=b"fake file content")), patch("mimetypes.guess_type", return_value=("application/pdf", None)):
+        # Test with full path - should extract just the filename
+        result = gmail_tools.send_email(
+            to="recipient@test.com",
+            subject="Path Test",
+            body="Email with full path attachment",
+            attachments="/full/path/to/document.pdf",
+        )
 
     assert "msg123" in result
     mock_gmail_service.users().messages().send.assert_called_once()
