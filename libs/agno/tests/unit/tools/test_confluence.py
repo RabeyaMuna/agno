@@ -13,7 +13,13 @@ from agno.tools.confluence import ConfluenceTools
 def mock_confluence():
     """Create a mock Confluence client."""
     with patch("agno.tools.confluence.Confluence") as mock_confluence_class:
-        mock_client = MagicMock(spec=Confluence)
+        mock_client = MagicMock(
+            spec=Confluence,
+            get_all_spaces=MagicMock(),
+            get_page_by_title=MagicMock(),
+            create_page=MagicMock(),
+            update_page=MagicMock(),
+        )
         mock_confluence_class.return_value = mock_client
         yield mock_client
 
@@ -65,9 +71,8 @@ def test_init_with_constructor_parameters():
 
 def test_init_with_missing_credentials():
     """Test initialization with missing credentials."""
-    with patch.dict("os.environ", {}, clear=True):
-        with pytest.raises(ValueError):
-            ConfluenceTools()
+    with patch.dict("os.environ", {}, clear=True), pytest.raises(ValueError):
+        ConfluenceTools()
 
 
 # Space Tests

@@ -1,4 +1,3 @@
-from typing import Dict
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest

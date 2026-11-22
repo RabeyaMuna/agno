@@ -44,6 +44,8 @@ def mock_groq_client():
 
 
 @patch("agno.tools.toolkit.Toolkit.__init__", return_value=None)  # Mock base init
+def test_generate_speech_error():
+def test_generate_speech_success():
 def test_groq_tools_init_success(mock_toolkit_init, mock_groq_client):
     """Test successful initialization with API key from env."""
     tools = GroqTools()
@@ -121,6 +123,7 @@ def test_transcribe_audio_local_file(mock_exists, mock_toolkit_init, mock_groq_c
 @patch("groq.resources.audio.Transcriptions.create", side_effect=Exception("API Error"))
 @patch("agno.tools.toolkit.Toolkit.__init__", return_value=None)  # Mock base init
 @patch("os.path.exists", return_value=True)
+def test_transcribe_audio_error():
 def test_transcribe_audio_error(mock_exists, mock_toolkit_init, mock_transcribe_create):
     """Test transcribe_audio handling API errors."""
     tools = GroqTools()
@@ -135,6 +138,7 @@ def test_transcribe_audio_error(mock_exists, mock_toolkit_init, mock_transcribe_
 
 @patch("agno.tools.toolkit.Toolkit.__init__", return_value=None)  # Mock base init
 @patch("os.path.exists", return_value=False)
+def test_transcribe_audio_url():
 def test_transcribe_audio_url(mock_exists, mock_toolkit_init, mock_groq_client):
     """Test transcribe_audio with a URL."""
     tools = GroqTools()
@@ -156,6 +160,7 @@ def test_transcribe_audio_url(mock_exists, mock_toolkit_init, mock_groq_client):
 @patch("groq.resources.audio.Transcriptions.create", side_effect=Exception("API Error"))
 @patch("agno.tools.toolkit.Toolkit.__init__", return_value=None)  # Mock base init
 @patch("os.path.exists", return_value=False)  # Simulate URL case
+def test_transcribe_audio_error_url():
 def test_transcribe_audio_error_url(mock_exists, mock_toolkit_init, mock_transcribe_create):
     """Test transcribe_audio handling API errors with URL."""
     tools = GroqTools()
@@ -195,6 +200,7 @@ def test_translate_audio_local_file(mock_exists, mock_toolkit_init, mock_groq_cl
 @patch("groq.resources.audio.Translations.create", side_effect=Exception("API Error"))
 @patch("agno.tools.toolkit.Toolkit.__init__", return_value=None)  # Mock base init
 @patch("os.path.exists", return_value=True)
+def test_translate_audio_error():
 def test_translate_audio_error(mock_exists, mock_toolkit_init, mock_translate_create):
     """Test translate_audio handling API errors."""
     tools = GroqTools()
@@ -230,6 +236,7 @@ def test_translate_audio_url(mock_exists, mock_toolkit_init, mock_groq_client):
 @patch("groq.resources.audio.Translations.create", side_effect=Exception("API Error"))
 @patch("agno.tools.toolkit.Toolkit.__init__", return_value=None)  # Mock base init
 @patch("os.path.exists", return_value=False)  # Simulate URL case
+def test_translate_audio_error_url():
 def test_translate_audio_error_url(mock_exists, mock_toolkit_init, mock_translate_create):
     """Test translate_audio handling API errors with URL."""
     tools = GroqTools()
