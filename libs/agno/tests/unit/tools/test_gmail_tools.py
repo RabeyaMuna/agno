@@ -2,7 +2,7 @@
 
 import base64
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import MagicMock, Mock, mock_open, patch
 
 import pytest
@@ -37,7 +37,7 @@ def gmail_tools(mock_credentials, mock_gmail_service):
         return tools
 
 
-def create_mock_message(msg_id: str, subject: str, sender: str, date: str, body: str) -> Dict[str, Any]:
+def create_mock_message(msg_id: str, subject: str, sender: str, date: str, body: str) -> dict[str, Any]:
     """Helper function to create mock message data."""
     return {
         "id": msg_id,
@@ -221,7 +221,7 @@ def test_get_emails_by_date(gmail_tools, mock_gmail_service):
     mock_gmail_service.users().messages().list().execute.return_value = mock_messages
     mock_gmail_service.users().messages().get().execute.return_value = mock_message_data
 
-    start_date = int(datetime(2024, 1, 1).timestamp())
+    start_date = int(datetime(2024, 1, 1, tzinfo=datetime.timezone.utc).timestamp())
     result = gmail_tools.get_emails_by_date(start_date, range_in_days=1)
 
     assert "Date Email" in result
@@ -498,9 +498,9 @@ def test_send_email_with_single_attachment(gmail_tools, mock_gmail_service):
     # Reset mock to clear any setup calls
     mock_gmail_service.reset_mock()
 
-    with patch("pathlib.Path.exists", return_value=True):
-        with patch("builtins.open", mock_open(read_data=b"fake file content")):
-            with patch("mimetypes.guess_type", return_value=("application/pdf", None)):
+    with patch("pathlib.Path.exists", return_value=True), \
+         patch("builtins.open", mock_open(read_data=b"fake file content")), \
+         patch("mimetypes.guess_type", return_value=("application/pdf", None)):
                 result = gmail_tools.send_email(
                     to="recipient@test.com",
                     subject="With Attachment",

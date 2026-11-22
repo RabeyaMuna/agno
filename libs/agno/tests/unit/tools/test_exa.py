@@ -197,22 +197,22 @@ def test_search_with_category(exa_tools, mock_exa_client):
 def test_error_handling(exa_tools, mock_exa_client):
     """Test error handling in various methods."""
     # Test search error
-    mock_exa_client.search_and_contents.side_effect = Exception("Search API Error")
+    mock_exa_client.search_and_contents.side_effect = RuntimeError("Search API Error")
     result = exa_tools.search_exa("test query")
     assert "Error: Search API Error" in result
 
     # Test get_contents error
-    mock_exa_client.get_contents.side_effect = Exception("Contents API Error")
+    mock_exa_client.get_contents.side_effect = RuntimeError("Contents API Error")
     result = exa_tools.get_contents(["https://example.com"])
     assert "Error: Contents API Error" in result
 
     # Test find_similar error
-    mock_exa_client.find_similar_and_contents.side_effect = Exception("Similar API Error")
+    mock_exa_client.find_similar_and_contents.side_effect = RuntimeError("Similar API Error")
     result = exa_tools.find_similar("https://example.com")
     assert "Error: Similar API Error" in result
 
     # Test answer error
-    mock_exa_client.answer.side_effect = Exception("Answer API Error")
+    mock_exa_client.answer.side_effect = RuntimeError("Answer API Error")
     result = exa_tools.exa_answer("test question")
     assert "Error: Answer API Error" in result
 
@@ -386,7 +386,7 @@ def test_research_timeout(exa_tools, mock_exa_client):
 def test_research_error_handling(exa_tools, mock_exa_client):
     """Test research error handling."""
     mock_research_client = Mock()
-    mock_research_client.create_task.side_effect = Exception("API Error")
+    mock_research_client.create_task.side_effect = RuntimeError("API Error")
     mock_exa_client.research = mock_research_client
 
     result = exa_tools.research("test instructions")
