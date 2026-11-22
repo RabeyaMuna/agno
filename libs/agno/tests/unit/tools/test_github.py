@@ -138,8 +138,8 @@ def test_get_pull_request_with_details(mock_github):
     mock_pr.user.login = "test-user"
     mock_pr.user.avatar_url = "https://github.com/avatars/test-user.png"
     mock_pr.created_at.isoformat.return_value = "2024-03-01T12:00:00"
-    mock_pr.created_at = datetime(2024, 3, 1, 12, 0, 0)
-    mock_pr.updated_at = datetime(2024, 3, 2, 12, 0, 0)
+    mock_pr.created_at = datetime(2024, 3, 1, 12, 0, 0, tzinfo=timezone.utc)
+    mock_pr.updated_at = datetime(2024, 3, 2, 12, 0, 0, tzinfo=timezone.utc)
     mock_pr.mergeable = True
     mock_pr.mergeable_state = "clean"
     mock_pr.additions = 100
@@ -153,7 +153,7 @@ def test_get_pull_request_with_details(mock_github):
     mock_issue1.state = "open"
     mock_issue1.user.login = "test-user"
     mock_issue1.pull_request = None
-    mock_issue1.created_at = datetime(2024, 2, 4, 12, 0, 0)
+    mock_issue1.created_at = datetime(2024, 2, 4, 12, 0, 0, tzinfo=timezone.utc)
 
     mock_issue2 = MagicMock(spec=Issue)
     mock_issue2.number = 2
@@ -162,7 +162,7 @@ def test_get_pull_request_with_details(mock_github):
     mock_issue2.state = "closed"
     mock_issue2.user.login = "another-user"
     mock_issue2.pull_request = None
-    mock_issue2.created_at = datetime(2024, 2, 3, 12, 0, 0)
+    mock_issue2.created_at = datetime(2024, 2, 3, 12, 0, 0, tzinfo=timezone.utc)
 
     mock_repo.get_issues.return_value = [mock_issue1, mock_issue2]
 
@@ -198,7 +198,7 @@ def test_create_issue(mock_github):
     mock_issue.state = "open"
     mock_issue.user.login = "test-user"
     mock_issue.body = "Issue description"
-    mock_issue.created_at = datetime(2024, 2, 4, 12, 0, 0)
+    mock_issue.created_at = datetime(2024, 2, 4, 12, 0, 0, tzinfo=timezone.utc)
 
     mock_repo.create_issue.return_value = mock_issue
 
