@@ -1,6 +1,6 @@
 import json
 from os import getenv
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from agno.tools import Toolkit
 from agno.utils.log import logger
@@ -100,7 +100,7 @@ class FirecrawlTools(Toolkit):
         Returns:
             The results of the crawling.
         """
-        params: Dict[str, Any] = {}
+        params: dict[str, Any] = {}
         if self.limit or limit:
             params["limit"] = self.limit or limit
         if self.formats:
@@ -128,7 +128,7 @@ class FirecrawlTools(Toolkit):
             query (str): The query to search for.
             limit (int): The maximum number of results to return.
         """
-        params: Dict[str, Any] = {}
+        params: dict[str, Any] = {}
         if self.limit or limit:
             params["limit"] = self.limit or limit
         if self.formats:
