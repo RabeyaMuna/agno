@@ -302,7 +302,7 @@ class Agent:
         num_history_responses: Optional[int] = None,
         num_history_runs: int = 3,
         knowledge: Optional[AgentKnowledge] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         enable_agentic_knowledge_filters: Optional[bool] = None,
         add_references: bool = False,
         retriever: Optional[Callable[..., Optional[List[Dict]]]] = None,
@@ -688,7 +688,7 @@ class Agent:
                 )
 
             # Build a list of messages that should be added to the AgentMemory
-            messages_for_memory: List[Message] = (
+            messages_for_memory: list[Message] = (
                 [run_messages.user_message] if run_messages.user_message is not None else []
             )
             # Add messages from messages_for_run after the last user message
@@ -726,14 +726,17 @@ class Agent:
                         continue
 
                     # Add the message to the AgentRun
-                    if mp:
-                        if agent_run.messages is None:
-                            agent_run.messages = []
-                        agent_run.messages.append(mp)
-                        if self.memory.create_user_memories and self.memory.update_user_memories_after_run:
-                            self.memory.update_memory(input=mp.get_content_string())
-                    else:
+                    if not mp:
                         log_warning("Unable to add message to memory")
+                        return
+
+                    if agent_run.messages is None:
+                        agent_run.messages = []
+                    agent_run.messages.append(mp)
+
+                    if self.memory.create_user_memories and self.memory.update_user_memories_after_run:
+                        self.memory.update_memory(input=mp.get_content_string())
+
             # Add AgentRun to memory
             self.memory.add_run(agent_run)
             # Update the session summary if needed
@@ -1022,14 +1025,14 @@ class Agent:
                 )
 
             # Build a list of messages that should be added to the AgentMemory
-            messages_for_memory: List[Message] = (
+            messages_for_memory: list[Message] = (
                 [run_messages.user_message] if run_messages.user_message is not None else []
             )
             # Add messages from messages_for_run after the last user message
-            for _rm in run_messages.messages[index_of_last_user_message:]:
-                if _rm.add_to_agent_memory:
-                    messages_for_memory.append(_rm)
-            if len(messages_for_memory) > 0:
+            messages_for_memory.extend(
+                _rm for _rm in run_messages.messages[index_of_last_user_message:] if _rm.add_to_agent_memory
+            )
+            if messages_for_memory:
                 self.memory.add_messages(messages=messages_for_memory)
 
             # Create an AgentRun object to add to memory
@@ -1121,7 +1124,7 @@ class Agent:
     @overload
     def run(
         self,
-        message: Optional[Union[str, List, Dict, Message]] = None,
+        message: Optional[Union[str, List, dict, Message]] = None,
         *,
         stream: Literal[False] = False,
         user_id: Optional[str] = None,
@@ -1130,10 +1133,10 @@ class Agent:
         images: Optional[Sequence[Image]] = None,
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
-        messages: Optional[Sequence[Union[Dict, Message]]] = None,
+        messages: Optional[Sequence[Union[dict, Message]]] = None,
         stream_intermediate_steps: bool = False,
         retries: Optional[int] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> RunResponse: ...
 
@@ -1149,10 +1152,10 @@ class Agent:
         images: Optional[Sequence[Image]] = None,
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
-        messages: Optional[Sequence[Union[Dict, Message]]] = None,
+        messages: Optional[Sequence[Union[dict, Message]]] = None,
         stream_intermediate_steps: bool = False,
         retries: Optional[int] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> Iterator[RunResponse]: ...
 
@@ -1331,7 +1334,7 @@ class Agent:
                     )
                     return resp
             except ModelProviderError as e:
-                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
+                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {e!s}")
                 if isinstance(e, StopAgentRun):
                     raise e
                 last_exception = e
@@ -2098,7 +2101,7 @@ class Agent:
                         messages=messages,
                     )
             except ModelProviderError as e:
-                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
+                log_warning(f"Attempt {attempt + 1}/{num_attempts} failed: {e!s}")
                 if isinstance(e, StopAgentRun):
                     raise e
                 last_exception = e
@@ -2207,9 +2210,9 @@ class Agent:
         run_messages: RunMessages,
         session_id: str,
         user_id: Optional[str] = None,
-        messages: Optional[List[Message]] = None,
+        messages: Optional[list[Message]] = None,
     ) -> None:
-        session_messages: List[Message] = []
+        session_messages: list[Message] = []
         self.memory = cast(Memory, self.memory)
         if self.enable_user_memories and run_messages.user_message is not None:
             log_debug("Creating user memories.")
@@ -2249,10 +2252,10 @@ class Agent:
         run_messages: RunMessages,
         session_id: str,
         user_id: Optional[str] = None,
-        messages: Optional[List[Message]] = None,
+        messages: Optional[list[Message]] = None,
     ) -> None:
         self.memory = cast(Memory, self.memory)
-        session_messages: List[Message] = []
+        session_messages: list[Message] = []
         if self.enable_user_memories and run_messages.user_message is not None:
             log_debug("Creating user memories.")
             await self.memory.acreate_user_memories(
@@ -2294,8 +2297,8 @@ class Agent:
         async_mode: bool = False,
         user_id: Optional[str] = None,
         knowledge_filters: Optional[Dict[str, Any]] = None,
-    ) -> Optional[List[Union[Toolkit, Callable, Function, Dict]]]:
-        agent_tools: List[Union[Toolkit, Callable, Function, Dict]] = []
+    ) -> Optional[list[Union[Toolkit, Callable, Function, Dict]]]:
+        agent_tools: list[Union[Toolkit, Callable, Function, Dict]] = []
 
         # Add provided tools
         if self.tools is not None:
@@ -2889,9 +2892,7 @@ class Agent:
         if self.model is not None:
             self.model.clear()
         if self.memory is not None:
-            if isinstance(self.memory, AgentMemory):
-                self.memory.clear()
-            elif isinstance(self.memory, Memory):
+            if isinstance(self.memory, AgentMemory) or isinstance(self.memory, Memory):
                 self.memory.clear()
         self.session_id = str(uuid4())
         self.load_session(force=True)
@@ -3521,18 +3522,7 @@ class Agent:
             return field_value.deep_copy()
 
         # For storage, model and reasoning_model, use a deep copy
-        elif field_name in ("storage", "model", "reasoning_model"):
-            try:
-                return deepcopy(field_value)
-            except Exception:
-                try:
-                    return copy(field_value)
-                except Exception as e:
-                    log_warning(f"Failed to copy field: {field_name} - {e}")
-                    return field_value
-
-        # For compound types, attempt a deep copy
-        elif isinstance(field_value, (list, dict, set)):
+        elif field_name in ("storage", "model", "reasoning_model") or isinstance(field_value, (list, dict, set)):
             try:
                 return deepcopy(field_value)
             except Exception:
@@ -3931,8 +3921,8 @@ class Agent:
         else:
             self.run_response.reasoning_content += reasoning_content
 
-    def aggregate_metrics_from_messages(self, messages: List[Message]) -> Dict[str, Any]:
-        aggregated_metrics: Dict[str, Any] = defaultdict(list)
+    def aggregate_metrics_from_messages(self, messages: list[Message]) -> dict[str, Any]:
+        aggregated_metrics: dict[str, Any] = defaultdict(list)
         assistant_message_role = self.model.assistant_message_role if self.model is not None else "assistant"
         for m in messages:
             if m.role == assistant_message_role and m.metrics is not None and m.from_history is False:
@@ -4107,13 +4097,13 @@ class Agent:
                 self.run_response.audio = []
             self.run_response.audio.append(audio)
 
-    def get_images(self) -> Optional[List[ImageArtifact]]:
+    def get_images(self) -> list[ImageArtifact] | None:
         return self.images
 
-    def get_videos(self) -> Optional[List[VideoArtifact]]:
+    def get_videos(self) -> list[VideoArtifact] | None:
         return self.videos
 
-    def get_audio(self) -> Optional[List[AudioArtifact]]:
+    def get_audio(self) -> list[AudioArtifact] | None:
         return self.audio
 
     ###########################################################################
@@ -4280,8 +4270,8 @@ class Agent:
 
             step_count = 1
             next_action = NextAction.CONTINUE
-            reasoning_messages: List[Message] = []
-            all_reasoning_steps: List[ReasoningStep] = []
+            reasoning_messages: list[Message] = []
+            all_reasoning_steps: list[ReasoningStep] = []
             log_debug("Starting Reasoning", center=True, symbol="=")
             while next_action == NextAction.CONTINUE and step_count < self.reasoning_max_steps:
                 log_debug(f"Step {step_count}", center=True, symbol="=")
@@ -4490,8 +4480,8 @@ class Agent:
 
             step_count = 1
             next_action = NextAction.CONTINUE
-            reasoning_messages: List[Message] = []
-            all_reasoning_steps: List[ReasoningStep] = []
+            reasoning_messages: list[Message] = []
+            all_reasoning_steps: list[ReasoningStep] = []
             log_debug("Starting Reasoning", center=True, symbol="=")
             while next_action == NextAction.CONTINUE and step_count < self.reasoning_max_steps:
                 log_debug(f"Step {step_count}", center=True, symbol="=")
@@ -4509,7 +4499,7 @@ class Agent:
                         log_warning("Reasoning error. Reasoning steps are empty, continuing regular session...")
                         break
 
-                    reasoning_steps: List[ReasoningStep] = reasoning_agent_response.content.reasoning_steps
+                    reasoning_steps: list[ReasoningStep] = reasoning_agent_response.content.reasoning_steps
                     all_reasoning_steps.extend(reasoning_steps)
                     # Yield reasoning steps
                     if self.stream_intermediate_steps:
@@ -5959,7 +5949,7 @@ class Agent:
             # Log the error but don't crash
             from agno.utils.log import log_error
 
-            log_error(f"Failed to add reasoning metrics to extra_data: {str(e)}")
+            log_error(f"Failed to add reasoning metrics to extra_data: {e!s}")
 
     def _get_effective_filters(self, knowledge_filters: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
         """
