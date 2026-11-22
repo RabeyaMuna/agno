@@ -541,8 +541,8 @@ def test_get_pull_request_comments(mock_github):
     mock_comment1.id = 1057297855
     mock_comment1.body = "This is a comment"
     mock_comment1.user.login = "test-user"
-    mock_comment1.created_at = datetime(2023, 1, 1)
-    mock_comment1.updated_at = datetime(2023, 1, 2)
+    mock_comment1.created_at = datetime(2023, 1, 1, tzinfo=timezone.utc)
+    mock_comment1.updated_at = datetime(2023, 1, 2, tzinfo=timezone.utc)
     mock_comment1.path = "file.txt"
     mock_comment1.position = 0
     mock_comment1.commit_id = "abc123"
@@ -552,8 +552,8 @@ def test_get_pull_request_comments(mock_github):
     mock_comment2.id = 1057297856
     mock_comment2.body = "Another comment"
     mock_comment2.user.login = "another-user"
-    mock_comment2.created_at = datetime(2023, 1, 3)
-    mock_comment2.updated_at = datetime(2023, 1, 4)
+    mock_comment2.created_at = datetime(2023, 1, 3, tzinfo=timezone.utc)
+    mock_comment2.updated_at = datetime(2023, 1, 4, tzinfo=timezone.utc)
     mock_comment2.path = "another-file.txt"
     mock_comment2.position = 10
     mock_comment2.commit_id = "def456"
@@ -600,7 +600,7 @@ def test_create_pull_request_comment(mock_github):
     mock_comment.id = 1057297855
     mock_comment.body = "This is a comment"
     mock_comment.user.login = "test-user"
-    mock_comment.created_at = datetime(2023, 1, 1)
+    mock_comment.created_at = datetime(2023, 1, 1, tzinfo=timezone.utc)
     mock_comment.path = "file.txt"
     mock_comment.position = 0
     mock_comment.commit_id = "abc123"
@@ -643,7 +643,7 @@ def test_edit_pull_request_comment(mock_github):
     mock_comment.id = 1057297855
     mock_comment.user = MagicMock()
     mock_comment.user.login = "test-user"
-    mock_comment.updated_at = datetime(2023, 1, 2)
+    mock_comment.updated_at = datetime(2023, 1, 2, tzinfo=timezone.utc)
     mock_comment.path = "file.txt"
     mock_comment.position = 5
     mock_comment.commit_id = "abc123"
@@ -657,7 +657,7 @@ def test_edit_pull_request_comment(mock_github):
                 "id": 1057297855,
                 "body": "This is a modified comment",
                 "user": "test-user",
-                "updated_at": datetime(2023, 1, 2).isoformat(),
+                "updated_at": datetime(2023, 1, 2, tzinfo=timezone.utc).isoformat(),
                 "path": "file.txt",
                 "position": 5,
                 "commit_id": "abc123",
@@ -779,8 +779,8 @@ def test_get_pull_request_with_comprehensive_details(mock_github):
     mock_pr.title = "Comprehensive PR"
     mock_pr.user.login = "test-user"
     mock_pr.state = "open"
-    mock_pr.created_at = datetime(2023, 3, 1, 12, 0, 0)
-    mock_pr.updated_at = datetime(2023, 3, 2, 12, 0, 0)
+    mock_pr.created_at = datetime(2023, 3, 1, 12, 0, 0, tzinfo=timezone.utc)
+    mock_pr.updated_at = datetime(2023, 3, 2, 12, 0, 0, tzinfo=timezone.utc)
     mock_pr.html_url = "https://github.com/test-org/test-repo/pull/101"
     mock_pr.body = "This is a comprehensive pull request"
     mock_pr.base = MagicMock()
@@ -803,7 +803,7 @@ def test_get_pull_request_with_comprehensive_details(mock_github):
     mock_review_comment1.id = 1001
     mock_review_comment1.body = "This is a review comment"
     mock_review_comment1.user.login = "reviewer1"
-    mock_review_comment1.created_at = datetime(2023, 3, 1, 14, 0, 0)
+    mock_review_comment1.created_at = datetime(2023, 3, 1, 14, 0, 0, tzinfo=timezone.utc)
     mock_review_comment1.path = "file.txt"
     mock_review_comment1.position = 10
     mock_review_comment1.commit_id = "abc123"
@@ -814,7 +814,7 @@ def test_get_pull_request_with_comprehensive_details(mock_github):
     mock_issue_comment1.id = 2001
     mock_issue_comment1.body = "This is an issue comment"
     mock_issue_comment1.user.login = "commenter1"
-    mock_issue_comment1.created_at = datetime(2023, 3, 1, 15, 0, 0)
+    mock_issue_comment1.created_at = datetime(2023, 3, 1, 15, 0, 0, tzinfo=timezone.utc)
     mock_issue_comment1.html_url = "https://github.com/test-org/test-repo/pull/101/issue-comments/2001"
 
     # Mock PR commits
@@ -822,7 +822,7 @@ def test_get_pull_request_with_comprehensive_details(mock_github):
     mock_commit.sha = "abc123def456"
     mock_commit.commit.message = "Implement feature"
     mock_commit.commit.author.name = "Author Name"
-    mock_commit.commit.author.date = datetime(2023, 3, 1, 10, 0, 0)
+    mock_commit.commit.author.date = datetime(2023, 3, 1, 10, 0, 0, tzinfo=timezone.utc)
     mock_commit.html_url = "https://github.com/test-org/test-repo/commit/abc123def456"
 
     # Mock PR files
