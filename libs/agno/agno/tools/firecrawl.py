@@ -1,12 +1,12 @@
 import json
 from os import getenv
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from agno.tools import Toolkit
 from agno.utils.log import logger
 
 try:
-    from firecrawl import FirecrawlApp, ScrapeOptions  # type: ignore[attr-defined]
+    from firecrawl import FirecrawlApp, V1ScrapeOptions  # type: ignore[attr-defined]
 except ImportError:
     raise ImportError("`firecrawl-py` not installed. Please install using `pip install firecrawl-py`")
 
@@ -37,14 +37,14 @@ class FirecrawlTools(Toolkit):
     def __init__(
         self,
         api_key: Optional[str] = None,
-        formats: Optional[List[str]] = None,
+        formats: Optional[list[str]] = None,
         limit: int = 10,
         poll_interval: int = 30,
         scrape: bool = True,
         crawl: bool = False,
         mapping: bool = False,
         search: bool = False,
-        search_params: Optional[Dict[str, Any]] = None,
+        search_params: Optional[dict[str, Any]] = None,
         api_url: Optional[str] = "https://api.firecrawl.dev",
         **kwargs,
     ):
@@ -52,7 +52,7 @@ class FirecrawlTools(Toolkit):
         if not self.api_key:
             logger.error("FIRECRAWL_API_KEY not set. Please set the FIRECRAWL_API_KEY environment variable.")
 
-        self.formats: Optional[List[str]] = formats
+        self.formats: Optional[list[str]] = formats
         self.limit: int = limit
         self.poll_interval: int = poll_interval
         self.app: FirecrawlApp = FirecrawlApp(api_key=self.api_key, api_url=api_url)
@@ -65,7 +65,7 @@ class FirecrawlTools(Toolkit):
         elif not scrape:
             crawl = True
 
-        tools: List[Any] = []
+        tools: list[Any] = []
         if scrape:
             tools.append(self.scrape_website)
         if crawl:
@@ -100,11 +100,11 @@ class FirecrawlTools(Toolkit):
         Returns:
             The results of the crawling.
         """
-        params: Dict[str, Any] = {}
+        params: dict[str, Any] = {}
         if self.limit or limit:
             params["limit"] = self.limit or limit
         if self.formats:
-            params["scrape_options"] = ScrapeOptions(formats=self.formats)  # type: ignore
+            params["scrape_options"] = V1ScrapeOptions(formats=self.formats)  # type: ignore
 
         params["poll_interval"] = self.poll_interval
 
@@ -128,11 +128,11 @@ class FirecrawlTools(Toolkit):
             query (str): The query to search for.
             limit (int): The maximum number of results to return.
         """
-        params: Dict[str, Any] = {}
+        params: dict[str, Any] = {}
         if self.limit or limit:
             params["limit"] = self.limit or limit
         if self.formats:
-            params["scrape_options"] = ScrapeOptions(formats=self.formats)  # type: ignore
+            params["scrape_options"] = V1ScrapeOptions(formats=self.formats)  # type: ignore
         if self.search_params:
             params.update(self.search_params)
 

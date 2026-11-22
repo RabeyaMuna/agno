@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 from pydantic import BaseModel
 
@@ -23,7 +23,7 @@ class MockDataclass:
     name: str
     age: int
     is_active: bool = True
-    tags: List[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
 
 
 # Nested Pydantic models
@@ -44,7 +44,7 @@ class UserProfileModel(BaseModel):
     name: str
     age: int
     contact_info: ContactInfoModel
-    preferences: Dict[str, Any] = field(default_factory=dict)
+    preferences: dict[str, Any] = field(default_factory=dict)
 
 
 # Nested dataclasses
@@ -68,7 +68,7 @@ class UserProfileDataclass:
     name: str
     age: int
     contact_info: ContactInfoDataclass
-    preferences: Dict[str, Any] = field(default_factory=dict)
+    preferences: dict[str, Any] = field(default_factory=dict)
 
 
 # Test cases for get_json_type_for_py_type
