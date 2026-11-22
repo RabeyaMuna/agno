@@ -1,5 +1,6 @@
 import json
-from typing import Any, Callable, Dict, Optional, TypeVar
+from __future__ import annotations
+from typing import Any, Callable, Optional, TypeVar
 
 from agno.tools.function import Function, FunctionCall
 from agno.utils.log import log_debug, log_error
@@ -11,7 +12,7 @@ def get_function_call(
     name: str,
     arguments: Optional[str] = None,
     call_id: Optional[str] = None,
-    functions: Optional[Dict[str, Function]] = None,
+    functions: Optional[dict[str, Function]] = None,
 ) -> Optional[FunctionCall]:
     if functions is None:
         return None
@@ -30,11 +31,11 @@ def get_function_call(
         try:
             try:
                 _arguments = json.loads(arguments)
-            except Exception:
+            except (json.JSONDecodeError, ValueError):
                 import ast
 
                 _arguments = ast.literal_eval(arguments)
-        except Exception as e:
+        except (json.JSONDecodeError, ValueError) as e:
             log_error(f"Unable to decode function arguments:\n{arguments}\nError: {e}")
             function_call.error = (
                 f"Error while decoding function arguments: {e}\n\n"
@@ -48,7 +49,7 @@ def get_function_call(
             return function_call
 
         try:
-            clean_arguments: Dict[str, Any] = {}
+            clean_arguments: dict[str, Any] = {}
             for k, v in _arguments.items():
                 if isinstance(v, str):
                     _v = v.strip().lower()
@@ -64,7 +65,7 @@ def get_function_call(
                     clean_arguments[k] = v
 
             function_call.arguments = clean_arguments
-        except Exception as e:
+        except (TypeError, ValueError) as e:
             log_error(f"Unable to parsing function arguments:\n{arguments}\nError: {e}")
             function_call.error = f"Error while parsing function arguments: {e}\n\n Please fix and retry."
             return function_call
@@ -145,7 +146,7 @@ def cache_result(enable_cache: bool = True, cache_dir: Optional[str] = None, cac
 
                     # Remove expired entry
                     os.remove(cache_file)
-                except Exception as e:
+                except (OSError, json.JSONDecodeError) as e:
                     log_error(f"Error reading cache: {e}")
                     # Continue with function execution if cache read fails
 
@@ -155,7 +156,7 @@ def cache_result(enable_cache: bool = True, cache_dir: Optional[str] = None, cac
             try:
                 with open(cache_file, "w") as f:
                     json.dump({"timestamp": time.time(), "result": result}, f)
-            except Exception as e:
+            except (OSError, json.JSONDecodeError) as e:
                 log_error(f"Error writing cache: {e}")
                 # Continue even if cache write fails
 

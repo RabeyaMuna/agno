@@ -1,6 +1,6 @@
+from __future__ import annotations
 import os
 import shutil
-from typing import List
 
 import pytest
 
@@ -30,15 +30,15 @@ def chroma_db(mock_embedder):
     # Cleanup after test
     try:
         db.drop()
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Error during cleanup: {e}")
 
     if os.path.exists(TEST_PATH):
         shutil.rmtree(TEST_PATH)
 
 
 @pytest.fixture
-def sample_documents() -> List[Document]:
+def sample_documents() -> list[Document]:
     """Fixture to create sample documents"""
     return [
         Document(
@@ -119,6 +119,8 @@ def test_distance_metrics():
     try:
         db_cosine.drop()
         db_euclidean.drop()
+    except Exception as e:
+        print(f"Error during cleanup: {e}")
     finally:
         if os.path.exists(TEST_PATH):
             shutil.rmtree(TEST_PATH)
@@ -160,6 +162,8 @@ def test_custom_embedder(mock_embedder):
     # Cleanup
     try:
         db.drop()
+    except Exception as e:
+        print(f"Error during cleanup: {e}")
     finally:
         if os.path.exists(TEST_PATH):
             shutil.rmtree(TEST_PATH)
