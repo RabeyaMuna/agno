@@ -23,6 +23,8 @@ def mock_webex_api():
         # Set up the nested structure
         mock_client.messages = mock_messages
         mock_client.rooms = mock_rooms
+        mock_client.messages.create = Mock()
+        mock_client.rooms.list = Mock()
 
         mock_api.return_value = mock_client
         return mock_client
@@ -54,9 +56,8 @@ def test_init_with_env_var():
 
 def test_init_without_token():
     """Test initialization without API token."""
-    with patch.dict("os.environ", clear=True):
-        with pytest.raises(ValueError, match="Webex access token is not set"):
-            WebexTools()
+    with patch.dict("os.environ", clear=True), pytest.raises(ValueError, match="Webex access token is not set"):
+        WebexTools()
 
 
 def test_init_with_selective_tools():
@@ -74,7 +75,7 @@ def test_init_with_selective_tools():
 def test_send_message_success(webex_tools, mock_webex_api):
     """Test successful message sending."""
     mock_response = Mock()
-    mock_response.json_data = {
+    mock_response.json = lambda: {
         "id": "msg123",
         "roomId": "room123",
         "text": "Test message",
