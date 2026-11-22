@@ -1,11 +1,13 @@
 """Unit tests for FirecrawlTools class."""
 
+from __future__ import annotations
+
 import json
 import os
 from unittest.mock import Mock, patch
 
 import pytest
-from firecrawl import FirecrawlApp
+from firecrawl import FirecrawlApp, ScrapeOptions
 
 from agno.tools.firecrawl import FirecrawlTools
 
