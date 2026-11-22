@@ -2,7 +2,7 @@
 
 import base64
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, dict
 from unittest.mock import MagicMock, Mock, mock_open, patch
 
 import pytest

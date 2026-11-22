@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional, cast
+from typing import Optional, cast
 
 from rich.prompt import Prompt
 
@@ -25,19 +25,19 @@ from agno.utils.log import logger
 from agno.workspace.config import WorkspaceConfig
 from agno.workspace.enums import WorkspaceStarterTemplate
 
-TEMPLATE_TO_NAME_MAP: Dict[WorkspaceStarterTemplate, str] = {
+TEMPLATE_TO_NAME_MAP: dict[WorkspaceStarterTemplate, str] = {
     WorkspaceStarterTemplate.agent_app: "agent-app",
     WorkspaceStarterTemplate.agent_api: "agent-api",
 }
-TEMPLATE_TO_REPO_MAP: Dict[WorkspaceStarterTemplate, str] = {
+TEMPLATE_TO_REPO_MAP: dict[WorkspaceStarterTemplate, str] = {
     WorkspaceStarterTemplate.agent_app: "https://github.com/agno-agi/agent-app-aws",
     WorkspaceStarterTemplate.agent_api: "https://github.com/agno-agi/agent-api-aws",
 }
 
 
 def create_workspace(
-    name: Optional[str] = None, template: Optional[str] = None, url: Optional[str] = None
-) -> Optional[WorkspaceConfig]:
+    name: str | None = None, template: str | None = None, url: str | None = None
+) -> WorkspaceConfig | None:
     """Creates a new workspace and returns the WorkspaceConfig.
 
     This function clones a template or url on the users machine at the path:
@@ -55,7 +55,7 @@ def create_workspace(
     current_dir: Path = Path(".").resolve()
 
     # Initialize Agno before creating a workspace
-    agno_config: Optional[AgnoCliConfig] = AgnoCliConfig.from_saved_config()
+    agno_config: AgnoCliConfig | None = AgnoCliConfig.from_saved_config()
     if not agno_config:
         agno_config = initialize_agno()
         if not agno_config:
@@ -63,8 +63,8 @@ def create_workspace(
             return None
     agno_config = cast(AgnoCliConfig, agno_config)
 
-    ws_dir_name: Optional[str] = name
-    repo_to_clone: Optional[str] = url
+    ws_dir_name: str | None = name
+    repo_to_clone: str | None = url
     ws_template = WorkspaceStarterTemplate.agent_app
     templates = list(WorkspaceStarterTemplate.__members__.values())
 
@@ -164,7 +164,7 @@ def create_workspace(
     return setup_workspace(ws_root_path=ws_root_path)
 
 
-def setup_workspace(ws_root_path: Path) -> Optional[WorkspaceConfig]:
+def setup_workspace(ws_root_path: Path) -> WorkspaceConfig | None:
     """Setup an Agno workspace at `ws_root_path` and return the WorkspaceConfig
 
     1. Pre-requisites
@@ -199,7 +199,7 @@ def setup_workspace(ws_root_path: Path) -> Optional[WorkspaceConfig]:
         return None
 
     # 1.2 Create AgnoCliConfig if needed
-    agno_config: Optional[AgnoCliConfig] = AgnoCliConfig.from_saved_config()
+    agno_config: AgnoCliConfig | None = AgnoCliConfig.from_saved_config()
     if not agno_config:
         agno_config = initialize_agno()
         if not agno_config:
@@ -208,7 +208,7 @@ def setup_workspace(ws_root_path: Path) -> Optional[WorkspaceConfig]:
 
     # 1.3 Create a WorkspaceConfig if needed
     logger.debug(f"Checking for a workspace at {ws_root_path}")
-    ws_config: Optional[WorkspaceConfig] = agno_config.get_ws_config_by_path(ws_root_path)
+    ws_config: WorkspaceConfig | None = agno_config.get_ws_config_by_path(ws_root_path)
     if ws_config is None:
         # There's no record of this workspace, reasons:
         # - The user is setting up a new workspace
@@ -230,7 +230,7 @@ def setup_workspace(ws_root_path: Path) -> Optional[WorkspaceConfig]:
     logger.debug(f"Workspace name: {workspace_name}")
 
     # 1.5 Get the git remote origin url
-    git_remote_origin_url: Optional[str] = get_remote_origin_for_dir(ws_root_path)
+    git_remote_origin_url: str | None = get_remote_origin_for_dir(ws_root_path)
     logger.debug("Git origin: {}".format(git_remote_origin_url))
 
     # 1.6 Create anon user if the user is not logged in
@@ -250,7 +250,7 @@ def setup_workspace(ws_root_path: Path) -> Optional[WorkspaceConfig]:
     ## 2. Create or update WorkspaceSchema
     ######################################################
     # 2.1 Check if a ws_schema exists for this workspace, meaning this workspace has a record in agno-api
-    ws_schema: Optional[WorkspaceSchema] = ws_config.ws_schema if ws_config is not None else None
+    ws_schema: WorkspaceSchema | None = ws_config.ws_schema if ws_config is not None else None
     if agno_config.user is not None:
         # 2.2 Create WorkspaceSchema if it doesn't exist
         if ws_schema is None or ws_schema.id_workspace is None:
@@ -260,9 +260,9 @@ def setup_workspace(ws_root_path: Path) -> Optional[WorkspaceConfig]:
             # We make a call to the api to create a new ws_schema
             logger.debug("Creating ws_schema")
             logger.debug(f"Getting teams for user: {agno_config.user.email}")
-            teams: Optional[List[TeamSchema]] = None
-            selected_team: Optional[TeamSchema] = None
-            team_identifier: Optional[TeamIdentifier] = None
+            teams: list[TeamSchema] | None = None
+            selected_team: TeamSchema | None = None
+            team_identifier: TeamIdentifier | None = None
             with Live(transient=True) as live_log:
                 status = Status(
                     "Checking for available teams...", spinner="aesthetic", speed=2.0, refresh_per_second=10
@@ -372,15 +372,15 @@ def setup_workspace(ws_root_path: Path) -> Optional[WorkspaceConfig]:
 def start_workspace(
     agno_config: AgnoCliConfig,
     ws_config: WorkspaceConfig,
-    target_env: Optional[str] = None,
-    target_infra: Optional[str] = None,
-    target_group: Optional[str] = None,
-    target_name: Optional[str] = None,
-    target_type: Optional[str] = None,
-    dry_run: Optional[bool] = False,
-    auto_confirm: Optional[bool] = False,
-    force: Optional[bool] = None,
-    pull: Optional[bool] = False,
+    target_env: str | None = None,
+    target_infra: str | None = None,
+    target_group: str | None = None,
+    target_name: str | None = None,
+    target_type: str | None = None,
+    dry_run: bool | None = False,
+    auto_confirm: bool | None = False,
+    force: bool | None = None,
+    pull: bool | None = False,
 ) -> None:
     """Start an Agno Workspace. This is called from `ag ws up`"""
     if ws_config is None:
@@ -402,7 +402,7 @@ def start_workspace(
     ws_config.set_local_env()
 
     # Get resource groups to deploy
-    resource_groups_to_create: List[InfraResources] = ws_config.get_resources(
+    resource_groups_to_create: list[InfraResources] = ws_config.get_resources(
         env=target_env,
         infra=target_infra,
         order="create",
@@ -480,14 +480,14 @@ def start_workspace(
 def stop_workspace(
     agno_config: AgnoCliConfig,
     ws_config: WorkspaceConfig,
-    target_env: Optional[str] = None,
-    target_infra: Optional[str] = None,
-    target_group: Optional[str] = None,
-    target_name: Optional[str] = None,
-    target_type: Optional[str] = None,
-    dry_run: Optional[bool] = False,
-    auto_confirm: Optional[bool] = False,
-    force: Optional[bool] = None,
+    target_env: str | None = None,
+    target_infra: str | None = None,
+    target_group: str | None = None,
+    target_name: str | None = None,
+    target_type: str | None = None,
+    dry_run: bool | None = False,
+    auto_confirm: bool | None = False,
+    force: bool | None = None,
 ) -> None:
     """Stop an Agno Workspace. This is called from `ag ws down`"""
     if ws_config is None:
@@ -508,7 +508,7 @@ def stop_workspace(
     ws_config.set_local_env()
 
     # Get resource groups to delete
-    resource_groups_to_delete: List[InfraResources] = ws_config.get_resources(
+    resource_groups_to_delete: list[InfraResources] = ws_config.get_resources(
         env=target_env,
         infra=target_infra,
         order="delete",
@@ -585,15 +585,15 @@ def stop_workspace(
 def update_workspace(
     agno_config: AgnoCliConfig,
     ws_config: WorkspaceConfig,
-    target_env: Optional[str] = None,
-    target_infra: Optional[str] = None,
-    target_group: Optional[str] = None,
-    target_name: Optional[str] = None,
-    target_type: Optional[str] = None,
-    dry_run: Optional[bool] = False,
-    auto_confirm: Optional[bool] = False,
-    force: Optional[bool] = None,
-    pull: Optional[bool] = False,
+    target_env: str | None = None,
+    target_infra: str | None = None,
+    target_group: str | None = None,
+    target_name: str | None = None,
+    target_type: str | None = None,
+    dry_run: bool | None = False,
+    auto_confirm: bool | None = False,
+    force: bool | None = None,
+    pull: bool | None = False,
 ) -> None:
     """Update an Agno Workspace. This is called from `ag ws patch`"""
     if ws_config is None:
@@ -615,7 +615,7 @@ def update_workspace(
     ws_config.set_local_env()
 
     # Get resource groups to update
-    resource_groups_to_update: List[InfraResources] = ws_config.get_resources(
+    resource_groups_to_update: list[InfraResources] = ws_config.get_resources(
         env=target_env,
         infra=target_infra,
         order="create",
@@ -689,7 +689,7 @@ def update_workspace(
         )
 
 
-def delete_workspace(agno_config: AgnoCliConfig, ws_to_delete: Optional[List[Path]]) -> None:
+def delete_workspace(agno_config: AgnoCliConfig, ws_to_delete: list[Path] | None) -> None:
     if ws_to_delete is None or len(ws_to_delete) == 0:
         print_heading("No workspaces to delete")
         return

@@ -2,7 +2,7 @@ import json
 import uuid
 from hashlib import md5
 from os import getenv
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from warnings import filterwarnings
@@ -34,18 +34,18 @@ class Weaviate(VectorDb):
     def __init__(
         self,
         # Connection/Client params
-        wcd_url: Optional[str] = None,
-        wcd_api_key: Optional[str] = None,
-        client: Optional[weaviate.WeaviateClient] = None,
+        wcd_url: str | None = None,
+        wcd_api_key: str | None = None,
+        client: weaviate.WeaviateClient | None = None,
         local: bool = False,
         # Collection params
         collection: str = "default",
         vector_index: VectorIndex = VectorIndex.HNSW,
         distance: Distance = Distance.COSINE,
         # Search/Embedding params
-        embedder: Optional[Embedder] = None,
+        embedder: Embedder | None = None,
         search_type: SearchType = SearchType.vector,
-        reranker: Optional[Reranker] = None,
+        reranker: Reranker | None = None,
         hybrid_search_alpha: float = 0.5,
     ):
         # Connection setup
@@ -239,7 +239,7 @@ class Weaviate(VectorDb):
         finally:
             await client.close()
 
-    def insert(self, documents: List[Document], filters: Optional[Dict[str, Any]] = None) -> None:
+    def insert(self, documents: list[Document], filters: dict[str, Any] | None = None) -> None:
         """
         Insert documents into Weaviate.
 
@@ -279,7 +279,7 @@ class Weaviate(VectorDb):
             )
             log_debug(f"Inserted document: {document.name} ({meta_data})")
 
-    async def async_insert(self, documents: List[Document], filters: Optional[Dict[str, Any]] = None) -> None:
+    async def async_insert(self, documents: list[Document], filters: dict[str, Any] | None = None) -> None:
         """
         Insert documents into Weaviate asynchronously.
 
@@ -329,7 +329,7 @@ class Weaviate(VectorDb):
         finally:
             await client.close()
 
-    def upsert(self, documents: List[Document], filters: Optional[Dict[str, Any]] = None) -> None:
+    def upsert(self, documents: list[Document], filters: dict[str, Any] | None = None) -> None:
         """
         Upsert documents into Weaviate.
 
