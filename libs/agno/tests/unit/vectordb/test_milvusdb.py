@@ -1,4 +1,3 @@
-from typing import List
 from unittest.mock import Mock, patch
 
 import pytest
@@ -62,7 +61,7 @@ def milvus_db(mock_milvus_client, mock_embedder):
 
 
 @pytest.fixture
-def sample_documents() -> List[Document]:
+def sample_documents() -> list[Document]:
     """Fixture to create sample documents"""
     return [
         Document(
