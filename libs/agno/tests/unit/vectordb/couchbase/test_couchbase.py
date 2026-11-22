@@ -845,7 +845,7 @@ async def test_async_search_scope_level(couchbase_fts, mock_embedder):
         mock_embedder.get_embedding.assert_called_once_with("test query scope kv")
         mock_get_async_scope.assert_called_once()  # For the search part
         mock_scope_inst.search.assert_called_once()
-        search_args, search_kwargs = mock_scope_inst.search.call_args
+        _, search_kwargs = mock_scope_inst.search.call_args
         assert search_kwargs["options"]["limit"] == 5
 
         # __async_get_doc_from_kv will call get_async_collection then .get for each doc
@@ -870,7 +870,7 @@ async def test_async_search_scope_level(couchbase_fts, mock_embedder):
         mock_embedder.get_embedding.assert_called_once_with("test query filter scope kv")
         mock_get_async_scope.assert_called_once()
         mock_scope_inst.search.assert_called_once()
-        search_args_f, search_kwargs_f = mock_scope_inst.search.call_args
+        _, search_kwargs_f = mock_scope_inst.search.call_args
         assert search_kwargs_f["options"]["limit"] == 5
         assert search_kwargs_f["options"]["raw"] == filters
 
