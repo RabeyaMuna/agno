@@ -65,9 +65,8 @@ def test_init_with_constructor_parameters():
 
 def test_init_with_missing_credentials():
     """Test initialization with missing credentials."""
-    with patch.dict("os.environ", {}, clear=True):
-        with pytest.raises(ValueError):
-            ConfluenceTools()
+    with patch.dict("os.environ", {}, clear=True), pytest.raises(ValueError):
+        ConfluenceTools()
 
 
 # Space Tests
@@ -201,7 +200,7 @@ def test_create_page_error(confluence_tools, mock_confluence):
     """Test error handling when creating a page."""
     # Mock the get_space_key method
     with patch.object(confluence_tools, "get_space_key", return_value="SPACE1"):
-        mock_confluence.create_page.side_effect = Exception("API Error")
+        mock_confluence.create_page.side_effect = RuntimeError("API Error")
 
         result = confluence_tools.create_page("Space One", "New Page", "<p>Content</p>")
         assert json.loads(result) == {"error": "API Error"}
@@ -220,7 +219,7 @@ def test_update_page_success(confluence_tools, mock_confluence):
 
 def test_update_page_error(confluence_tools, mock_confluence):
     """Test error handling when updating a page."""
-    mock_confluence.update_page.side_effect = Exception("API Error")
+    mock_confluence.update_page.side_effect = RuntimeError("API Error")
 
     result = confluence_tools.update_page("12345", "Updated Page", "<p>Updated content</p>")
     assert json.loads(result) == {"error": "API Error"}

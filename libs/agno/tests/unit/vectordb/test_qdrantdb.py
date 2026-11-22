@@ -1,4 +1,3 @@
-from typing import List
 from unittest.mock import Mock, patch
 
 import pytest
@@ -205,7 +204,7 @@ def test_search(qdrant_db, mock_qdrant_client):
 
         # Verify search was called with correct parameters
         mock_qdrant_client.search.assert_called_once()
-        args, kwargs = mock_qdrant_client.search.call_args
+        _, kwargs = mock_qdrant_client.search.call_args
         assert kwargs["collection_name"] == "test_collection"
         assert kwargs["query_vector"] == [0.1] * 768
         assert kwargs["limit"] == 2

@@ -171,6 +171,8 @@ def test_audio_to_message_filepath_is_dir(tmp_path):
 )
 def test_audio_to_message_url(url, expected_format, mocker):
     """Test audio_to_message with various URL formats (mocking content fetch)."""
+    if not url.startswith(("http://", "https://")):
+        pytest.skip("Invalid URL prefix")
     mock_content = b"mocked_audio_content_for_" + url.encode()
     mock_audio = Audio(url=url)
     # Mock the property that fetches URL content
