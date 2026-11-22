@@ -105,7 +105,7 @@ def test_get_access_token_refresh_on_expiry(zoom_tools, mock_token_response):
         assert token1 == "test_access_token"
 
         # Manually expire the token
-        zoom_tools._ZoomTools__token_expiry = datetime.now() - timedelta(seconds=1)
+        zoom_tools._ZoomTools__token_expiry = datetime.now(timezone.utc) - timedelta(seconds=1)
 
         # Should get new token
         token2 = zoom_tools.get_access_token()
@@ -356,4 +356,5 @@ def test_api_methods_request_failure(zoom_tools, method_name, mock_func, error_m
 
         error_response = json.loads(result)
         assert "error" in error_response
-        assert error_message in str(error_response["error"])
+        assert isinstance(error_response["error"], str)
+        assert error_message in error_response["error"]

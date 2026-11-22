@@ -1,5 +1,6 @@
 import asyncio
-from typing import AsyncIterator, Generator
+from collections.abc import Generator
+from typing import AsyncIterator
 
 import pytest
 

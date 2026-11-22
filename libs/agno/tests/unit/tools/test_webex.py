@@ -46,10 +46,9 @@ def test_init_with_api_token():
 
 def test_init_with_env_var():
     """Test initialization with environment variable."""
-    with patch("agno.tools.webex.WebexAPI") as mock_api:
-        with patch.dict("os.environ", {"WEBEX_ACCESS_TOKEN": "env_token"}):
-            WebexTools()
-            mock_api.assert_called_once_with(access_token="env_token")
+    with patch("agno.tools.webex.WebexAPI") as mock_api, patch.dict("os.environ", {"WEBEX_ACCESS_TOKEN": "env_token"}):
+        WebexTools()
+        mock_api.assert_called_once_with(access_token="env_token")
 
 
 def test_init_without_token():

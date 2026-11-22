@@ -359,18 +359,18 @@ class Agent:
         num_history_responses: Optional[int] = None,
         num_history_runs: int = 3,
         knowledge: Optional[AgentKnowledge] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: Optional[dict[str, Any]] = None,
         enable_agentic_knowledge_filters: Optional[bool] = None,
         add_references: bool = False,
-        retriever: Optional[Callable[..., Optional[List[Union[Dict, str]]]]] = None,
+        retriever: Optional[Callable[..., Optional[list[Union[dict, str]]]]] = None,
         references_format: Literal["json", "yaml"] = "json",
         storage: Optional[Storage] = None,
         extra_data: Optional[Dict[str, Any]] = None,
-        tools: Optional[List[Union[Toolkit, Callable, Function, Dict]]] = None,
+        tools: Optional[list[Union[Toolkit, Callable, Function, dict]]] = None,
         show_tool_calls: bool = True,
         tool_call_limit: Optional[int] = None,
-        tool_choice: Optional[Union[str, Dict[str, Any]]] = None,
-        tool_hooks: Optional[List[Callable]] = None,
+        tool_choice: Optional[Union[str, dict[str, Any]]] = None,
+        tool_hooks: Optional[list[Callable]] = None,
         reasoning: bool = False,
         reasoning_model: Optional[Model] = None,
         reasoning_agent: Optional[Agent] = None,
@@ -395,8 +395,8 @@ class Agent:
         add_location_to_instructions: bool = False,
         timezone_identifier: Optional[str] = None,
         add_state_in_messages: bool = False,
-        add_messages: Optional[List[Union[Dict, Message]]] = None,
-        user_message: Optional[Union[List, Dict, str, Callable, Message]] = None,
+        add_messages: Optional[list[Union[dict, Message]]] = None,
+        user_message: Optional[Union[list, dict, str, Callable, Message]] = None,
         user_message_role: str = "user",
         create_default_user_message: bool = True,
         retries: int = 0,
@@ -412,9 +412,9 @@ class Agent:
         stream: Optional[bool] = None,
         stream_intermediate_steps: bool = False,
         store_events: bool = False,
-        events_to_skip: Optional[List[RunEvent]] = None,
-        team: Optional[List[Agent]] = None,
-        team_data: Optional[Dict[str, Any]] = None,
+        events_to_skip: Optional[list[RunEvent]] = None,
+        team: Optional[list[Agent]] = None,
+        team_data: Optional[dict[str, Any]] = None,
         role: Optional[str] = None,
         respond_directly: bool = False,
         add_transfer_instructions: bool = True,
@@ -2457,7 +2457,7 @@ class Agent:
         self.model = cast(Model, self.model)
         # Execute the tool
         function_call = self.model.get_function_call_to_run_from_tool_execution(tool, self._functions_for_model)
-        function_call_results: List[Message] = []
+        function_call_results: list[Message] = []
 
         for call_result in self.model.run_function_call(
             function_call=function_call,
@@ -2760,7 +2760,7 @@ class Agent:
                 )
 
             # Build a list of messages that should be added to the AgentMemory
-            messages_for_memory: List[Message] = (
+            messages_for_memory: list[Message] = (
                 [run_messages.user_message] if run_messages.user_message is not None else []
             )
             # Add messages from messages_for_run after the last user message
@@ -4223,7 +4223,7 @@ class Agent:
             log_warning(f"Template substitution failed: {e}")
             return msg
 
-    def get_system_message(self, session_id: str, user_id: Optional[str] = None) -> Optional[Message]:
+    def get_system_message(self, session_id: str, user_id: str | None = None) -> Message | None:
         """Return the system message for the Agent.
 
         1. If the system_message is provided, use that.
@@ -4532,14 +4532,14 @@ class Agent:
     def get_user_message(
         self,
         *,
-        message: Optional[Union[str, List]],
+        message: str | list | None,
         audio: Optional[Sequence[Audio]] = None,
         images: Optional[Sequence[Image]] = None,
         videos: Optional[Sequence[Video]] = None,
         files: Optional[Sequence[File]] = None,
-        knowledge_filters: Optional[Dict[str, Any]] = None,
+        knowledge_filters: dict[str, Any] | None = None,
         **kwargs: Any,
-    ) -> Optional[Message]:
+    ) -> Message | None:
         """Return the user message for the Agent.
 
         1. If the user_message is provided, use that.
@@ -5005,7 +5005,7 @@ class Agent:
             # If copy fails, return as is
             return field_value
 
-    def get_transfer_function(self, member_agent: Agent, index: int, session_id: Optional[str] = None) -> Function:
+    def get_transfer_function(self, member_agent: Agent, index: int, session_id: str | None = None) -> Function:
         def _transfer_task_to_agent(
             task_description: str, expected_output: str, additional_information: Optional[str] = None
         ) -> Iterator[str]:
@@ -5123,8 +5123,8 @@ class Agent:
         return ""
 
     def get_relevant_docs_from_knowledge(
-        self, query: str, num_documents: Optional[int] = None, filters: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Optional[List[Union[Dict[str, Any], str]]]:
+        self, query: str, num_documents: Optional[int] = None, filters: Optional[dict[str, Any]] = None, **kwargs
+    ) -> Optional[list[Union[dict[str, Any], str]]]:
         """Get relevant docs from the knowledge base to answer a query.
 
         Args:
@@ -5195,8 +5195,8 @@ class Agent:
             raise e
 
     async def aget_relevant_docs_from_knowledge(
-        self, query: str, num_documents: Optional[int] = None, filters: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Optional[List[Union[Dict[str, Any], str]]]:
+        self, query: str, num_documents: Optional[int] = None, filters: Optional[dict[str, Any]] = None, **kwargs
+    ) -> Optional[list[Union[dict[str, Any], str]]]:
         """Get relevant documents from knowledge base asynchronously."""
         from agno.document import Document
 
@@ -6264,7 +6264,7 @@ class Agent:
         return Function.from_callable(update_user_memory_function, name="update_user_memory")
 
     def get_chat_history_function(self, session_id: str) -> Callable:
-        def get_chat_history(num_chats: Optional[int] = None) -> str:
+        def get_chat_history(num_chats: int | None = None) -> str:
             """Use this function to get the chat history between the user and agent.
 
             Args:
@@ -7629,7 +7629,7 @@ class Agent:
                 live_log.update(Group(*panels))
 
     def update_reasoning_content_from_tool_call(
-        self, tool_name: str, tool_args: Dict[str, Any]
+        self, tool_name: str, tool_args: dict[str, Any]
     ) -> Optional[ReasoningStep]:
         """Update reasoning_content based on tool calls that look like thinking or reasoning tools."""
 

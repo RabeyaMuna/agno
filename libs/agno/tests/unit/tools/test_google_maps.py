@@ -98,9 +98,9 @@ MOCK_TIMEZONE_RESPONSE = {
 @pytest.fixture
 def google_maps_tools():
     """Create a GoogleMapTools instance with a mock API key."""
-    with patch.dict("os.environ", {"GOOGLE_MAPS_API_KEY": "AIzaTest"}):
-        with patch("google.maps.places_v1.PlacesClient"):
-            return GoogleMapTools()
+    with patch.dict("os.environ", {"GOOGLE_MAPS_API_KEY": "AIzaTest"}), \
+         patch("google.maps.places_v1.PlacesClient"):
+        return GoogleMapTools()
 
 
 @pytest.fixture
@@ -209,7 +209,7 @@ def test_get_timezone(google_maps_tools):
     """Test the get_timezone method."""
     with patch.object(google_maps_tools.client, "timezone") as mock_timezone:
         mock_timezone.return_value = MOCK_TIMEZONE_RESPONSE
-        test_time = datetime(2024, 1, 1, 12, 0)
+        test_time = datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc)
 
         result = eval(google_maps_tools.get_timezone(40.7128, -74.0060, test_time))
 

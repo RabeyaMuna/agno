@@ -6,7 +6,10 @@ from unittest.mock import Mock, patch
 import pytest
 
 # Mock the e2b_code_interpreter module
-with patch.dict("sys.modules", {"e2b_code_interpreter": Mock()}):
+with (
+    patch.dict("sys.modules", {"e2b_code_interpreter": Mock()}),
+    patch("agno.tools.e2b.Sandbox") as mock_sandbox_class
+):
     # Create a mock Sandbox class
     sys_modules = __import__("sys").modules
     sys_modules["e2b_code_interpreter"].Sandbox = Mock
@@ -90,29 +93,35 @@ def test_init_with_api_key():
 
 def test_init_with_env_var():
     """Test initialization with environment variable."""
-    with patch("agno.tools.e2b.Sandbox"):
-        with patch.dict("os.environ", {"E2B_API_KEY": TEST_API_KEY}):
-            tools = E2BTools()
-            # Instead of checking if the mock was called, just verify the API key is set
+    with (
+        patch("agno.tools.e2b.Sandbox"),
+        patch.dict("os.environ", {"E2B_API_KEY": TEST_API_KEY})
+    ):
+        tools = E2BTools()
+        # Instead of checking if the mock was called, just verify the API key is set
             assert tools.api_key == TEST_API_KEY
 
 
 def test_init_without_api_key():
     """Test initialization without API key raises error."""
-    with patch.dict("os.environ", clear=True):
-        with pytest.raises(ValueError, match="E2B_API_KEY not set"):
-            E2BTools()
+    with (
+        patch.dict("os.environ", clear=True),
+        pytest.raises(ValueError, match="E2B_API_KEY not set")
+    ):
+        E2BTools()
 
 
 def test_init_with_selective_tools():
     """Test initialization with only selected tools enabled."""
-    with patch("agno.tools.e2b.Sandbox"):
-        with patch.dict("os.environ", {"E2B_API_KEY": TEST_API_KEY}):
-            tools = E2BTools(
-                run_code=True,
-                upload_file=False,
-                download_result=False,
-                filesystem=True,
+    with (
+        patch("agno.tools.e2b.Sandbox"),
+        patch.dict("os.environ", {"E2B_API_KEY": TEST_API_KEY})
+    ):
+        tools = E2BTools(
+            run_code=True,
+            upload_file=False,
+            download_result=False,
+            filesystem=True,
                 internet_access=False,
                 sandbox_management=False,
                 command_execution=True,

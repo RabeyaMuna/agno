@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
+from typing_extensions import Dict, List, Optional, Union
 
 from pydantic import BaseModel
 

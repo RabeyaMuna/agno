@@ -1,4 +1,3 @@
-from typing import List
 from unittest.mock import Mock, patch
 
 import pytest
@@ -62,7 +61,7 @@ def milvus_db(mock_milvus_client, mock_embedder):
 
 
 @pytest.fixture
-def sample_documents() -> List[Document]:
+def sample_documents() -> list[Document]:
     """Fixture to create sample documents"""
     return [
         Document(
@@ -348,11 +347,13 @@ async def test_async_doc_exists(mock_embedder, mock_milvus_async_client):
 
     db._async_client = mock_milvus_async_client
 
-    with patch.object(mock_milvus_async_client, "get", side_effect=lambda **kwargs: async_return([Mock()])):
+    patch_get = patch.object(mock_milvus_async_client, "get", side_effect=lambda **kwargs: async_return([Mock()]))
+    with patch_get:
         result = await db.async_doc_exists(test_doc)
         assert result is True
 
-    with patch.object(mock_milvus_async_client, "get", side_effect=lambda **kwargs: async_return([])):
+    patch_get_empty = patch.object(mock_milvus_async_client, "get", side_effect=lambda **kwargs: async_return([]))
+    with patch_get_empty:
         result = await db.async_doc_exists(test_doc)
         assert result is False
 
@@ -363,7 +364,8 @@ async def test_async_insert(mock_embedder, sample_documents):
     db = Milvus(embedder=mock_embedder, collection="test_collection")
 
     # Mock async_insert directly
-    with patch.object(db, "async_insert", return_value=None):
+    patch_insert = patch.object(db, "async_insert", return_value=None)
+    with patch_insert:
         await db.async_insert(sample_documents)
 
 
@@ -373,7 +375,8 @@ async def test_async_upsert(mock_embedder, sample_documents):
     db = Milvus(embedder=mock_embedder, collection="test_collection")
 
     # Mock async_upsert directly
-    with patch.object(db, "async_upsert", return_value=None):
+    patch_upsert = patch.object(db, "async_upsert", return_value=None)
+    with patch_upsert:
         await db.async_upsert(sample_documents)
 
 
@@ -383,5 +386,6 @@ async def test_async_drop(mock_embedder):
     db = Milvus(embedder=mock_embedder, collection="test_collection")
 
     # Mock async_drop directly
-    with patch.object(db, "async_drop", return_value=None):
+    patch_drop = patch.object(db, "async_drop", return_value=None)
+    with patch_drop:
         await db.async_drop()
