@@ -137,7 +137,7 @@ def test_get_pull_request_with_details(mock_github):
     mock_pr.user.login = "test-user"
     mock_pr.user.avatar_url = "https://github.com/avatars/test-user.png"
     mock_pr.created_at.isoformat.return_value = "2024-03-01T12:00:00"
-    mock_pr.created_at = datetime(2024, 3, 1, 12, 0, 0)
+    mock_pr.created_at = datetime(2024, 3, 1, 12, 0, 0, tzinfo=timezone.utc)
     mock_pr.updated_at = datetime(2024, 3, 2, 12, 0, 0)
     mock_pr.mergeable = True
     mock_pr.mergeable_state = "clean"

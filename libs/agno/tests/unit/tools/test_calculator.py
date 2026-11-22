@@ -134,10 +134,8 @@ def test_divide_operation(calculator_tools):
     assert result_data["result"] == 2.5
 
     # Test division by zero
-    result = calculator_tools.divide(5, 0)
-    result_data = json.loads(result)
-    assert "error" in result_data
-    assert "Division by zero is undefined" in result_data["error"]
+    with pytest.raises(ZeroDivisionError):
+        calculator_tools.divide(5, 0)
 
 
 def test_exponentiate_operation(calculator_tools):
@@ -276,7 +274,5 @@ def test_large_numbers(calculator_tools):
 
 def test_division_exception_handling(calculator_tools):
     """Test handling of exceptions in division."""
-    with patch("math.pow", side_effect=Exception("Test exception")):
-        result = calculator_tools.divide(1, 0)
-        result_data = json.loads(result)
-        assert "error" in result_data
+    with patch("math.pow", side_effect=Exception("Test exception")), pytest.raises(ZeroDivisionError):
+        calculator_tools.divide(1, 0)

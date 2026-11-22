@@ -15,15 +15,9 @@ from agno.tools.webex import WebexTools
 def mock_webex_api():
     """Create a mock Webex API client."""
     with patch("agno.tools.webex.WebexAPI") as mock_api:
-        # Create mock for nested attributes
         mock_client = Mock(spec=WebexAPI)
-        mock_messages = Mock()
-        mock_rooms = Mock()
-
-        # Set up the nested structure
-        mock_client.messages = mock_messages
-        mock_client.rooms = mock_rooms
-
+        mock_client.messages = Mock()
+        mock_client.rooms = Mock()
         mock_api.return_value = mock_client
         return mock_client
 
@@ -46,17 +40,15 @@ def test_init_with_api_token():
 
 def test_init_with_env_var():
     """Test initialization with environment variable."""
-    with patch("agno.tools.webex.WebexAPI") as mock_api:
-        with patch.dict("os.environ", {"WEBEX_ACCESS_TOKEN": "env_token"}):
-            WebexTools()
-            mock_api.assert_called_once_with(access_token="env_token")
+    with patch("agno.tools.webex.WebexAPI") as mock_api, patch.dict("os.environ", {"WEBEX_ACCESS_TOKEN": "env_token"}):
+        WebexTools()
+        mock_api.assert_called_once_with(access_token="env_token")
 
 
 def test_init_without_token():
     """Test initialization without API token."""
-    with patch.dict("os.environ", clear=True):
-        with pytest.raises(ValueError, match="Webex access token is not set"):
-            WebexTools()
+    with patch.dict("os.environ", clear=True), pytest.raises(ValueError, match="Webex access token is not set"):
+        WebexTools()
 
 
 def test_init_with_selective_tools():
