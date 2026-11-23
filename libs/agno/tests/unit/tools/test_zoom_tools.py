@@ -105,7 +105,7 @@ def test_get_access_token_refresh_on_expiry(zoom_tools, mock_token_response):
         assert token1 == "test_access_token"
 
         # Manually expire the token
-        zoom_tools._ZoomTools__token_expiry = datetime.now() - timedelta(seconds=1)
+        zoom_tools._ZoomTools__token_expiry = datetime.now(tz=timezone.utc) - timedelta(seconds=1)
 
         # Should get new token
         token2 = zoom_tools.get_access_token()
