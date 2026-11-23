@@ -245,7 +245,7 @@ def test_distance_setting(mock_embedder, mock_milvus_client):
         db1._client = mock_milvus_client
         with patch.object(db1, "exists", return_value=False):
             db1.create()
-            args, kwargs = mock_milvus_client.create_collection.call_args
+            _, kwargs = mock_milvus_client.create_collection.call_args
             assert kwargs["metric_type"] == "COSINE"
 
     # Test with L2 distance
@@ -255,7 +255,7 @@ def test_distance_setting(mock_embedder, mock_milvus_client):
         db2._client = mock_milvus_client
         with patch.object(db2, "exists", return_value=False):
             db2.create()
-            args, kwargs = mock_milvus_client.create_collection.call_args
+            _, kwargs = mock_milvus_client.create_collection.call_args
             assert kwargs["metric_type"] == "L2"
 
     # Test with inner product distance
@@ -265,7 +265,7 @@ def test_distance_setting(mock_embedder, mock_milvus_client):
         db3._client = mock_milvus_client
         with patch.object(db3, "exists", return_value=False):
             db3.create()
-            args, kwargs = mock_milvus_client.create_collection.call_args
+            _, kwargs = mock_milvus_client.create_collection.call_args
             assert kwargs["metric_type"] == "IP"
 
 

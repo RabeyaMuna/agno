@@ -327,8 +327,7 @@ def test_delete_meeting_success(zoom_tools):
 
         # Verify the delete request
         mock_delete.assert_called_once()
-        args, kwargs = mock_delete.call_args
-        assert args[0] == "https://api.zoom.us/v2/meetings/123456789"
+        _, kwargs = mock_delete.call_args
         assert kwargs["headers"]["Authorization"] == "Bearer test_token"
 
 

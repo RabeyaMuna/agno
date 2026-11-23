@@ -187,19 +187,19 @@ def test_multiple_document_operations(chroma_db, sample_documents):
 async def test_async_create_collection(chroma_db):
     """Test creating a collection asynchronously"""
     # First delete the collection created by the fixture
-    chroma_db.delete()
+    await chroma_db.async_delete()
 
     # Test async create
     await chroma_db.async_create()
-    assert chroma_db.exists() is True
-    assert chroma_db.get_count() == 0
+    assert await chroma_db.async_exists() is True
+    assert await chroma_db.async_get_count() == 0
 
 
 @pytest.mark.asyncio
 async def test_async_insert_documents(chroma_db, sample_documents):
     """Test inserting documents asynchronously"""
     await chroma_db.async_insert(sample_documents)
-    assert chroma_db.get_count() == 3
+    assert await chroma_db.async_get_count() == 3
 
 
 @pytest.mark.asyncio
@@ -218,7 +218,7 @@ async def test_async_upsert_documents(chroma_db, sample_documents):
     """Test upserting documents asynchronously"""
     # Initial insert
     await chroma_db.async_insert([sample_documents[0]])
-    assert chroma_db.get_count() == 1
+    assert await chroma_db.async_get_count() == 1
 
     # Upsert same document with different content
     modified_doc = Document(
@@ -251,9 +251,9 @@ async def test_async_name_exists(chroma_db, sample_documents):
 @pytest.mark.asyncio
 async def test_async_drop_collection(chroma_db):
     """Test dropping collection asynchronously"""
-    assert chroma_db.exists() is True
+    assert await chroma_db.async_exists() is True
     await chroma_db.async_drop()
-    assert chroma_db.exists() is False
+    assert await chroma_db.async_exists() is False
 
 
 @pytest.mark.asyncio
@@ -263,7 +263,7 @@ async def test_async_exists(chroma_db):
     assert exists is True
 
     # Delete the collection
-    chroma_db.delete()
+    await chroma_db.async_delete()
 
     exists = await chroma_db.async_exists()
     assert exists is False
