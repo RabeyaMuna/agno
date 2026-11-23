@@ -247,6 +247,7 @@ def test_make_request_error_response(api_tools):
         assert result_data["status_code"] == 404
         assert result_data["error"] == "Request failed"
         assert result_data["data"]["status"] == "error"
+        assert result_data["data"]["message"] == "Breed not found"
 
 
 def test_make_request_json_decode_error(api_tools):
@@ -266,12 +267,13 @@ def test_make_request_json_decode_error(api_tools):
 
         result_data = json.loads(result)
         assert result_data["status_code"] == 200
+        assert result_data["error"] == "Invalid JSON"
         assert result_data["data"]["text"] == "Not a JSON response"
 
 
 def test_make_request_network_error(api_tools):
     """Test request with network error."""
-    with patch("requests.request", side_effect=requests.exceptions.RequestException("Connection error")):
+    with patch("requests.request", side_effect=requests.exceptions.ConnectionError("Connection error")):
         result = api_tools.make_request(
             endpoint="/breeds/image/random",
             method="GET",
@@ -284,7 +286,7 @@ def test_make_request_network_error(api_tools):
 
 def test_make_request_general_exception(api_tools):
     """Test request with general exception."""
-    with patch("requests.request", side_effect=Exception("Unexpected error")):
+    with patch("requests.request", side_effect=Exception("Unexpected error")) as mock_request:
         result = api_tools.make_request(
             endpoint="/breeds/image/random",
             method="GET",
@@ -293,6 +295,7 @@ def test_make_request_general_exception(api_tools):
         result_data = json.loads(result)
         assert "error" in result_data
         assert "Unexpected error" in result_data["error"]
+        mock_request.assert_called_once()
 
 
 def test_make_request_all_http_methods(api_tools, mock_dog_image_response):
