@@ -1,6 +1,6 @@
 import uuid
 from hashlib import md5
-from typing import Any, Dict, Generator, List
+from typing import Any, dict, Generator, list
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -168,7 +168,7 @@ def create_test_documents(num_docs: int = 3) -> List[Document]:
             meta_data={"type": "test", "index": str(i)},
             name=f"test_doc_{i}",
         )
-        for i in range(num_docs)
+        for i in range(num_docs):
     ]
 
 

@@ -384,5 +384,5 @@ def test_format_file_raw_bytes():
     assert msg["type"] == "file"
     assert msg["file"]["filename"] == "file"
     data_url = msg["file"]["file_data"]
-    assert data_url.startswith("data:application/pdf;base64,")
+    assert data_url.startswith("data:application/octet-stream;base64,")
     assert base64.b64decode(data_url.split(",", 1)[1]) == content
