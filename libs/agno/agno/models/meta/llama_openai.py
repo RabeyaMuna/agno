@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from os import getenv
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import httpx
 
@@ -43,18 +43,18 @@ class LlamaOpenAI(OpenAILike):
     extra_headers: Optional[Any] = None
     extra_query: Optional[Any] = None
     extra_body: Optional[Any] = None
-    request_params: Optional[Dict[str, Any]] = None
+    request_params: Optional[dict[str, Any]] = None
 
     supports_native_structured_outputs: bool = False
     supports_json_schema_outputs: bool = True
 
     @property
-    def request_kwargs(self) -> Dict[str, Any]:
+    def request_kwargs(self) -> dict[str, Any]:
         """
         Returns keyword arguments for API requests.
 
         Returns:
-            Dict[str, Any]: A dictionary of keyword arguments for API requests.
+            dict[str, Any]: A dictionary of keyword arguments for API requests.
         """
         # Define base request parameters
         base_params = {
@@ -92,7 +92,7 @@ class LlamaOpenAI(OpenAILike):
 
         return request_params
 
-    def _format_message(self, message: Message) -> Dict[str, Any]:
+    def _format_message(self, message: Message) -> dict[str, Any]:
         """
         Format a message into the format expected by Llama API.
 
@@ -100,7 +100,7 @@ class LlamaOpenAI(OpenAILike):
             message (Message): The message to format.
 
         Returns:
-            Dict[str, Any]: The formatted message.
+            dict[str, Any]: The formatted message.
         """
         return format_message(message, openai_like=True)
 
