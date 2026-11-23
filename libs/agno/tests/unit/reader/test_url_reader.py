@@ -69,10 +69,11 @@ def test_read_url_max_retries():
     """Test URL reading with max retries exceeded"""
     url = "https://example.com"
 
-    with patch("httpx.get", side_effect=httpx.RequestError("Connection error")):
+    with patch("httpx.get", side_effect=httpx.RequestError("Connection error")) as mock_get:
         reader = URLReader()
         with pytest.raises(httpx.RequestError):
             reader.read(url)
+        assert mock_get.call_count == 3
 
 
 def test_read_url_http_error(mock_response):
