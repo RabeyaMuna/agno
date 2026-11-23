@@ -137,8 +137,8 @@ def test_get_pull_request_with_details(mock_github):
     mock_pr.user.login = "test-user"
     mock_pr.user.avatar_url = "https://github.com/avatars/test-user.png"
     mock_pr.created_at.isoformat.return_value = "2024-03-01T12:00:00"
-    mock_pr.created_at = datetime(2024, 3, 1, 12, 0, 0)
-    mock_pr.updated_at = datetime(2024, 3, 2, 12, 0, 0)
+    mock_pr.created_at = datetime(2024, 3, 1, 12, 0, 0, tzinfo=timezone.utc)
+    mock_pr.updated_at = datetime(2024, 3, 2, 12, 0, 0, tzinfo=timezone.utc)
     mock_pr.mergeable = True
     mock_pr.mergeable_state = "clean"
     mock_pr.additions = 100
@@ -152,7 +152,7 @@ def test_get_pull_request_with_details(mock_github):
     mock_issue1.state = "open"
     mock_issue1.user.login = "test-user"
     mock_issue1.pull_request = None
-    mock_issue1.created_at = datetime(2024, 2, 4, 12, 0, 0)
+    mock_issue1.created_at = datetime(2024, 2, 4, 12, 0, 0, tzinfo=timezone.utc)
 
     mock_issue2 = MagicMock(spec=Issue)
     mock_issue2.number = 2
@@ -161,7 +161,7 @@ def test_get_pull_request_with_details(mock_github):
     mock_issue2.state = "closed"
     mock_issue2.user.login = "another-user"
     mock_issue2.pull_request = None
-    mock_issue2.created_at = datetime(2024, 2, 3, 12, 0, 0)
+    mock_issue2.created_at = datetime(2024, 2, 3, 12, 0, 0, tzinfo=timezone.utc)
 
     mock_repo.get_issues.return_value = [mock_issue1, mock_issue2]
 
@@ -197,7 +197,7 @@ def test_create_issue(mock_github):
     mock_issue.state = "open"
     mock_issue.user.login = "test-user"
     mock_issue.body = "Issue description"
-    mock_issue.created_at = datetime(2024, 2, 4, 12, 0, 0)
+    mock_issue.created_at = datetime(2024, 2, 4, 12, 0, 0, tzinfo=timezone.utc)
 
     mock_repo.create_issue.return_value = mock_issue
 
@@ -541,8 +541,8 @@ def test_get_pull_request_comments(mock_github):
     mock_comment1.id = 1057297855
     mock_comment1.body = "This is a comment"
     mock_comment1.user.login = "test-user"
-    mock_comment1.created_at = datetime(2023, 1, 1)
-    mock_comment1.updated_at = datetime(2023, 1, 2)
+    mock_comment1.created_at = datetime(2023, 1, 1, tzinfo=timezone.utc)
+    mock_comment1.updated_at = datetime(2023, 1, 2, tzinfo=timezone.utc)
     mock_comment1.path = "file.txt"
     mock_comment1.position = 0
     mock_comment1.commit_id = "abc123"
@@ -552,8 +552,8 @@ def test_get_pull_request_comments(mock_github):
     mock_comment2.id = 1057297856
     mock_comment2.body = "Another comment"
     mock_comment2.user.login = "another-user"
-    mock_comment2.created_at = datetime(2023, 1, 3)
-    mock_comment2.updated_at = datetime(2023, 1, 4)
+    mock_comment2.created_at = datetime(2023, 1, 3, tzinfo=timezone.utc)
+    mock_comment2.updated_at = datetime(2023, 1, 4, tzinfo=timezone.utc)
     mock_comment2.path = "another-file.txt"
     mock_comment2.position = 10
     mock_comment2.commit_id = "def456"
@@ -600,7 +600,7 @@ def test_create_pull_request_comment(mock_github):
     mock_comment.id = 1057297855
     mock_comment.body = "This is a comment"
     mock_comment.user.login = "test-user"
-    mock_comment.created_at = datetime(2023, 1, 1)
+    mock_comment.created_at = datetime(2023, 1, 1, tzinfo=timezone.utc)
     mock_comment.path = "file.txt"
     mock_comment.position = 0
     mock_comment.commit_id = "abc123"
@@ -643,7 +643,7 @@ def test_edit_pull_request_comment(mock_github):
     mock_comment.id = 1057297855
     mock_comment.user = MagicMock()
     mock_comment.user.login = "test-user"
-    mock_comment.updated_at = datetime(2023, 1, 2)
+    mock_comment.updated_at = datetime(2023, 1, 2, tzinfo=timezone.utc)
     mock_comment.path = "file.txt"
     mock_comment.position = 5
     mock_comment.commit_id = "abc123"
@@ -779,8 +779,8 @@ def test_get_pull_request_with_comprehensive_details(mock_github):
     mock_pr.title = "Comprehensive PR"
     mock_pr.user.login = "test-user"
     mock_pr.state = "open"
-    mock_pr.created_at = datetime(2023, 3, 1, 12, 0, 0)
-    mock_pr.updated_at = datetime(2023, 3, 2, 12, 0, 0)
+    mock_pr.created_at = datetime(2023, 3, 1, 12, 0, 0, tzinfo=timezone.utc)
+    mock_pr.updated_at = datetime(2023, 3, 2, 12, 0, 0, tzinfo=timezone.utc)
     mock_pr.html_url = "https://github.com/test-org/test-repo/pull/101"
     mock_pr.body = "This is a comprehensive pull request"
     mock_pr.base = MagicMock()
@@ -803,7 +803,7 @@ def test_get_pull_request_with_comprehensive_details(mock_github):
     mock_review_comment1.id = 1001
     mock_review_comment1.body = "This is a review comment"
     mock_review_comment1.user.login = "reviewer1"
-    mock_review_comment1.created_at = datetime(2023, 3, 1, 14, 0, 0)
+    mock_review_comment1.created_at = datetime(2023, 3, 1, 14, 0, 0, tzinfo=timezone.utc)
     mock_review_comment1.path = "file.txt"
     mock_review_comment1.position = 10
     mock_review_comment1.commit_id = "abc123"
@@ -814,7 +814,7 @@ def test_get_pull_request_with_comprehensive_details(mock_github):
     mock_issue_comment1.id = 2001
     mock_issue_comment1.body = "This is an issue comment"
     mock_issue_comment1.user.login = "commenter1"
-    mock_issue_comment1.created_at = datetime(2023, 3, 1, 15, 0, 0)
+    mock_issue_comment1.created_at = datetime(2023, 3, 1, 15, 0, 0, tzinfo=timezone.utc)
     mock_issue_comment1.html_url = "https://github.com/test-org/test-repo/pull/101/issue-comments/2001"
 
     # Mock PR commits
@@ -822,7 +822,7 @@ def test_get_pull_request_with_comprehensive_details(mock_github):
     mock_commit.sha = "abc123def456"
     mock_commit.commit.message = "Implement feature"
     mock_commit.commit.author.name = "Author Name"
-    mock_commit.commit.author.date = datetime(2023, 3, 1, 10, 0, 0)
+    mock_commit.commit.author.date = datetime(2023, 3, 1, 10, 0, 0, tzinfo=timezone.utc)
     mock_commit.html_url = "https://github.com/test-org/test-repo/commit/abc123def456"
 
     # Mock PR files
@@ -1007,7 +1007,7 @@ def test_create_pull_request(mock_github):
     mock_pr.body = "This implements the new feature"
     mock_pr.user.login = "test-user"
     mock_pr.state = "open"
-    mock_pr.created_at = datetime(2024, 3, 1, 12, 0, 0)
+    mock_pr.created_at = datetime(2024, 3, 1, 12, 0, 0, tzinfo=timezone.utc)
     mock_pr.html_url = "https://github.com/test-org/test-repo/pull/123"
     mock_pr.base = MagicMock()
     mock_pr.base.ref = "main"
