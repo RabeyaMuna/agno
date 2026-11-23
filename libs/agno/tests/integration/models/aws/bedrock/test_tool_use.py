@@ -1,6 +1,6 @@
 from typing import Optional
 
-from agno.agent import Agent, RunResponse  # noqa
+from agno.agent import Agent, RunResponse
 from agno.models.aws import AwsBedrock
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.exa import ExaTools
@@ -43,9 +43,8 @@ def test_tool_use_stream():
     for chunk in response_stream:
         assert isinstance(chunk, RunResponse)
         responses.append(chunk)
-        if chunk.tools:
-            if any(tc.get("tool_name") for tc in chunk.tools):
-                tool_call_seen = True
+        if chunk.tools and any(tc.get("tool_name") for tc in chunk.tools):
+            tool_call_seen = True
 
     assert len(responses) > 0
     assert tool_call_seen, "No tool calls observed in stream"

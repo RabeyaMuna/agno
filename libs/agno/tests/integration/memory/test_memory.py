@@ -171,14 +171,20 @@ async def test_acreate_user_memories_with_db(memory_with_db):
 def test_search_user_memories_semantic(memory_with_db):
     """Test semantic search of user memories."""
     # Add multiple memories with different content
-    memory1 = UserMemory(memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now())
+    memory1 = UserMemory(
+        memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now(timezone.utc)
+    )
 
     memory2 = UserMemory(
-        memory="The user likes to play basketball", topics=["sports", "hobbies"], last_updated=datetime.now()
+        memory="The user likes to play basketball",
+        topics=["sports", "hobbies"],
+        last_updated=datetime.now(timezone.utc),
     )
 
     memory3 = UserMemory(
-        memory="The user's favorite color is blue", topics=["preferences", "colors"], last_updated=datetime.now()
+        memory="The user's favorite color is blue",
+        topics=["preferences", "colors"],
+        last_updated=datetime.now(timezone.utc),
     )
 
     # Add the memories
@@ -251,7 +257,9 @@ def test_memory_persistence_across_instances(model, memory_db):
     memory1 = Memory(model=model, db=memory_db)
 
     # Add a user memory
-    user_memory = UserMemory(memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now())
+    user_memory = UserMemory(
+        memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now(timezone.utc)
+    )
 
     memory_id = memory1.add_user_memory(memory=user_memory, user_id="test_user")
 
@@ -266,13 +274,15 @@ def test_memory_persistence_across_instances(model, memory_db):
 def test_memory_operations_with_db(memory_with_db):
     """Test various memory operations with database persistence."""
     # Add a user memory
-    user_memory = UserMemory(memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now())
+    user_memory = UserMemory(
+        memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now(timezone.utc)
+    )
 
     memory_id = memory_with_db.add_user_memory(memory=user_memory, user_id="test_user")
 
     # Replace the memory
     updated_memory = UserMemory(
-        memory="The user's name is Jane Doe", topics=["name", "user"], last_updated=datetime.now()
+        memory="The user's name is Jane Doe", topics=["name", "user"], last_updated=datetime.now(timezone.utc)
     )
 
     memory_with_db.replace_user_memory(memory_id=memory_id, memory=updated_memory, user_id="test_user")
@@ -333,7 +343,9 @@ def test_summary_operations_with_db(memory_with_db):
 def test_clear_memory_with_db(memory_with_db):
     """Test clearing memory with database persistence."""
     # Add a user memory
-    user_memory = UserMemory(memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now())
+    user_memory = UserMemory(
+        memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now(timezone.utc)
+    )
 
     memory_with_db.add_user_memory(memory=user_memory, user_id="test_user")
 
@@ -418,12 +430,18 @@ def test_search_user_memories_first_n(memory_with_db):
 def test_update_memory_task_with_db(memory_with_db):
     """Test updating memory with a task using database persistence."""
     # Add multiple memories with different content
-    memory1 = UserMemory(memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now())
+    memory1 = UserMemory(
+        memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now(timezone.utc)
+    )
     memory2 = UserMemory(
-        memory="The user likes to play basketball", topics=["sports", "hobbies"], last_updated=datetime.now()
+        memory="The user likes to play basketball",
+        topics=["sports", "hobbies"],
+        last_updated=datetime.now(timezone.utc),
     )
     memory3 = UserMemory(
-        memory="The user's favorite color is blue", topics=["preferences", "colors"], last_updated=datetime.now()
+        memory="The user's favorite color is blue",
+        topics=["preferences", "colors"],
+        last_updated=datetime.now(timezone.utc),
     )
 
     # Add the memories
@@ -460,12 +478,18 @@ def test_update_memory_task_with_db(memory_with_db):
 async def test_aupdate_memory_task_with_db(memory_with_db):
     """Test async updating memory with a task using database persistence."""
     # Add multiple memories with different content
-    memory1 = UserMemory(memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now())
+    memory1 = UserMemory(
+        memory="The user's name is John Doe", topics=["name", "user"], last_updated=datetime.now(timezone.utc)
+    )
     memory2 = UserMemory(
-        memory="The user likes to play basketball", topics=["sports", "hobbies"], last_updated=datetime.now()
+        memory="The user likes to play basketball",
+        topics=["sports", "hobbies"],
+        last_updated=datetime.now(timezone.utc),
     )
     memory3 = UserMemory(
-        memory="The user's favorite color is blue", topics=["preferences", "colors"], last_updated=datetime.now()
+        memory="The user's favorite color is blue",
+        topics=["preferences", "colors"],
+        last_updated=datetime.now(timezone.utc),
     )
 
     # Add the memories

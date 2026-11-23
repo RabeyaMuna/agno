@@ -479,6 +479,7 @@ def test_get_messages_for_session_with_multiple_runs(memory_with_model):
     session_id = "test_session"
 
     run1 = RunResponse(
+        id="run1",
         content="First response",
         messages=[
             Message(role="user", content="What's the weather like?"),
@@ -487,6 +488,7 @@ def test_get_messages_for_session_with_multiple_runs(memory_with_model):
     )
 
     run2 = RunResponse(
+        id="run2",
         content="Second response",
         messages=[
             Message(role="user", content="What about tomorrow?"),
@@ -518,6 +520,7 @@ def test_get_messages_for_session_with_history_messages(memory_with_model):
     session_id = "test_session"
 
     run_response_1 = RunResponse(
+        id="run1",
         content="Sample response",
         messages=[
             Message(role="user", content="Hello, how are you?", from_history=True),
@@ -527,6 +530,7 @@ def test_get_messages_for_session_with_history_messages(memory_with_model):
 
     # The most recent run response
     run_response_2 = RunResponse(
+        id="run2",
         content="Sample response",
         messages=[
             Message(role="user", content="What's new?"),
@@ -568,6 +572,7 @@ def test_get_messages_from_last_n_runs(memory_with_model):
     session_id = "test_session"
 
     run1 = RunResponse(
+        id="run1",
         content="First response",
         messages=[
             Message(role="user", content="What's the weather like?"),
@@ -576,6 +581,7 @@ def test_get_messages_from_last_n_runs(memory_with_model):
     )
 
     run2 = RunResponse(
+        id="run2",
         content="Second response",
         messages=[
             Message(role="user", content="What about tomorrow?"),
@@ -606,6 +612,7 @@ def test_add_interaction_to_team_context(memory_with_model):
     task = "Research the latest AI developments"
 
     run_response = RunResponse(
+        id="run1",
         content="Research findings",
         messages=[Message(role="assistant", content="I found that the latest AI models have improved significantly.")],
     )
@@ -657,11 +664,13 @@ def test_get_team_member_interactions_str(memory_with_model):
     session_id = "test_session"
 
     run1 = RunResponse(
+        id="run1",
         content="Research findings",
         messages=[Message(role="assistant", content="I found that the latest AI models have improved significantly.")],
     )
 
     run2 = RunResponse(
+        id="run2",
         content="Analysis results",
         messages=[
             Message(role="assistant", content="Based on the research, we should focus on transformer architectures.")
