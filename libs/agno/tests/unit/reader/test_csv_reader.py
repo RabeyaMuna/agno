@@ -191,7 +191,7 @@ async def test_async_read_empty_file(csv_reader, temp_dir):
     empty_path.touch()
 
     documents = await csv_reader.async_read(empty_path)
-    assert documents == []
+    assert len(documents) == 0
 
 
 @pytest.fixture

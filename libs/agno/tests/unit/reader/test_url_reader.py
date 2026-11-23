@@ -177,10 +177,14 @@ async def test_async_read_url_http_error():
     mock_client = AsyncMock(spec=httpx.AsyncClient)
     mock_client.__aenter__.return_value.get.return_value = mock_response
 
-    with patch("httpx.AsyncClient", return_value=mock_client):
+    patcher = patch("httpx.AsyncClient", return_value=mock_client)
+    mock_client_instance = patcher.start()
+    try:
         reader = URLReader()
         with pytest.raises(httpx.HTTPStatusError):
             await reader.async_read(url)
+    finally:
+        patcher.stop()
 
 
 @pytest.mark.asyncio
@@ -195,7 +199,9 @@ async def test_async_chunking():
     mock_client = AsyncMock(spec=httpx.AsyncClient)
     mock_client.__aenter__.return_value.get.return_value = mock_response
 
-    with patch("httpx.AsyncClient", return_value=mock_client):
+    patcher = patch("httpx.AsyncClient", return_value=mock_client)
+    mock_client_instance = patcher.start()
+    try:
         reader = URLReader()
         reader.chunk = True
         reader.chunking_strategy.chunk_size = 100
@@ -204,3 +210,5 @@ async def test_async_chunking():
         assert len(documents) > 1
         assert all("url" in doc.meta_data for doc in documents)
         assert all(doc.meta_data["url"] == url for doc in documents)
+    finally:
+        patcher.stop()
