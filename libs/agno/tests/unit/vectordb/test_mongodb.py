@@ -1,6 +1,7 @@
 import uuid
 from hashlib import md5
-from typing import Any, Dict, Generator, List
+from typing import Any
+from collections.abc import Generator
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -58,7 +59,7 @@ def mock_mongodb_client() -> Generator[MagicMock, None, None]:
 class AsyncCursor:
     """Mock async cursor for MongoDB."""
 
-    def __init__(self, data: List[Dict[str, Any]]):
+    def __init__(self, data: list[dict[str, Any]]):
         self.data = data
         self.current = 0
 
@@ -159,7 +160,7 @@ def async_vector_db(mock_async_mongodb_client: AsyncMock, mock_embedder: MagicMo
         yield db
 
 
-def create_test_documents(num_docs: int = 3) -> List[Document]:
+def create_test_documents(num_docs: int = 3) -> list[Document]:
     """Helper function to create test documents."""
     return [
         Document(
@@ -168,7 +169,7 @@ def create_test_documents(num_docs: int = 3) -> List[Document]:
             meta_data={"type": "test", "index": str(i)},
             name=f"test_doc_{i}",
         )
-        for i in range(num_docs)
+        for i in range(num_docs):
     ]
 
 
@@ -245,7 +246,7 @@ def test_document_existence(vector_db: MongoDb, mock_mongodb_client: MagicMock) 
     docs = create_test_documents(1)
 
     # Setup mock responses for find_one
-    def mock_find_one(query: Dict[str, Any]) -> Dict[str, Any]:
+    def mock_find_one(query: dict[str, Any]) -> dict[str, Any]:
         # For doc_exists
         if "_id" in query and query["_id"] == md5(docs[0].content.encode("utf-8")).hexdigest():
             return {"_id": "doc_0", "content": "This is test document 0", "name": "test_doc_0"}
@@ -354,8 +355,8 @@ def test_search_with_filters(vector_db: MongoDb, mock_mongodb_client: MagicMock,
     assert results[0].meta_data["type"] == "test"
 
     # Verify the search pipeline included filters
-    args = collection.aggregate.call_args[0][0]
-    assert any("$match" in stage for stage in args)
+    _args = collection.aggregate.call_args[0][0]
+    assert any("$match" in stage for stage in _args)
 
 
 # Async Tests

@@ -2,7 +2,7 @@ import json
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from os import getenv
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Dict, Iterator, Optional
 
 import httpx
 
@@ -175,12 +175,12 @@ class Cerebras(Model):
 
         return request_params
 
-    def invoke(self, messages: List[Message]) -> ChatCompletion:
+    def invoke(self, messages: list[Message]) -> ChatCompletion:
         """
         Send a chat completion request to the Cerebras API.
 
         Args:
-            messages (List[Message]): A list of messages to send to the model.
+            messages (list[Message]): A list of messages to send to the model.
 
         Returns:
             ChatCompletion: The chat completion response from the API.
@@ -191,12 +191,12 @@ class Cerebras(Model):
             **self.request_kwargs,
         )
 
-    async def ainvoke(self, messages: List[Message]) -> ChatCompletion:
+    async def ainvoke(self, messages: list[Message]) -> ChatCompletion:
         """
         Sends an asynchronous chat completion request to the Cerebras API.
 
         Args:
-            messages (List[Message]): A list of messages to send to the model.
+            messages (list[Message]): A list of messages to send to the model.
 
         Returns:
             ChatCompletion: The chat completion response from the API.
@@ -207,12 +207,12 @@ class Cerebras(Model):
             **self.request_kwargs,
         )
 
-    def invoke_stream(self, messages: List[Message]) -> Iterator[ChatCompletionChunk]:
+    def invoke_stream(self, messages: list[Message]) -> Iterator[ChatCompletionChunk]:
         """
         Send a streaming chat completion request to the Cerebras API.
 
         Args:
-            messages (List[Message]): A list of messages to send to the model.
+            messages (list[Message]): A list of messages to send to the model.
 
         Returns:
             Iterator[ChatCompletionChunk]: An iterator of chat completion chunks.
@@ -224,12 +224,12 @@ class Cerebras(Model):
             **self.request_kwargs,
         )  # type: ignore
 
-    async def ainvoke_stream(self, messages: List[Message]) -> AsyncIterator[ChatCompletionChunk]:
+    async def ainvoke_stream(self, messages: list[Message]) -> AsyncIterator[ChatCompletionChunk]:
         """
         Sends an asynchronous streaming chat completion request to the Cerebras API.
 
         Args:
-            messages (List[Message]): A list of messages to send to the model.
+            messages (list[Message]): A list of messages to send to the model.
 
         Returns:
             AsyncIterator[ChatCompletionChunk]: An asynchronous iterator of chat completion chunks.
@@ -243,7 +243,7 @@ class Cerebras(Model):
         async for chunk in async_stream:  # type: ignore
             yield chunk  # type
 
-    def _format_message(self, message: Message) -> Dict[str, Any]:
+    def _format_message(self, message: Message) -> dict[str, Any]:
         """
         Format a message into the format expected by the Cerebras API.
 
@@ -251,10 +251,10 @@ class Cerebras(Model):
             message (Message): The message to format.
 
         Returns:
-            Dict[str, Any]: The formatted message.
+            dict[str, Any]: The formatted message.
         """
         # Basic message content
-        message_dict: Dict[str, Any] = {
+        message_dict: dict[str, Any] = {
             "role": message.role,
             "content": message.content if message.content is not None else "",
         }
